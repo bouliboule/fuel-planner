@@ -28,7 +28,8 @@ local-first, no account, no backend in the first versions.
 - Vitest for unit tests, Playwright for end-to-end tests.
 - pnpm as package manager.
 - Tooling: ESLint (typescript-eslint, react-hooks, react-refresh), Prettier,
-  `@vitejs/plugin-react`, `@tailwindcss/vite`, `workbox-window`.
+  `@vitejs/plugin-react`, `@tailwindcss/vite`, `workbox-window`,
+  `fake-indexeddb` (tests only).
 
 Ask before adding any dependency not listed here.
 

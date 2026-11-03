@@ -13,3 +13,12 @@ describe('i18n', () => {
     expect(t(key)).toBe('Today');
   });
 });
+
+describe('i18n placeholders', () => {
+  it('fills named values and leaves unknown ones', () => {
+    expect(t('form.range', { min: 1.2, max: 1.5 })).toBe(
+      'Allowed range: 1.2 to 1.5.',
+    );
+    expect(t('settings.version', {})).toBe('Version {version}');
+  });
+});

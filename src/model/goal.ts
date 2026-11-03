@@ -1,6 +1,5 @@
 import { z } from 'zod';
-
-const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD');
+import { isoDate, stored } from './common.ts';
 
 export const goalSchema = z.object({
   kind: z.enum(['maintain', 'lose', 'gain']),
@@ -17,3 +16,6 @@ export const goalSchema = z.object({
 });
 
 export type Goal = z.infer<typeof goalSchema>;
+
+export const storedGoalSchema = stored(goalSchema);
+export type StoredGoal = z.infer<typeof storedGoalSchema>;

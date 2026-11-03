@@ -1,13 +1,17 @@
 import { expect, test } from '@playwright/test';
+import { completeFirstRun } from './helpers.ts';
 
-test('the start URL lands on Today', async ({ page }) => {
+test.beforeEach(async ({ page }) => {
+  await completeFirstRun(page);
+});
+
+test('the start URL lands on Today once set up', async ({ page }) => {
   await page.goto('./');
   await expect(page).toHaveURL(/\/fuel-planner\/today$/);
   await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
 });
 
 test('the tab bar navigates between the four screens', async ({ page }) => {
-  await page.goto('today');
   const tabs = page.getByRole('navigation', { name: 'Main' });
   for (const [label, path] of [
     ['Week', 'week'],
@@ -17,7 +21,9 @@ test('the tab bar navigates between the four screens', async ({ page }) => {
   ] as const) {
     await tabs.getByRole('link', { name: label }).click();
     await expect(page).toHaveURL(new RegExp(`/fuel-planner/${path}$`));
-    await expect(page.getByRole('heading', { name: label })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: label, level: 1 }),
+    ).toBeVisible();
   }
 });
 

@@ -37,16 +37,18 @@ meal slots whose carbohydrate sums to the day target within 1 g.
 
 ## M3. Data layer and profile
 
-- [ ] Dexie schema v1, repositories, migrations test.
-- [ ] Profile, goal, body mass, settings screens.
-- [ ] JSON export/import with Zod validation.
-- [ ] First-run flow and seed loading.
+- [x] Dexie schema v1, repositories, migrations test.
+- [x] Profile, goal, body mass, settings screens.
+- [x] JSON export/import with Zod validation.
+- [x] First-run flow and seed loading (profile prefill from the seed; the
+      week template step moves to M4 and seed foods to M5, D26).
 
 ## M4. Sessions and week
 
 - [ ] Session editor with live kcal preview.
 - [ ] Week templates, apply to a week, per-day edits.
 - [ ] Week view with kcal and carbohydrate g/kg per day.
+- [ ] First-run step: pick or create a week template.
 
 ## M5. Foods, portions, Today
 
@@ -55,6 +57,8 @@ meal slots whose carbohydrate sums to the day target within 1 g.
 - [ ] Portion solver (DOMAIN section 5) with tests.
 - [ ] Today screen with timeline, swaps, warnings and "why" traces.
 - [ ] Shopping list.
+- [ ] First-run step: load the seed food list, completing its nutrition
+      values in the food editor.
 
 Acceptance: a full week from the seed template plans in under 200 ms on a
 recent phone; every slot either meets tolerance or shows its gap.

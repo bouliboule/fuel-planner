@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
+import { completeFirstRun } from './helpers.ts';
 
 interface ManifestIcon {
   src: string;
@@ -67,7 +68,7 @@ test('the app loads offline once the service worker is active', async ({
   page,
   context,
 }) => {
-  await page.goto('today');
+  await completeFirstRun(page);
   // `ready` resolves while the worker may still be activating; precaching is
   // done only once it reports 'activated'.
   const state = await page.evaluate(async () => {

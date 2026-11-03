@@ -20,7 +20,7 @@ src/
   model/           Zod schemas and inferred types
   db/              Dexie database, migrations, repositories
   data/            bundled food subset (CIQUAL), seed loader
-  features/        one folder per screen: today, week, sessions, foods, templates, profile, settings
+  features/        one folder per screen: onboarding, today, week, sessions, foods, templates, profile, settings
   ui/              shared components
   i18n/
   pwa/             service worker registration, update prompt

@@ -1,5 +1,6 @@
 // English UI strings. Every user-visible string goes through `t()` so a
-// French dictionary with the same keys can be added later.
+// French dictionary with the same keys can be added later. `{name}` marks a
+// value filled in by `t(key, values)`.
 export const en = {
   'app.name': 'Fuel Planner',
   'tab.today': 'Today',
@@ -11,6 +12,133 @@ export const en = {
   'update.available': 'A new version is available.',
   'update.reload': 'Reload',
   'update.dismiss': 'Later',
+
+  'common.save': 'Save',
+  'common.saved': 'Saved.',
+  'common.back': 'Back',
+  'common.next': 'Next',
+  'common.cancel': 'Cancel',
+  'common.remove': 'Remove',
+  'common.add': 'Add',
+  'common.optional': 'optional',
+  'form.check': 'Check this value.',
+  'form.required': 'Required.',
+  'form.range': 'Allowed range: {min} to {max}.',
+  'form.fixErrors': 'Fix the highlighted fields to continue.',
+
+  'notice.title': 'Not medical advice',
+  'notice.body':
+    'Fuel Planner gives general sports-nutrition estimates from published guidelines for healthy adults. It is not medical advice. If you have a medical condition, an eating disorder, or are pregnant, talk to a doctor or registered dietitian before changing how you eat.',
+
+  'profile.title': 'Profile',
+  'profile.sex': 'Sex',
+  'profile.sex.choose': 'Choose',
+  'profile.sex.male': 'Male',
+  'profile.sex.female': 'Female',
+  'profile.birthYear': 'Birth year',
+  'profile.heightCm': 'Height (cm)',
+  'profile.massKg': 'Body mass (kg)',
+  'profile.massFromEntries':
+    'Body mass: {mass} kg, from your latest body mass entry.',
+  'profile.bodyFatPct': 'Body fat (%)',
+  'profile.bodyFatHint':
+    'When set, resting energy uses Katch-McArdle instead of Mifflin-St Jeor.',
+  'profile.ftpW': 'FTP (W)',
+  'profile.ftpHint': 'Needed to estimate ride energy from zones.',
+  'profile.timeZone': 'Time zone',
+  'profile.wakeTime': 'Wake time',
+  'profile.sleepTime': 'Sleep time',
+  'profile.meals': 'Usual meals',
+  'profile.mealName': 'Meal name',
+  'profile.mealTime': 'Time',
+  'profile.addMeal': 'Add meal',
+  'profile.mealsRequired': 'Add at least one meal.',
+
+  'goal.title': 'Goal',
+  'goal.kind': 'Goal',
+  'goal.maintain': 'Maintain',
+  'goal.lose': 'Lose weight',
+  'goal.gain': 'Gain weight',
+  'goal.rate': 'Rate (kg per week)',
+  'goal.rateCap':
+    'The plan caps the rate at 0.5 % of body mass per week: {cap} kg for {mass} kg.',
+  'goal.gainKcal': 'Daily surplus (kcal)',
+  'goal.gainHint': 'Default 250 kcal.',
+  'goal.proteinNote':
+    'Protein switches between 1.8 and 2.0 g/kg when the goal changes to or from losing weight, unless you set another value.',
+  'goal.event': 'Goal event',
+  'goal.eventName': 'Event name',
+  'goal.eventDate': 'Event date',
+  'goal.eventDuration': 'Expected duration (min)',
+  'goal.eventHint':
+    'Events over 90 min add carbohydrate loading on the two days before.',
+
+  'bodyMass.title': 'Body mass',
+  'bodyMass.date': 'Date',
+  'bodyMass.massKg': 'Mass (kg)',
+  'bodyMass.bodyFatPct': 'Body fat (%)',
+  'bodyMass.bodyFatHint':
+    'Kept as history. Set body fat in the profile to use it in plans.',
+  'bodyMass.add': 'Add entry',
+  'bodyMass.empty': 'No entries yet.',
+  'bodyMass.trend': 'Body mass trend, {min} to {max} kg',
+  'bodyMass.entries': 'Entries',
+
+  'coefficients.title': 'Coefficients',
+  'coefficients.nea': 'Non-exercise activity factor',
+  'coefficients.neaHint':
+    '1.2 desk work, little walking; 1.5 on your feet most of the day.',
+  'coefficients.efficiency': 'Cycling gross efficiency',
+  'coefficients.protein': 'Protein (g/kg/day)',
+  'coefficients.carbPoint': 'Carbohydrate point in range',
+  'coefficients.carbPointHint':
+    '0 uses the lower bound of each range, 1 the upper bound, 0.5 the midpoint.',
+  'coefficients.onBike': 'On-bike carbohydrate for rides over 2.5 h (g/h)',
+  'coefficients.onBikeHint':
+    'Leave empty to use the carbohydrate point in the 60 to 90 g/h range. Above 90 g/h needs gut training; the maximum is 120 g/h.',
+
+  'window.title': 'Eating window',
+  'window.enabled': 'Use a time-restricted eating window',
+  'window.start': 'Start',
+  'window.end': 'End',
+  'window.hint': 'Slots outside the window are flagged, never dropped.',
+
+  'data.title': 'Data',
+  'data.export': 'Export data',
+  'data.exportHint': 'Downloads every table as one JSON file.',
+  'data.lastExport': 'Last export: {date}.',
+  'data.neverExported': 'Not exported yet on this device.',
+  'data.import': 'Import a backup',
+  'data.importHint': 'Replaces all data on this device after you confirm.',
+  'data.importSummary':
+    'This file has {profile} profile, {goals} goals, {bodyMass} body mass entries, {sessions} sessions and {foods} foods. Import it and replace all data on this device?',
+  'data.importConfirm': 'Replace my data',
+  'data.importDone': 'Backup imported.',
+  'data.import.not-json': 'This file is not JSON.',
+  'data.import.not-fuel-planner': 'This file is not a Fuel Planner export.',
+  'data.import.newer-version':
+    'This file comes from a newer version of the app (schema {detail}). Update the app first.',
+  'data.import.invalid': 'This file has invalid data and was not imported.',
+  'data.storage': 'Storage',
+  'data.storage.persisted': 'This device keeps the data persistently.',
+  'data.storage.not-persisted':
+    'The browser may clear this data when space is low. Export regularly; adding the app to the home screen helps on iPhone.',
+  'data.storage.unsupported':
+    'This browser does not report storage persistence.',
+
+  'settings.about': 'About',
+  'settings.version': 'Version {version}',
+  'settings.checkUpdate': 'Check for update',
+  'settings.updateChecked': 'Checked for updates.',
+  'settings.updateUnavailable':
+    'Updates are checked only in the installed or deployed app.',
+
+  'firstRun.title': 'Welcome',
+  'firstRun.intro':
+    'Set up your profile and goal. Everything stays on this device.',
+  'firstRun.step': 'Step {step} of {total}',
+  'firstRun.start': 'Start planning',
+  'firstRun.restore': 'Restore from a backup instead',
 } as const;
 
 export type MessageKey = keyof typeof en;

@@ -1,8 +1,12 @@
-import { Outlet } from 'react-router';
+import { Navigate, Outlet } from 'react-router';
+import { db, getProfile, useLiveQuery } from '../db/index.ts';
 import { UpdatePrompt } from '../pwa/UpdatePrompt.tsx';
 import { TabBar } from '../ui/TabBar.tsx';
 
 export function AppLayout() {
+  const profile = useLiveQuery(() => getProfile(db), []);
+  if (profile.loading) return null;
+  if (!profile.value) return <Navigate to="/welcome" replace />;
   return (
     <div className="flex min-h-dvh flex-col pt-[env(safe-area-inset-top)]">
       <UpdatePrompt />

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clockTime, isoDate, stored } from './common.ts';
 
 export const sportSchema = z.enum([
   'ride',
@@ -29,8 +30,8 @@ export const intensitySchema = z.discriminatedUnion('kind', [
 export type Intensity = z.infer<typeof intensitySchema>;
 
 export const sessionSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD'),
-  start: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'HH:mm'),
+  date: isoDate,
+  start: clockTime,
   durationMin: z.number().positive(),
   sport: sportSchema,
   indoor: z.boolean(),
@@ -44,3 +45,17 @@ export const sessionSchema = z.object({
 });
 
 export type Session = z.infer<typeof sessionSchema>;
+
+export const storedSessionSchema = stored(sessionSchema);
+export type StoredSession = z.infer<typeof storedSessionSchema>;
+
+export const weekTemplateSchema = z.object({
+  name: z.string().min(1),
+  sessions: z.array(
+    sessionSchema
+      .omit({ date: true, source: true })
+      .extend({ weekday: z.number().int().min(1).max(7) }),
+  ),
+});
+export type WeekTemplate = z.infer<typeof weekTemplateSchema>;
+export const storedWeekTemplateSchema = stored(weekTemplateSchema);

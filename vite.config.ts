@@ -1,4 +1,4 @@
-import { copyFile } from 'node:fs/promises';
+import { copyFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
@@ -10,6 +10,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 const base = '/fuel-planner/';
 
 const themeColor = '#0f172a';
+
+const { version } = JSON.parse(
+  await readFile(new URL('./package.json', import.meta.url), 'utf8'),
+) as { version: string };
 
 // GitHub Pages has no rewrite rules. A copy of index.html as 404.html boots
 // the app on deep links loaded before the service worker is installed.
@@ -32,6 +36,7 @@ function pagesSpaFallback(): Plugin {
 
 export default defineConfig({
   base,
+  define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
     react(),
     tailwindcss(),

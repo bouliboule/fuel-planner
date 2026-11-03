@@ -57,6 +57,21 @@
       eating-window conflicts with a suggested window (DOMAIN T5, T6).
 - D22. Meal moving, bedtime slot, and the protein, carbohydrate (1.5
       weights) and fat split (DOMAIN section 4).
+- D23. Dexie schema v1 creates every table in DATA_MODEL, including those
+      used from M4 on, so the first schema change is a real migration.
+      `fake-indexeddb` (dev only) runs storage tests in Vitest.
+- D24. Ids are UUID v7 from a small generator in `src/model/id.ts`.
+- D25. Profile mass follows the latest body mass entry by date. Body fat on
+      an entry is history only; the profile body fat is set on purpose,
+      since it switches E1 to Katch-McArdle.
+- D26. First run: profile (prefilled from `seed/profile.json`, TODO values
+      required), goal, not-medical-advice notice, then Today. The week
+      template step comes with M4; seed foods load in M5 because their
+      nutrition values are empty on purpose.
+- D27. Coefficient inputs accept only their DOMAIN ranges. Changing the goal
+      to or from lose switches protein between 1.8 and 2.0 g/kg unless the
+      user set another value. Import validates, summarises and replaces all
+      data after confirmation; no merge.
 
 ## Open questions (defaults in brackets)
 
@@ -69,7 +84,6 @@
 - Q5. Default carbohydrate point inside M2 ranges? [midpoint]
 - Q6. Show a time-restricted eating window by default? [off]
 - Q7. CIQUAL licence terms for bundling: to verify at M5.
-- Q9. Profile values still marked TODO in `seed/profile.json` (sex, body
-      mass, FTP, wake, sleep and meal times) and session start times and
-      durations in `seed/week-template.json`. [engine tests use labelled
-      test values until these are filled]
+- Q9. Session start times and durations in `seed/week-template.json`.
+      Profile values are now entered in first run. [engine tests use
+      labelled test values]
