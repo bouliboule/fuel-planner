@@ -17,11 +17,12 @@ installed from Safari on iPhone, opens in airplane mode (manual).
 
 ## M1. Engine: energy and macros
 
-- [ ] `constants.ts` with all E and M constants and sources.
-- [ ] E1 to E7, M1 to M3 implemented with trace steps.
-- [ ] Load classification for M2.
-- [ ] Fixtures: rest day, Monday run intervals, Wednesday sweet spot indoor,
-      Thursday hard club ride, Sunday 4 h+ ride, using `seed/profile.json`.
+- [x] `constants.ts` with all E and M constants and sources.
+- [x] E1 to E7, M1 to M3 implemented with trace steps.
+- [x] Load classification for M2.
+- [x] Fixtures: rest day, Monday run intervals, Wednesday sweet spot indoor,
+      Thursday hard club ride, Sunday 4 h+ ride, using `seed/profile.json`
+      (labelled test values where the seed is still TODO, see Q9).
 
 Acceptance: fixture outputs match hand-computed values in the tests.
 

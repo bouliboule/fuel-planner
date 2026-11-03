@@ -18,6 +18,8 @@ Default, Mifflin-St Jeor (1990):
 - male: `10 * mass_kg + 6.25 * height_cm - 5 * age + 5`
 - female: `10 * mass_kg + 6.25 * height_cm - 5 * age - 161`
 
+Age is the plan date's year minus the birth year.
+
 If body-fat % is set, Katch-McArdle:
 
 - `370 + 21.6 * lean_mass_kg`, with `lean_mass_kg = mass_kg * (1 - bf)`
@@ -46,20 +48,37 @@ Z1 0.50, Z2 0.65, Z3 0.83, sweet spot 0.90, Z4 0.98, Z5 1.10.
 Ride-level IF for intervals is computed from the planned structure if given,
 otherwise from the dominant zone.
 
+A ride with a zone or IF but no FTP, or with only an RPE, has no mechanical
+work to start from. It falls back to E4 with the compendium cycling codes by
+self-selected effort, indoor and outdoor alike, and carries a warning that
+the estimate has no power data:
+
+- easy, 01015, 4.3 MET: Z1, Z2, RPE under 4, IF under 0.83
+- moderate, 01016, 7.0 MET: Z3, RPE 4 to 6, IF 0.83 to under 0.90
+- vigorous, 01017, 9.0 MET: sweet spot, Z4, Z5, RPE 7 or more, IF 0.90 or more
+
+An IF maps to the highest zone whose IF in the table above is at or below it.
+
 ### E4. Exercise energy, everything else
 
 `kcal = (MET - 1) * mass_kg * hours` (net of resting energy, already counted
 in E1). MET values from the 2024 Adult Compendium of Physical Activities.
-Store the compendium code next to each value in `constants.ts`. Starting set
-to verify against the compendium before use:
+Store the compendium code next to each value in `constants.ts`. A session can
+carry its own MET and compendium code, which takes precedence. Defaults,
+checked against the compendium:
 
-- running: by pace, compendium running codes
-- Pilates, general: about 3.0
-- resistance training, circuit, moderate effort: about 3.5 to 5.0
-- cycling without power data: by speed or effort, compendium cycling codes
+- Pilates, general: 02105, 2.8 MET
+- strength, body weight resistance exercises, general: 02056, 3.0 MET
+  (the morning circuit: push-ups, bridges, lunges, curls, holds)
+- cycling without power data: see E3
+- walk and other sports: no default; the session needs a MET, otherwise the
+  engine counts 0 kcal and warns
 
-Running alternative when distance is known: net `kcal = 1.0 * mass_kg * km`
-(range 0.9 to 1.05, roughly independent of pace on flat ground).
+Running uses distance: net `kcal = 1.0 * mass_kg * km` (range 0.9 to 1.05,
+roughly independent of pace on flat ground). The user enters duration and
+expected pace; `km = duration_s / pace_s_per_km`. A measured distance, when
+given, replaces the estimate. A run with neither pace nor distance nor MET
+counts 0 kcal and warns.
 
 ### E5. Daily total
 
@@ -70,12 +89,15 @@ Running alternative when distance is known: net `kcal = 1.0 * mass_kg * km`
 - maintain: 0
 - lose: `-rate_kg_per_week * 7700 / 7` kcal/day. Cap rate at 0.5 % of body
   mass per week. Apply the deficit on low and moderate days only; on days with
-  more than 2.5 h of training or a key session, target maintenance.
+  more than 2.5 h of training or a key session, target maintenance. The
+  engine applies the deficit exactly when the day has no key session and
+  150 min of training or less.
 - gain: `+250` kcal/day default, user editable.
 
 ### E7. Energy availability guard
 
-`EA = (intake_kcal - exercise_kcal) / fat_free_mass_kg`.
+`EA = (intake_kcal - exercise_kcal) / fat_free_mass_kg`, where intake is the
+planned day total, including any excess from the M3 fat floor.
 If body-fat % is unknown, use `fat_free_mass = 0.85 * mass` for males and
 `0.75 * mass` for females and show that it is an estimate.
 Warn when a planned day has `EA < 30` kcal/kg FFM, the threshold associated
@@ -87,6 +109,8 @@ with low energy availability (IOC consensus on REDs, 2023). Warn, never block.
 
 1.6 to 2.2 g/kg/day (Morton et al. 2018 meta-analysis; ISSN 2017 position
 stand). Default 1.8; default 2.0 when goal is lose.
+The engine uses the profile value as is. The 2.0 default for a lose goal is
+applied by the settings screen when the goal changes, not by the engine.
 Distribute over 4 to 5 eating occasions at about 0.3 to 0.4 g/kg each, one
 of them within 2 h after the main session and one before sleep if the gap to
 breakfast is over 10 h.
@@ -105,12 +129,37 @@ From Burke et al. 2011 and the ACSM 2016 joint position statement:
 Load classification uses total session minutes and the highest intensity of
 the day. Rest days use light, lower bound by default.
 
+Session intensity band, from the session's intensity input:
+
+| Input | low      | moderate | high              |
+|-------|----------|----------|-------------------|
+| zone  | Z1       | Z2, Z3   | sweet spot, Z4, Z5 |
+| RPE   | under 4  | 4 to 6   | 7 or more         |
+| MET   | under 3  | 3 to 6   | 6 or more         |
+
+- IF: the zone it maps to (E3).
+- kJ: the IF from FTP when known, otherwise the MET equivalent of the
+  session's energy, `kcal / (mass_kg * hours) + 1`.
+- pace: the MET of the compendium running code for that speed. Every code
+  from 4 mph (6.44 km/h, 12028, 6.5 MET) up is 6 MET or more, so these
+  runs are high; slower is jogging, 12026, 3.3 MET, moderate.
+
+Day load:
+
+| Load      | Rule                                                   |
+|-----------|--------------------------------------------------------|
+| rest      | no sessions                                            |
+| light     | under 60 min in total, or every session is low         |
+| moderate  | 60 to 89 min                                           |
+| high      | 90 to 239 min                                          |
+| very high | 240 min or more                                        |
+
 ### M3. Fat
 
 Remainder: `fat_g = (target_kcal - 4 * protein_g - 4 * carb_g) / 9`.
-Floor at 20 % of energy and at 0.8 g/kg. If the floor is hit, reduce
-carbohydrate toward the lower bound of its range first, then flag the day as
-over target rather than cutting protein.
+Floor at 20 % of energy and at 0.8 g/kg (the higher of the two). If the
+floor is hit, reduce carbohydrate toward the lower bound of its range first,
+then flag the day as over target rather than cutting protein.
 
 ### M4. Fibre
 

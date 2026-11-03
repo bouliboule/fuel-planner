@@ -6,11 +6,14 @@
 src/
   engine/          pure planning logic, no IO
     constants.ts   every coefficient, with DOMAIN rule ID and source
+    types.ts       engine input and output types
+    zones.ts       IF to zone mapping (E3)
     energy.ts      E1 to E7
+    load.ts        session intensity bands and day load (M2)
     macros.ts      M1 to M4
     timing.ts      T1 to T6, slot construction
     portions.ts    portion solver
-    plan.ts        planDay(inputs) and planWeek(inputs)
+    plan.ts        planDayTargets, then planDay(inputs) and planWeek(inputs)
     trace.ts
   model/           Zod schemas and inferred types
   db/              Dexie database, migrations, repositories

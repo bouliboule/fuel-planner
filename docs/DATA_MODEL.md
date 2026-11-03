@@ -10,7 +10,7 @@ from them. Every stored record has `id` (UUID v7, sortable by time),
 ```ts
 type Profile = {
   sex: 'male' | 'female';
-  birthYear: number;
+  birthYear: number;          // age = plan year - birthYear (DOMAIN E1)
   heightCm: number;
   massKg: number;              // latest value, mirrored from BodyMassEntry
   bodyFatPct?: number;
@@ -64,8 +64,9 @@ type Session = {
     | { kind: 'if'; value: number }
     | { kind: 'kj'; value: number }
     | { kind: 'rpe'; value: number }        // 1..10
-    | { kind: 'met'; value: number; compendiumCode?: string };
-  distanceKm?: number;
+    | { kind: 'met'; value: number; compendiumCode?: string }
+    | { kind: 'pace'; secPerKm: number };   // runs: expected pace
+  distanceKm?: number;         // measured distance, replaces the pace estimate
   key: boolean;                // key session: no deficit that day (E6)
   title?: string;
   source: 'manual' | 'template' | 'import';
@@ -138,9 +139,12 @@ type DayPlan = {
 };
 
 type Macros = { kcal: number; carbG: number; proteinG: number; fatG: number };
-type Warning = { code: string; ruleId: string; message: string };
+type Warning = { code: string; ruleId: string; values?: Record<string, number|string> };
 type TraceStep = { ruleId: string; label: string; inputs: Record<string, number|string>; output: number };
 ```
+
+The engine emits warning codes and values only; the UI turns them into text
+through the i18n module.
 
 `trace` powers the "why this number" view. Every engine function that
 produces a displayed value appends a `TraceStep`.

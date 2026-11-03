@@ -24,6 +24,27 @@
       by a Playwright test with the network off (Chromium only, where
       Playwright supports service workers), and on iPhone by hand.
 
+- D10. Runs are entered as duration and expected pace (min/km). Energy uses
+      the E4 distance rule on `duration / pace`; a measured distance
+      replaces the estimate. Intensity band comes from the compendium
+      running code for that speed (DOMAIN M2).
+- D11. Day load classification thresholds and session intensity bands as in
+      DOMAIN M2 (resolves the gaps and overlaps of the published table).
+- D12. MET defaults from the 2024 Compendium: Pilates 02105 at 2.8 (not
+      3.0), body weight strength 02056 at 3.0. Rides without power data use
+      cycling codes 01015, 01016, 01017 by effort, with a warning. Walk and
+      other sports need an explicit MET. Resolves Q8.
+- D13. Age is the plan year minus the birth year. Birth year 1989 (age 37 in
+      2026).
+- D14. The engine uses the profile protein g/kg as is; the 2.0 g/kg default
+      for a lose goal is applied by the settings screen.
+- D15. The E6 deficit applies exactly when the day has no key session and
+      150 min of training or less. Rest days use the lower bound of the light
+      carbohydrate range.
+- D16. The engine returns unrounded numbers; the UI rounds for display.
+      Warnings carry a code and values, and the UI writes the text through
+      i18n. E7 intake is the planned day total, including any M3 excess.
+
 ## Open questions (defaults in brackets)
 
 - Q1. UI language for v1? [English, i18n-ready]
@@ -35,5 +56,7 @@
 - Q5. Default carbohydrate point inside M2 ranges? [midpoint]
 - Q6. Show a time-restricted eating window by default? [off]
 - Q7. CIQUAL licence terms for bundling: to verify at M5.
-- Q8. MET values for Pilates and circuit training: to confirm against the
-      2024 compendium at M1 and record the codes here.
+- Q9. Profile values still marked TODO in `seed/profile.json` (sex, body
+      mass, FTP, wake, sleep and meal times) and session start times and
+      durations in `seed/week-template.json`. [engine tests use labelled
+      test values until these are filled]
