@@ -33,8 +33,10 @@ result keyed by `date` and `inputsHash`. The engine never reads storage.
   banner instead of reloading silently.
 - Precache the app shell and the bundled food data. Runtime caching
   (stale-while-revalidate) only for Open Food Facts product images, capped.
-- Manifest: standalone display, maskable icons, theme colour, start URL
-  `/today`.
+- Manifest: standalone display, maskable icons, theme colour. `start_url`
+  and `scope` are the base path (see Hosting); the router redirects the base
+  path to `today`. `index.html` also links a 180x180 PNG `apple-touch-icon`,
+  because iOS ignores maskable manifest icons for the home screen.
 - Call `navigator.storage.persist()` on first launch and show the result in
   Settings. Safari can evict storage for sites not added to the home screen;
   the export button and a "last export" date in Settings are the backup.
@@ -57,8 +59,25 @@ time rather than assuming.
 
 ## Hosting
 
-Static build. Any static host works (GitHub Pages, Cloudflare Pages, or a
-local server). HTTPS is required for the service worker outside localhost.
+GitHub Pages project site (DECISIONS D6), served at
+`https://<user>.github.io/fuel-planner/`. HTTPS is required for the service
+worker outside localhost, and Pages provides it.
+
+- Vite `base` is `/fuel-planner/`, and React Router uses the same value as
+  `basename`. The manifest `start_url`, `scope` and the service worker scope
+  follow it.
+- Pages has no rewrite rules. The build copies `index.html` to `404.html` so
+  a deep link loaded without the service worker still boots the app. Once
+  the service worker is installed, its navigation fallback serves the
+  precached `index.html` for every route.
+- Deploy with a GitHub Actions workflow on push to `main`: install, run
+  `pnpm ci`, build, upload `dist/` with `actions/upload-pages-artifact` and
+  publish with `actions/deploy-pages`.
+- On iPhone, install from Safari: Share, then Add to Home Screen. iOS shows no
+  install prompt, so Settings shows these steps when the app is not running
+  standalone.
+- Moving to another host or a custom domain changes the origin. The installed
+  app on the new origin starts empty; move data with export and import.
 
 ## Testing
 

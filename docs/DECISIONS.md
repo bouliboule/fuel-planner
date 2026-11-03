@@ -7,11 +7,15 @@
 - D3. Engine is pure TypeScript, separate from UI and storage.
 - D4. Metric units, kcal, Europe/Paris default time zone.
 - D5. Suggestions come only from the user's foods and templates.
+- D6. Hosting on GitHub Pages as a project site, deployed by GitHub Actions
+      (resolves Q2). The origin and base path are fixed from the first
+      install, because iOS ties the installed app and its IndexedDB data to
+      the exact origin. Pages on a free plan needs a public repository; user
+      data never leaves the device, so only the code is public.
 
 ## Open questions (defaults in brackets)
 
 - Q1. UI language for v1? [English, i18n-ready]
-- Q2. Hosting: GitHub Pages, Cloudflare Pages, or local only? [decide at M0]
 - Q3. Body mass source: manual entry only, or also import from a scale app
       export? [manual]
 - Q4. Should homemade ride drink be one food with a fixed recipe, or a
