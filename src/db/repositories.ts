@@ -1,9 +1,12 @@
 import { proteinOnGoalChange } from '../engine/goalDefaults.ts';
+import { sessionsFromTemplate } from '../engine/week.ts';
 import {
   bodyMassEntrySchema,
   goalSchema,
   profileSchema,
+  sessionSchema,
   uuidv7,
+  weekTemplateSchema,
   type BodyMassEntry,
   type Goal,
   type Profile,
@@ -11,6 +14,7 @@ import {
   type StoredBodyMassEntry,
   type StoredGoal,
   type StoredProfile,
+  type WeekTemplate,
 } from '../model/index.ts';
 import type { FuelDatabase } from './database.ts';
 
@@ -136,18 +140,42 @@ export async function removeBodyMass(
   });
 }
 
-/** First run: profile, goal and first body mass entry in one transaction. */
+/**
+ * First run: profile, goal, first body mass entry and, when given, a week
+ * template applied to the current week, in one transaction.
+ */
 export async function completeFirstRun(
   db: FuelDatabase,
-  input: { profile: Profile; goal: Goal; date: string },
+  input: {
+    profile: Profile;
+    goal: Goal;
+    date: string;
+    template?: WeekTemplate;
+  },
 ): Promise<void> {
   const profile = profileSchema.parse(input.profile);
   const goal = goalSchema.parse(input.goal);
-  await db.transaction('rw', db.profile, db.goals, db.bodyMass, async () => {
-    await db.profile.put(withMeta(profile, await getProfile(db)));
-    await db.goals.put(withMeta(goal));
-    await db.bodyMass.put(
-      withMeta({ date: input.date, massKg: profile.massKg }),
-    );
-  });
+  const template = input.template
+    ? weekTemplateSchema.parse(input.template)
+    : undefined;
+  await db.transaction(
+    'rw',
+    [db.profile, db.goals, db.bodyMass, db.weekTemplates, db.sessions],
+    async () => {
+      await db.profile.put(withMeta(profile, await getProfile(db)));
+      await db.goals.put(withMeta(goal));
+      await db.bodyMass.put(
+        withMeta({ date: input.date, massKg: profile.massKg }),
+      );
+      if (template) {
+        const record = withMeta(template);
+        await db.weekTemplates.put(record);
+        await db.sessions.bulkAdd(
+          sessionsFromTemplate(template, record.id, input.date).map((s) =>
+            withMeta(sessionSchema.parse(s)),
+          ),
+        );
+      }
+    },
+  );
 }

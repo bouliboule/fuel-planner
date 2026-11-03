@@ -24,8 +24,11 @@ Bottom tab bar: Today, Week, Foods, Settings.
 
 ## Week
 
-- Seven columns (or rows on mobile): sessions, kcal, carbohydrate g/kg.
-- Apply a week template, then edit sessions per day.
+- Seven rows, Monday to Sunday, with previous and next week: sessions,
+  target kcal, carbohydrate g/kg. Tap a day to add, edit or delete its
+  sessions.
+- Apply a week template (replaces the week after confirmation), then edit
+  sessions per day. Templates screen: create, edit, duplicate, delete.
 - Shopping list button: aggregates picked foods for the selected days, groups
   by store section tag, rounds to purchase units.
 
@@ -51,5 +54,6 @@ app version and update check, the not-medical-advice notice.
 
 ## First run
 
-Short setup: profile, goal, pick or create a week template, load the seed
-food list (can be skipped). Then land on Today.
+Short setup: profile, goal, week template (the seed standard week with its
+missing times filled in, or skip), the not-medical-advice notice. Loading
+the seed food list comes with M5. Then land on Today.

@@ -9,7 +9,7 @@ import {
   useLiveQuery,
 } from '../../db/index.ts';
 import { t } from '../../i18n/index.ts';
-import type { Goal, Profile } from '../../model/index.ts';
+import type { Goal, Profile, WeekTemplate } from '../../model/index.ts';
 import { Button } from '../../ui/form.tsx';
 import { MedicalNotice } from '../../ui/Notice.tsx';
 import { Screen } from '../../ui/Screen.tsx';
@@ -27,8 +27,9 @@ import {
   type ProfileDraft,
 } from '../profile/profileDraft.ts';
 import { ImportBackup } from '../settings/ImportBackup.tsx';
+import { WeekStep } from './WeekStep.tsx';
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 
 export function FirstRunScreen() {
   const existing = useLiveQuery(() => getProfile(db), []);
@@ -45,6 +46,7 @@ export function FirstRunScreen() {
   );
   const [goalErrors, setGoalErrors] = useState<GoalErrors>({});
   const [goal, setGoal] = useState<Goal | undefined>();
+  const [template, setTemplate] = useState<WeekTemplate | undefined>();
 
   if (existing.loading) return null;
   if (existing.value && step === 1 && !restoring)
@@ -151,14 +153,27 @@ export function FirstRunScreen() {
           </form>
         )}
 
-        {step === 3 && profile && goal && (
+        {step === 3 && profile && (
+          <WeekStep
+            profile={profile}
+            onBack={() => {
+              setStep(2);
+            }}
+            onDone={(next) => {
+              setTemplate(next);
+              setStep(4);
+            }}
+          />
+        )}
+
+        {step === 4 && profile && goal && (
           <>
             <MedicalNotice />
             <div className="mt-6 flex gap-2">
               <Button
                 variant="secondary"
                 onClick={() => {
-                  setStep(2);
+                  setStep(3);
                 }}
               >
                 {t('common.back')}
@@ -175,6 +190,7 @@ export function FirstRunScreen() {
                     profile: { ...profile, proteinGPerKg },
                     goal,
                     date,
+                    ...(template ? { template } : {}),
                   }).then(() => navigate('/today', { replace: true }));
                 }}
               >

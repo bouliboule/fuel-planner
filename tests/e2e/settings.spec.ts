@@ -71,7 +71,7 @@ test('export then import restores data in a fresh browser', async ({
   page,
   browser,
 }) => {
-  await completeFirstRun(page, '71.5');
+  await completeFirstRun(page, { massKg: '71.5' });
   await page.goto('settings/data');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export data' }).click();

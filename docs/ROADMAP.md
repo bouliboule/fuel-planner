@@ -45,10 +45,10 @@ meal slots whose carbohydrate sums to the day target within 1 g.
 
 ## M4. Sessions and week
 
-- [ ] Session editor with live kcal preview.
-- [ ] Week templates, apply to a week, per-day edits.
-- [ ] Week view with kcal and carbohydrate g/kg per day.
-- [ ] First-run step: pick or create a week template.
+- [x] Session editor with live kcal preview.
+- [x] Week templates, apply to a week, per-day edits.
+- [x] Week view with kcal and carbohydrate g/kg per day.
+- [x] First-run step: pick or create a week template.
 
 ## M5. Foods, portions, Today
 

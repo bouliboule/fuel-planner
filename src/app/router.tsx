@@ -10,6 +10,10 @@ import { ProfileSettings } from '../features/settings/ProfileSettings.tsx';
 import { SettingsScreen } from '../features/settings/SettingsScreen.tsx';
 import { TodayScreen } from '../features/today/TodayScreen.tsx';
 import { WeekScreen } from '../features/week/WeekScreen.tsx';
+import { DayScreen } from '../features/week/DayScreen.tsx';
+import { SessionScreen } from '../features/sessions/SessionScreen.tsx';
+import { TemplatesScreen } from '../features/templates/TemplatesScreen.tsx';
+import { TemplateScreen } from '../features/templates/TemplateScreen.tsx';
 import { AppLayout } from './AppLayout.tsx';
 
 // BASE_URL is the Vite `base` ('/fuel-planner/'); the router wants it without
@@ -26,6 +30,12 @@ export const router = createBrowserRouter(
         { index: true, element: <Navigate to="today" replace /> },
         { path: 'today', element: <TodayScreen /> },
         { path: 'week', element: <WeekScreen /> },
+        { path: 'week/:date', element: <DayScreen /> },
+        { path: 'sessions/new', element: <SessionScreen /> },
+        { path: 'sessions/:id', element: <SessionScreen /> },
+        { path: 'templates', element: <TemplatesScreen /> },
+        { path: 'templates/new', element: <TemplateScreen /> },
+        { path: 'templates/:id', element: <TemplateScreen /> },
         { path: 'foods', element: <FoodsScreen /> },
         { path: 'settings', element: <SettingsScreen /> },
         { path: 'settings/profile', element: <ProfileSettings /> },

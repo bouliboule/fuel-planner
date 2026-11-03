@@ -72,6 +72,19 @@
       to or from lose switches protein between 1.8 and 2.0 g/kg unless the
       user set another value. Import validates, summarises and replaces all
       data after confirmation; no merge.
+- D28. Session intensity inputs by sport: ride zone, kJ or RPE; run pace
+      or distance (a distance stores the implied pace, duration / distance);
+      Pilates and strength RPE for the band, or an explicit MET; walk and
+      other a MET. The editor shows the E3/E4 estimate live.
+- D29. Week templates: applying one replaces every session of that week
+      after confirmation. The seed week imports Saturday as a normal
+      session; the morning circuit becomes one 15 min strength session per
+      chosen weekday. First run offers the seed week with TODO values to
+      fill, or skipping.
+- D30. The Week view runs Monday to Sunday in the profile time zone and
+      shows each day's energy target (kcal, whole number) and carbohydrate
+      (g/kg, one decimal). Dates before the first goal use the earliest
+      goal. Overlapping sessions are allowed.
 
 ## Open questions (defaults in brackets)
 
