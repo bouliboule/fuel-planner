@@ -12,6 +12,17 @@
       install, because iOS ties the installed app and its IndexedDB data to
       the exact origin. Pages on a free plan needs a public repository; user
       data never leaves the device, so only the code is public.
+- D7. Tooling dependencies approved at M0: ESLint with typescript-eslint,
+      eslint-plugin-react-hooks and eslint-plugin-react-refresh, Prettier,
+      @vitejs/plugin-react, @tailwindcss/vite, workbox-window,
+      @playwright/test. TypeScript stays on 6.0 because typescript-eslint
+      does not support 7 yet.
+- D8. The full check script is `pnpm check`, not `pnpm ci`: `ci` is a pnpm
+      built-in command name.
+- D9. Lighthouse 12 removed the PWA audits. Installability is checked by a
+      Playwright test on the manifest, icons and apple-touch-icon, offline
+      by a Playwright test with the network off (Chromium only, where
+      Playwright supports service workers), and on iPhone by hand.
 
 ## Open questions (defaults in brackets)
 

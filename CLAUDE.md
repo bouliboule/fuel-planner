@@ -27,6 +27,8 @@ local-first, no account, no backend in the first versions.
 - Tailwind CSS for styling.
 - Vitest for unit tests, Playwright for end-to-end tests.
 - pnpm as package manager.
+- Tooling: ESLint (typescript-eslint, react-hooks, react-refresh), Prettier,
+  `@vitejs/plugin-react`, `@tailwindcss/vite`, `workbox-window`.
 
 Ask before adding any dependency not listed here.
 
@@ -41,6 +43,7 @@ pnpm test         # Vitest
 pnpm test:e2e     # Playwright
 pnpm lint
 pnpm typecheck
+pnpm check       # typecheck, lint, format check, test, build
 ```
 
 ## Rules

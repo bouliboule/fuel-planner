@@ -71,7 +71,7 @@ worker outside localhost, and Pages provides it.
   the service worker is installed, its navigation fallback serves the
   precached `index.html` for every route.
 - Deploy with a GitHub Actions workflow on push to `main`: install, run
-  `pnpm ci`, build, upload `dist/` with `actions/upload-pages-artifact` and
+  `pnpm check`, upload `dist/` with `actions/upload-pages-artifact` and
   publish with `actions/deploy-pages`.
 - On iPhone, install from Safari: Share, then Add to Home Screen. iOS shows no
   install prompt, so Settings shows these steps when the app is not running

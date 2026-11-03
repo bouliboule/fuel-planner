@@ -4,13 +4,16 @@ Work in order. Each milestone ends with the definition of done in CLAUDE.md.
 
 ## M0. Scaffold
 
-- [ ] Vite + React + TS strict, pnpm, ESLint, Prettier, Tailwind, Vitest,
+- [x] Vite + React + TS strict, pnpm, ESLint, Prettier, Tailwind, Vitest,
       Playwright, vite-plugin-pwa, Dexie, Zod installed and configured.
-- [ ] Folder layout from ARCHITECTURE.md with empty modules.
-- [ ] Installable PWA shell with the four tabs, works offline in `pnpm preview`.
-- [ ] CI script (`pnpm ci`) running typecheck, lint, test, build.
+- [x] Folder layout from ARCHITECTURE.md with empty modules.
+- [x] Installable PWA shell with the four tabs, works offline in `pnpm preview`.
+- [x] CI script (`pnpm check`) running typecheck, lint, test, build.
 
-Acceptance: Lighthouse PWA installability passes; app loads offline.
+Acceptance: the Playwright installability test passes (manifest name, icons
+including maskable, standalone display, start URL and scope, apple-touch-icon);
+the Playwright offline test loads the app with the network off; the app,
+installed from Safari on iPhone, opens in airplane mode (manual).
 
 ## M1. Engine: energy and macros
 
