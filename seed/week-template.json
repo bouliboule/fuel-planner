@@ -1,0 +1,21 @@
+{
+  "name": "Standard week",
+  "note": "Start times marked TODO are unknown. Durations and zones are placeholders to confirm before use.",
+  "sessions": [
+    { "weekday": 1, "sport": "run", "title": "Run intervals", "start": "TODO", "durationMin": "TODO", "intensity": { "kind": "zone", "zone": "Z4" }, "key": true },
+    { "weekday": 2, "sport": "pilates", "title": "Pilates", "start": "TODO (morning)", "durationMin": "TODO", "intensity": { "kind": "rpe", "value": "TODO" }, "key": false },
+    { "weekday": 3, "sport": "ride", "title": "Sweet spot, trainer", "indoor": true, "start": "TODO", "durationMin": "TODO", "intensity": { "kind": "zone", "zone": "SS" }, "key": true },
+    { "weekday": 4, "sport": "ride", "title": "Hard club ride", "start": "TODO (evening)", "durationMin": "TODO", "intensity": { "kind": "zone", "zone": "Z4" }, "key": true },
+    { "weekday": 5, "sport": "ride", "title": "Easy Z2", "start": "TODO", "durationMin": "TODO", "intensity": { "kind": "zone", "zone": "Z2" }, "key": false },
+    { "weekday": 6, "sport": "ride", "title": "Optional Z2", "start": "TODO", "durationMin": "TODO", "intensity": { "kind": "zone", "zone": "Z2" }, "key": false, "optional": true },
+    { "weekday": 7, "sport": "ride", "title": "Long ride", "start": "TODO", "durationMin": 240, "intensity": { "kind": "zone", "zone": "Z2" }, "key": true }
+  ],
+  "recurringStrength": {
+    "sport": "strength",
+    "title": "Morning circuit (push-ups, glute bridges, reverse lunges, towel curls, hollow holds)",
+    "durationMin": 15,
+    "timesPerWeek": "3 to 4",
+    "weekdays": "TODO",
+    "start": "TODO (morning)"
+  }
+}

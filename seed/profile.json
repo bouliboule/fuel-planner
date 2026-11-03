@@ -1,0 +1,23 @@
+{
+  "sex": "TODO",
+  "birthYear": "TODO",
+  "heightCm": 181,
+  "massKg": "TODO",
+  "bodyFatPct": null,
+  "ftpW": "TODO",
+  "timeZone": "Europe/Paris",
+  "wakeTime": "TODO",
+  "sleepTime": "TODO",
+  "usualMeals": [
+    { "name": "Breakfast", "time": "TODO" },
+    { "name": "Lunch", "time": "TODO" },
+    { "name": "Dinner", "time": "TODO" }
+  ],
+  "neaFactor": 1.35,
+  "grossEfficiency": 0.24,
+  "proteinGPerKg": 1.8,
+  "carbPointInRange": 0.5,
+  "onBikeCarbTargetGPerH": null,
+  "eatingWindow": null,
+  "dislikedTags": ["fish", "olive"]
+}
