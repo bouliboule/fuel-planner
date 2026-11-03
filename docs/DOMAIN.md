@@ -177,6 +177,20 @@ Show only. Target 25 to 35 g/day, but limit fibre in the pre-session slot
   easily digested carbohydrate, low fat and fibre.
 - Sessions under 60 min at low intensity: no specific pre-session slot.
 
+Engine rules (D17):
+
+- Pre meal: 2 g/kg for sessions over 90 min; 1 g/kg for 60 to 90 min at
+  moderate or high intensity (M2 band); no pre meal otherwise. A session
+  with a pre meal counts as hard for meal moving (section 4).
+- The pre meal is the latest usual meal 90 min to 4 h before the start; it
+  keeps its time and takes the T1 carbohydrate. With no such meal, a pre
+  meal is added 3 h before the start if that is at or after wake time and
+  not inside another session; otherwise there is none.
+- Pre snack at 45 min before the start, 0.5 g/kg, when the session has a pre
+  meal or a during slot and the last eating slot before the start is more
+  than 3 h earlier (or there is none that day), and 45 min before the start
+  is at or after wake time.
+
 ### T2. During session
 
 From Jeukendrup 2014 and the ACSM 2016 statement:
@@ -196,6 +210,22 @@ a default. The user's historical target is 60 to 90 g/h on long efforts.
 Output: total grams, grams per hour, and a schedule (every 20 to 30 min),
 mapped to the user's on-bike foods.
 
+Engine rules (D18), for every sport:
+
+| Duration           | Planned                                         |
+|--------------------|-------------------------------------------------|
+| under 45 min       | no during slot                                  |
+| 45 to under 75 min | during slot, 0 g, small amounts or rinse optional |
+| 75 to 150 min      | 30 to 60 g/h                                    |
+| over 150 min       | 60 to 90 g/h                                    |
+
+- The rate is the profile's carbohydrate point inside the range. For
+  sessions over 150 min, `onBikeCarbTargetGPerH` replaces it when set; above
+  90 g/h it warns (gut training), and it is capped at 120 g/h.
+- Schedule: one feed every 20 min from minute 20 while time is left in the
+  session, the total split equally.
+- Above 60 g/h the slot is marked as needing glucose plus fructose.
+
 ### T3. Fluid and sodium during sessions
 
 Default fluid 400 to 800 ml/h, adjusted by temperature if entered. Sodium
@@ -203,6 +233,10 @@ Default fluid 400 to 800 ml/h, adjusted by temperature if entered. Sodium
 varies widely; if the user enters a measured sweat rate
 (`(mass_before - mass_after + fluid_drunk - urine) / hours`), use it and aim
 to replace 60 to 80 % of it.
+
+Engine rules (D19): fluid 600 ml/h for every session with a during slot;
+sodium 450 mg/h for sessions over 2 h. Temperature and sweat rate are not
+inputs yet.
 
 ### T4. Recovery
 
@@ -212,10 +246,30 @@ to replace 60 to 80 % of it.
   within about 2 h.
 - Protein 0.3 to 0.4 g/kg in the recovery slot (counts toward M1).
 
+Engine rules (D20), for the main session only (most exercise energy, first
+one on a tie) and only when it lasts 60 min or more:
+
+- Fast mode, when a hard session (high band or key) starts within 8 h after
+  the end, the same day or the next day: recovery slots at the end and at
+  +1, +2 and +3 h, 1.1 g/kg carbohydrate each. A usual meal within 30 min of
+  one of those times takes that slot's carbohydrate instead. The first
+  recovery slot carries the recovery protein.
+- Normal mode: the first usual meal within 2 h after the end is the recovery
+  meal. If none, the next usual meal moves to 2 h after the end. If no meal
+  follows the session that day, a recovery slot is added at the end.
+- Fast-mode slots that fall after midnight stay in this day's plan; their
+  time shows the next day's clock.
+- A standalone recovery slot gets 0.35 g/kg protein. A meal acting as the
+  recovery occasion takes the meal share of protein.
+
 ### T5. Carbohydrate loading
 
 For a goal event over 90 min: 10 to 12 g/kg/day for the 36 to 48 h before.
 Only when an event date is set. Reduce fibre on those days.
+
+Engine rule (D21): for an event over 90 min, the two days before the event
+date use 10 to 12 g/kg at the profile's carbohydrate point instead of the M2
+load range, and every slot on those days is marked fibre-limited.
 
 ### T6. Time-restricted eating
 
@@ -225,7 +279,15 @@ eating. If a session falls outside the window and needs T1, T2 or T4 slots,
 the engine flags the conflict and proposes moving the window or the session;
 it does not drop fueling silently.
 
+Engine rule (D21): every slot with energy outside the window (bounds
+included) gets an `eating-window-conflict` warning. When a pre, pre-snack,
+during or recovery slot is outside, the warning suggests a window of the
+same length starting at the earliest of those slots if it covers all of
+them (a during slot spans the whole session), otherwise moving the session.
+
 ## 4. Slot construction
+
+Rule ID for this section: `S4`.
 
 For each day:
 
@@ -237,6 +299,27 @@ For each day:
 5. Assign carbohydrate: T1, T2, T4 first, the remainder spread across meals
    weighted toward the meal before and the meal after the main session.
 6. Assign fat to regular meals, avoiding the pre-session and during slots.
+
+Engine rules (D22):
+
+- Meals: a usual meal inside a session moves to 30 min after its end. A
+  usual meal less than 90 min before a hard session moves to 90 min before
+  the start if that is at or after wake time and at least 2 h after the
+  previous meal; otherwise it moves to 30 min after the session's end.
+- Bedtime slot at 30 min before sleep when the gap from the day's last
+  eating slot to the next day's first usual meal is over 10 h. Protein only.
+- Protein: recovery and bedtime slots 0.35 g/kg each; the rest split equally
+  across meals. Pre, pre-snack and during slots get none. Each protein slot
+  shows the 0.3 to 0.4 g/kg range; a meal above it is allowed.
+- Carbohydrate: pre, pre-snack, during and fast-recovery amounts first. The
+  remainder goes to the other meals and to a standalone normal-mode recovery
+  slot, by weight: 1.5 for the last of them before the main session and the
+  first of them after it, 1.0 otherwise. A negative remainder gives those
+  slots 0 and a `carb-over-target` warning; a remainder with no slot to
+  take it gives a `carb-unassigned` warning.
+- Fat: split equally across meals that are not the pre meal. Other slots get
+  none; with no such meal, `fat-unassigned`.
+- Pre meals and pre snacks are fibre-limited (M4).
 
 ## 5. Portion solving
 

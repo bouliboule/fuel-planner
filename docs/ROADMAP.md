@@ -28,9 +28,9 @@ Acceptance: fixture outputs match hand-computed values in the tests.
 
 ## M2. Engine: timing and slots
 
-- [ ] T1 to T6 and slot construction (DOMAIN section 4).
-- [ ] During-session schedule with g/h and intervals.
-- [ ] Eating-window conflict detection.
+- [x] T1 to T6 and slot construction (DOMAIN section 4).
+- [x] During-session schedule with g/h and intervals.
+- [x] Eating-window conflict detection.
 
 Acceptance: Sunday fixture produces pre, during (with schedule), recovery and
 meal slots whose carbohydrate sums to the day target within 1 g.

@@ -114,14 +114,21 @@ type MealTemplate = {
 type SlotKind = 'meal' | 'pre' | 'pre-snack' | 'during' | 'recovery' | 'snack' | 'bedtime';
 
 type Slot = {
+  id: string;                  // stable within a day plan, e.g. 'meal-1', 'during-s1'
   kind: SlotKind;
   time: string;
+  name?: string;               // usual meal name
+  role?: 'pre' | 'recovery';   // a usual meal acting as pre meal or recovery
   sessionId?: string;
   target: Macros;
-  targetRanges: { carbG: [number, number]; proteinG: [number, number] };
+  targetRanges?: { carbG?: [number, number]; proteinG?: [number, number] };
+  carbGPerH?: number;          // during-session
   fluidMl?: number;
   sodiumMg?: number;
   schedule?: { atMin: number; carbG: number }[];   // during-session
+  needsMultipleTransportableCarbs?: boolean;     // above 60 g/h (T2)
+  mouthRinseOptional?: boolean;                  // 45 to 75 min (T2)
+  fibreLimited?: boolean;                        // M4, T5
   picks: { foodId: string; grams: number }[];
   achieved: Macros;
   warnings: Warning[];

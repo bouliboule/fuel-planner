@@ -3,6 +3,7 @@
 import type { Profile } from '../model/index.ts';
 import {
   CARB_G_PER_KG_RANGE,
+  CARB_LOADING_G_PER_KG_RANGE,
   FAT_MIN_ENERGY_FRACTION,
   FAT_MIN_G_PER_KG,
   KCAL_PER_G_CARB,
@@ -39,14 +40,18 @@ export interface CarbohydrateTarget {
 
 /**
  * M2: daily carbohydrate at the profile's point inside the load range. Rest
- * days use the light range at its lower bound.
+ * days use the light range at its lower bound. On carbohydrate-loading days
+ * (T5) the loading range replaces the load range.
  */
 export function carbohydrateTarget(
   load: DayLoad,
   profile: Profile,
+  carbLoading = false,
 ): CarbohydrateTarget {
-  const rangeGPerKg = CARB_G_PER_KG_RANGE[load === 'rest' ? 'light' : load];
-  const point = load === 'rest' ? 0 : profile.carbPointInRange;
+  const rangeGPerKg = carbLoading
+    ? CARB_LOADING_G_PER_KG_RANGE
+    : CARB_G_PER_KG_RANGE[load === 'rest' ? 'light' : load];
+  const point = load === 'rest' && !carbLoading ? 0 : profile.carbPointInRange;
   const [low, high] = rangeGPerKg;
   const gPerKg = low + point * (high - low);
   const g = gPerKg * profile.massKg;
@@ -57,8 +62,10 @@ export function carbohydrateTarget(
     lowerG: low * profile.massKg,
     trace: [
       step(
-        'M2',
-        'Carbohydrate: (low + point * (high - low)) * mass',
+        carbLoading ? 'T5' : 'M2',
+        carbLoading
+          ? 'Carbohydrate loading: (low + point * (high - low)) * mass'
+          : 'Carbohydrate: (low + point * (high - low)) * mass',
         { load, low, high, point, massKg: profile.massKg },
         g,
       ),

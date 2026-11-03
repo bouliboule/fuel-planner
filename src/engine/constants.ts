@@ -110,3 +110,60 @@ export const KCAL_PER_G_FAT = 9;
 // M4. Fibre, shown only (DOMAIN M4).
 export const FIBRE_G_PER_DAY_RANGE = [25, 35] as const;
 export const PRE_SESSION_FIBRE_MAX_G = 5;
+
+// T1. Pre-session, ACSM 2016 (DOMAIN T1, D17).
+export const PRE_MEAL_G_PER_KG_RANGE = [1, 4] as const;
+export const PRE_MEAL_G_PER_KG_LONG = 2; // sessions over 90 min
+export const PRE_MEAL_G_PER_KG_MEDIUM = 1; // 60 to 90 min, moderate or high
+export const PRE_MEAL_LONG_ABOVE_MIN = 90;
+export const PRE_MEAL_MEDIUM_FROM_MIN = 60;
+export const PRE_MEAL_WINDOW_MIN = [90, 240] as const; // usual meal taken as pre meal
+export const PRE_MEAL_ADDED_BEFORE_MIN = 180; // DOMAIN: 3 to 4 h before
+export const PRE_SNACK_G_PER_KG = 0.5;
+export const PRE_SNACK_BEFORE_MIN = 45; // midpoint of 30 to 60 min
+export const PRE_SNACK_LAST_MEAL_GAP_MIN = 180; // last meal over 3 h earlier
+
+// T2. During session, Jeukendrup 2014; ACSM 2016 (DOMAIN T2, D18).
+export const DURING_NONE_BELOW_MIN = 45;
+export const DURING_SMALL_BELOW_MIN = 75;
+export const DURING_MEDIUM_MAX_MIN = 150; // 2.5 h
+export const DURING_G_PER_H_MEDIUM = [30, 60] as const;
+export const DURING_G_PER_H_LONG = [60, 90] as const;
+export const DURING_G_PER_H_OVERRIDE_WARN_ABOVE = 90;
+export const DURING_G_PER_H_OVERRIDE_MAX = 120;
+export const DURING_FEED_INTERVAL_MIN = 20; // DOMAIN: every 20 to 30 min
+export const MULTIPLE_TRANSPORTABLE_ABOVE_G_PER_H = 60;
+export const GLUCOSE_TO_FRUCTOSE_RATIO = [1, 0.8] as const; // range 2:1 to 1:0.8
+
+// T3. Fluid and sodium (DOMAIN T3, D19). Midpoints of the ranges.
+export const FLUID_ML_PER_H_RANGE = [400, 800] as const;
+export const FLUID_ML_PER_H = 600;
+export const SODIUM_MG_PER_H_RANGE = [300, 600] as const;
+export const SODIUM_MG_PER_H = 450;
+export const SODIUM_ABOVE_MIN = 120;
+
+// T4. Recovery, ACSM 2016 (DOMAIN T4, D20).
+export const RECOVERY_MIN_SESSION_MIN = 60;
+export const FAST_RECOVERY_NEXT_HARD_WITHIN_MIN = 480; // 8 h
+export const FAST_RECOVERY_G_PER_KG_PER_H_RANGE = [1.0, 1.2] as const;
+export const FAST_RECOVERY_G_PER_KG_PER_H = 1.1;
+export const FAST_RECOVERY_HOURS = 4;
+export const FAST_RECOVERY_MEAL_MATCH_MIN = 30;
+export const RECOVERY_MEAL_WITHIN_MIN = 120; // next main meal within about 2 h
+export const RECOVERY_PROTEIN_G_PER_KG_RANGE = [0.3, 0.4] as const;
+export const RECOVERY_PROTEIN_G_PER_KG = 0.35;
+
+// T5. Carbohydrate loading, ACSM 2016 (DOMAIN T5, D21).
+export const CARB_LOADING_G_PER_KG_RANGE = [10, 12] as const;
+export const CARB_LOADING_MIN_EVENT_MIN = 90;
+export const CARB_LOADING_DAYS_BEFORE = 2;
+
+// M1 and section 4. Protein occasions and slot construction (D22).
+export const PROTEIN_PER_OCCASION_G_PER_KG_RANGE = [0.3, 0.4] as const;
+export const OCCASION_PROTEIN_G_PER_KG = 0.35; // recovery and bedtime slots
+export const BEDTIME_GAP_ABOVE_MIN = 600; // 10 h to the next breakfast
+export const BEDTIME_BEFORE_SLEEP_MIN = 30;
+export const MEAL_BEFORE_HARD_MIN = 90;
+export const MEAL_MIN_GAP_MIN = 120;
+export const MEAL_AFTER_SESSION_MIN = 30;
+export const MAIN_SESSION_MEAL_WEIGHT = 1.5;

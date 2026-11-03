@@ -11,7 +11,9 @@ src/
     energy.ts      E1 to E7
     load.ts        session intensity bands and day load (M2)
     macros.ts      M1 to M4
-    timing.ts      T1 to T6, slot construction
+    time.ts        HH:mm to minutes of the day
+    timing.ts      T1 to T6
+    slots.ts       slot construction and macro split (section 4)
     portions.ts    portion solver
     plan.ts        planDayTargets, then planDay(inputs) and planWeek(inputs)
     trace.ts

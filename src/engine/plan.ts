@@ -1,5 +1,5 @@
-// Day targets: energy (E1 to E7), load and macros (M1 to M3). Meal slots
-// (docs/DOMAIN.md sections 3 and 4) build on this.
+// Day plan: energy (E1 to E7), load and macros (M1 to M3), then timing and
+// slots (T1 to T6, section 4).
 
 import type { Goal, Profile } from '../model/index.ts';
 import {
@@ -14,6 +14,14 @@ import {
 } from './energy.ts';
 import { classifyDayLoad, sessionIntensityBand } from './load.ts';
 import { carbohydrateTarget, fatTarget, proteinTarget } from './macros.ts';
+import { buildSlots, type Slot } from './slots.ts';
+import { toMinutes } from './time.ts';
+import {
+  carbLoadingDay,
+  duringSession,
+  eatingWindowWarnings,
+  preMealGPerKg,
+} from './timing.ts';
 import { step, type TraceStep, type Warning } from './trace.ts';
 import type { DayLoad, PlannedSession } from './types.ts';
 
@@ -47,6 +55,7 @@ export interface DayTargets {
     target: number;
   };
   load: DayLoad;
+  carbLoading: boolean;
   carbRangeGPerKg: readonly [number, number];
   macros: Macros;
   energyAvailability: Pick<
@@ -95,8 +104,9 @@ export function planDayTargets(input: DayTargetsInput): DayTargets {
   const load = classifyDayLoad(perSession);
   trace.push(...load.trace);
 
+  const carbLoading = carbLoadingDay(date, goal);
   const protein = proteinTarget(profile);
-  const carb = carbohydrateTarget(load.load, profile);
+  const carb = carbohydrateTarget(load.load, profile, carbLoading);
   const fat = fatTarget({
     targetKcal: target,
     proteinG: protein.g,
@@ -135,6 +145,7 @@ export function planDayTargets(input: DayTargetsInput): DayTargets {
       target,
     },
     load: load.load,
+    carbLoading,
     carbRangeGPerKg: carb.rangeGPerKg,
     macros: {
       kcal: fat.kcal,
@@ -149,5 +160,71 @@ export function planDayTargets(input: DayTargetsInput): DayTargets {
     },
     warnings,
     trace,
+  };
+}
+
+export interface DayPlanInput extends DayTargetsInput {
+  /** The next day's sessions, for the T4 fast-recovery lookahead. */
+  nextDaySessions?: readonly PlannedSession[];
+}
+
+export interface DayPlan extends DayTargets {
+  slots: Slot[];
+}
+
+export function planDay(input: DayPlanInput): DayPlan {
+  const { profile, sessions } = input;
+  const targets = planDayTargets(input);
+  const withBand = (s: PlannedSession) => {
+    const kcal = sessionEnergy(s, profile).kcal;
+    return { session: s, kcal, band: sessionIntensityBand(s, profile, kcal) };
+  };
+
+  const built = buildSlots({
+    profile,
+    sessions: sessions.map((s) => {
+      const { kcal, band } = withBand(s);
+      const during = duringSession(s.durationMin, profile);
+      return {
+        id: s.id,
+        startMin: toMinutes(s.start),
+        durationMin: s.durationMin,
+        band,
+        key: s.key,
+        kcal,
+        preMealGPerKg: preMealGPerKg(s.durationMin, band),
+        ...(during ? { during } : {}),
+      };
+    }),
+    nextDaySessions: (input.nextDaySessions ?? []).map((s) => ({
+      startMin: toMinutes(s.start),
+      band: withBand(s).band,
+      key: s.key,
+    })),
+    targets: targets.macros,
+    carbLoading: targets.carbLoading,
+  });
+
+  const warnings = [...targets.warnings, ...built.warnings];
+  if (profile.eatingWindow) {
+    warnings.push(
+      ...eatingWindowWarnings(
+        profile.eatingWindow,
+        sessions,
+        built.slots.map((s) => ({
+          id: s.id,
+          kind: s.kind,
+          time: s.time,
+          kcal: s.target.kcal,
+          ...(s.sessionId === undefined ? {} : { sessionId: s.sessionId }),
+        })),
+      ),
+    );
+  }
+  return {
+    ...targets,
+    slots: built.slots,
+    warnings,
+    trace: [...targets.trace, ...built.trace],
   };
 }

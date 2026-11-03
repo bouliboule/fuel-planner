@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { planDayTargets } from '../../src/engine/plan.ts';
+import { planDay, planDayTargets } from '../../src/engine/plan.ts';
 import type { PlannedSession } from '../../src/engine/types.ts';
 import { maintain, session, testProfile } from './fixtures.ts';
 
@@ -162,5 +162,114 @@ describe('full-day fixtures', () => {
     for (const id of ['E1', 'E2', 'E3', 'E5', 'E6', 'E7', 'M1', 'M2', 'M3']) {
       expect(rules, id).toContain(id);
     }
+  });
+});
+
+describe('M2 acceptance: Sunday long ride slots', () => {
+  // Sunday 09:30 to 13:30, Z2 240 min, key. Day targets from the Sunday
+  // fixture: carbohydrate 750, protein 135, fat 120.777047,
+  // kcal 4626.993427.
+  // Meals: breakfast 07:30 is 2 h before the start -> pre meal, 2 g/kg =
+  //   150 g. Lunch 12:30 is inside the ride -> 13:30 + 30 min = 14:00, the
+  //   first meal within 2 h after the end -> recovery meal (normal mode).
+  // Pre snack: breakfast is 2 h before, not over 3 h -> none.
+  // During: 240 > 150 min -> 60 + 0.5 * 30 = 75 g/h * 4 h = 300 g;
+  //   feeds at 20, 40, ..., 220 min = 11 feeds of 300 / 11 = 27.272727 g;
+  //   fluid 600 * 4 = 2400 ml; sodium 450 * 4 = 1800 mg.
+  // Bedtime: dinner 19:30 to breakfast 07:30 = 12 h > 10 h -> 22:30.
+  // Carbohydrate: fixed 150 + 300 = 450; remainder 300 to lunch (1.5,
+  //   first after) and dinner (1.0): lunch 180, dinner 120.
+  // Protein: bedtime 0.35 * 75 = 26.25; meals (135 - 26.25) / 3 = 36.25.
+  // Fat: lunch and dinner (breakfast is the pre meal): 120.777047 / 2 =
+  //   60.388524.
+  // Slot kcal: breakfast 4*150 + 4*36.25 = 745; during 4*300 = 1200;
+  //   lunch 4*180 + 4*36.25 + 9*60.388524 = 1408.496713;
+  //   dinner 4*120 + 4*36.25 + 9*60.388524 = 1168.496713; bedtime 105;
+  //   sum 4626.993427.
+  const r = planDay({
+    date: '2026-11-08',
+    profile: testProfile,
+    goal: maintain,
+    sessions: [
+      session({
+        start: '09:30',
+        sport: 'ride',
+        durationMin: 240,
+        intensity: { kind: 'zone', zone: 'Z2' },
+        key: true,
+      }),
+    ],
+  });
+  const find = (id: string) => r.slots.find((s) => s.id === id);
+
+  it('has pre, during with schedule, recovery and meal slots', () => {
+    expect(r.slots.map((s) => [s.id, s.kind, s.time, s.role])).toEqual([
+      ['meal-0', 'meal', '07:30', 'pre'],
+      ['during-s1', 'during', '09:30', undefined],
+      ['meal-1', 'meal', '14:00', 'recovery'],
+      ['meal-2', 'meal', '19:30', undefined],
+      ['bedtime', 'bedtime', '22:30', undefined],
+    ]);
+    const during = find('during-s1');
+    expect(during?.carbGPerH).toBeCloseTo(75, 6);
+    expect(during?.schedule).toHaveLength(11);
+    expect(during?.schedule?.[0]?.atMin).toBe(20);
+    expect(during?.schedule?.[10]?.atMin).toBe(220);
+    expect(during?.schedule?.[0]?.carbG).toBeCloseTo(27.272727, 5);
+    expect(during?.fluidMl).toBeCloseTo(2400, 6);
+    expect(during?.sodiumMg).toBeCloseTo(1800, 6);
+    expect(during?.needsMultipleTransportableCarbs).toBe(true);
+  });
+
+  it('assigns the hand-computed slot targets', () => {
+    expect(find('meal-0')?.target.carbG).toBeCloseTo(150, 6);
+    expect(find('during-s1')?.target.carbG).toBeCloseTo(300, 6);
+    expect(find('meal-1')?.target.carbG).toBeCloseTo(180, 6);
+    expect(find('meal-2')?.target.carbG).toBeCloseTo(120, 6);
+    expect(find('meal-1')?.target.fatG).toBeCloseTo(60.388524, 5);
+    expect(find('meal-0')?.target.fatG).toBe(0);
+    expect(find('meal-2')?.target.proteinG).toBeCloseTo(36.25, 6);
+    expect(find('meal-1')?.target.kcal).toBeCloseTo(1408.496713, 5);
+  });
+
+  it('sums slot macros to the day targets within 1 g', () => {
+    const sum = (key: 'carbG' | 'proteinG' | 'fatG' | 'kcal') =>
+      r.slots.reduce((total, s) => total + s.target[key], 0);
+    expect(Math.abs(sum('carbG') - r.macros.carbG)).toBeLessThan(1);
+    expect(Math.abs(sum('proteinG') - r.macros.proteinG)).toBeLessThan(1);
+    expect(Math.abs(sum('fatG') - r.macros.fatG)).toBeLessThan(1);
+    expect(sum('kcal')).toBeCloseTo(4626.993427, 4);
+    expect(r.warnings).toEqual([]);
+  });
+});
+
+describe('T5 carbohydrate loading day', () => {
+  it('replaces the load range and limits fibre', () => {
+    // event 2026-11-03, 180 min: 2026-11-02 is the day before.
+    // rest day, 10 + 0.5 * 2 = 11 g/kg = 825 g
+    // fat remainder (2296.6875 - 540 - 3300) / 9 < 0 -> floor
+    //   max(0.2 * 2296.6875 / 9 = 51.0375, 60) = 60 g
+    // carbohydrate for the target (2296.6875 - 540 - 540) / 4 = 304.171875,
+    //   below the 10 g/kg = 750 g lower bound -> 750 g
+    // kcal 540 + 3000 + 540 = 4080, over by 4080 - 2296.6875 = 1783.3125
+    const r = planDay({
+      date: '2026-11-02',
+      profile: testProfile,
+      goal: {
+        ...maintain,
+        event: {
+          name: 'Gran fondo',
+          date: '2026-11-03',
+          expectedDurationMin: 180,
+        },
+      },
+      sessions: [],
+    });
+    expect(r.carbLoading).toBe(true);
+    expect(r.carbRangeGPerKg).toEqual([10, 12]);
+    expect(r.macros.carbG).toBeCloseTo(750, 6);
+    expect(r.macros.kcal).toBeCloseTo(4080, 6);
+    expect(r.warnings.map((w) => w.code)).toContain('over-target');
+    expect(r.slots.every((s) => s.fibreLimited === true)).toBe(true);
   });
 });

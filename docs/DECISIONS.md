@@ -44,6 +44,19 @@
 - D16. The engine returns unrounded numbers; the UI rounds for display.
       Warnings carry a code and values, and the UI writes the text through
       i18n. E7 intake is the planned day total, including any M3 excess.
+- D17. Pre-session rules: pre meal amounts, which usual meal becomes the pre
+      meal, when one is added, and the pre snack (DOMAIN T1).
+- D18. During-session bands, rate point, the user override above 90 g/h up
+      to 120 g/h, and a 20 min feed schedule (DOMAIN T2).
+- D19. Fluid 600 ml/h and sodium 450 mg/h, midpoints, until temperature and
+      sweat rate are inputs (DOMAIN T3).
+- D20. Recovery only for the main session of 60 min or more; fast mode at
+      1.1 g/kg/h for 4 h when a hard session follows within 8 h; normal mode
+      uses or moves a meal (DOMAIN T4).
+- D21. Carbohydrate loading on the two days before an event over 90 min;
+      eating-window conflicts with a suggested window (DOMAIN T5, T6).
+- D22. Meal moving, bedtime slot, and the protein, carbohydrate (1.5
+      weights) and fat split (DOMAIN section 4).
 
 ## Open questions (defaults in brackets)
 
