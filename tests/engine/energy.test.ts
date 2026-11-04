@@ -208,6 +208,20 @@ describe('E4 other sports', () => {
     expect(r.compendiumCode).toBe('02056');
   });
 
+  it('uses the default MET for Pilates entered with an effort (D44)', () => {
+    // Effort only sets the band: (2.8 - 1) * 75 * (60 / 60) = 1.8 * 75 = 135
+    const r = sessionEnergy(
+      session({
+        sport: 'pilates',
+        durationMin: 60,
+        intensity: { kind: 'effort', value: 'hard' },
+      }),
+      testProfile,
+    );
+    expect(r.kcal).toBeCloseTo(135, 6);
+    expect(r.compendiumCode).toBe('02105');
+  });
+
   it('uses an explicit MET with its code', () => {
     // (5.0 - 1) * 75 * 0.5 = 150
     const r = sessionEnergy(

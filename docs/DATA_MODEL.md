@@ -5,6 +5,9 @@ from them. Every stored record has `id` (UUID v7, sortable by time),
 `createdAt` and `updatedAt` (ISO strings). The Dexie database has a
 `schemaVersion`; every change ships with a migration and a migration test.
 
+Stored tables: `profile`, `goals`, `bodyMass`, `sessions`. Plans are computed
+when shown and never stored.
+
 ## Profile (single record)
 
 ```ts
@@ -25,8 +28,6 @@ type Profile = {
   carbPointInRange: number;    // 0..1, position inside the M2 range
   onBikeCarbTargetGPerH?: number;
   eatingWindow?: { start: string; end: string };  // DOMAIN T6
-  dislikedFoodIds: string[];
-  dislikedTags: string[];      // e.g. 'fish', 'olive'
 };
 ```
 
@@ -50,6 +51,8 @@ type BodyMassEntry = { date: string; massKg: number; bodyFatPct?: number };
 
 ## Session
 
+The UI calls a session an activity.
+
 ```ts
 type Sport = 'ride' | 'run' | 'strength' | 'pilates' | 'walk' | 'other';
 
@@ -58,67 +61,33 @@ type Session = {
   start: string;               // 'HH:mm'
   durationMin: number;
   sport: Sport;
-  indoor: boolean;
   intensity:
     | { kind: 'zone'; zone: 'Z1'|'Z2'|'Z3'|'SS'|'Z4'|'Z5' }
     | { kind: 'if'; value: number }
     | { kind: 'kj'; value: number }
     | { kind: 'rpe'; value: number }        // 1..10
+    | { kind: 'effort'; value: 'easy' | 'moderate' | 'hard' }  // D44
     | { kind: 'met'; value: number; compendiumCode?: string }
     | { kind: 'pace'; secPerKm: number };   // runs: expected pace
   distanceKm?: number;         // measured distance, replaces the pace estimate
   key: boolean;                // key session: no deficit that day (E6)
   title?: string;
-  source: 'manual' | 'template' | 'import';
-  templateId?: string;
-};
-
-type WeekTemplate = {
-  name: string;
-  sessions: (Omit<Session, 'date' | 'source'> & { weekday: 1|2|3|4|5|6|7 })[];
 };
 ```
 
-## Food
+The editor writes `zone`, `kj`, `pace`, `effort` and `met`. The engine still
+accepts `if` and `rpe`.
 
-```ts
-type Food = {
-  name: string;
-  brand?: string;
-  per100g: {
-    kcal: number; carbG: number; sugarG?: number; fibreG?: number;
-    proteinG: number; fatG: number; sodiumMg?: number;
-    glucoseG?: number; fructoseG?: number;   // for T2 ratio checks
-  };
-  unit?: { name: string; grams: number };     // '1 scoop' = 30 g
-  portion: { minG: number; maxG: number; stepG: number; defaultG: number };
-  tags: string[];   // 'breakfast', 'lunch', 'dinner', 'meal', 'pre', 'on-bike', 'recovery', 'snack', 'bedtime'
-  source: 'manual' | 'ciqual' | 'off';
-  sourceRef?: string;          // CIQUAL code or barcode
-  belowDetection?: string[];   // CIQUAL fields reported as traces or '< x', stored as 0
-  shopSection?: string;        // shopping list group, e.g. 'dairy'
-  purchaseUnit?: { name: string; grams: number };  // shopping list rounding
-};
-```
-
-## MealTemplate
-
-```ts
-type MealTemplate = {
-  name: string;
-  slotKinds: SlotKind[];
-  items: { foodId: string; fixedG?: number; scalable: boolean }[];
-};
-```
-
-## Plan (computed, cached)
-
-The `plans` table stores, per date, the user's food choices from swaps:
-`{ date, inputsHash, plan, foodChoices?: Record<slotId, foodId[]> }`. The
-plan itself is recomputed when shown (D34).
+## Plan (computed, not stored)
 
 ```ts
 type SlotKind = 'meal' | 'pre' | 'pre-snack' | 'during' | 'recovery' | 'snack' | 'bedtime';
+
+type GuidanceKey =                              // DOMAIN G1
+  | 'pre-meal' | 'pre' | 'pre-snack'
+  | 'during' | 'during-rinse'
+  | 'recovery-meal' | 'recovery' | 'recovery-fast'
+  | 'meal' | 'snack' | 'bedtime';
 
 type Slot = {
   id: string;                  // stable within a day plan, e.g. 'meal-1', 'during-s1'
@@ -136,16 +105,15 @@ type Slot = {
   needsMultipleTransportableCarbs?: boolean;     // above 60 g/h (T2)
   mouthRinseOptional?: boolean;                  // 45 to 75 min (T2)
   fibreLimited?: boolean;                        // M4, T5
-  picks: { foodId: string; grams: number }[];
-  achieved: Macros;
+  guidance: GuidanceKey;
   warnings: Warning[];
 };
 
 type DayPlan = {
   date: string;
-  inputsHash: string;          // invalidate when inputs change
   energy: { bmr: number; nonExercise: number; exercise: { sessionId: string; kcal: number; method: string }[]; goalAdj: number; target: number };
   macros: Macros;
+  ranges: { carbG: [number, number]; proteinG: [number, number] };
   load: 'rest' | 'light' | 'moderate' | 'high' | 'very-high';
   slots: Slot[];
   warnings: Warning[];
@@ -157,27 +125,16 @@ type Warning = { code: string; ruleId: string; values?: Record<string, number|st
 type TraceStep = { ruleId: string; label: string; inputs: Record<string, number|string>; output: number };
 ```
 
-The engine emits warning codes and values only; the UI turns them into text
-through the i18n module.
+The engine emits warning codes, guidance keys and values only; the UI turns
+them into text through the i18n module.
 
-`trace` powers the "why this number" view. Every engine function that
-produces a displayed value appends a `TraceStep`.
-
-## LogEntry (optional, milestone M6)
-
-```ts
-type LogEntry = {
-  date: string;
-  time: string;
-  slotKind?: SlotKind;
-  slotId?: string;             // plan slot, e.g. 'meal-1'; absent for unattached items (D38)
-  foodId: string;
-  grams: number;
-};
-```
+`trace` powers the number detail sheet. Every engine function that produces a
+displayed value appends a `TraceStep`.
 
 ## Export format
 
 One JSON file: `{ app: 'fuel-planner', schemaVersion, exportedAt, data: {...} }`
 containing every table. Import validates with Zod and refuses unknown
-`schemaVersion` values newer than the app's.
+`schemaVersion` values newer than the app's. A schema version 1 file imports
+its profile, goals, body mass and sessions and ignores its other tables
+(D43).

@@ -86,8 +86,6 @@ export function seedProfileRest(): Omit<Profile, keyof ProfileDraft> {
       typeof seed.carbPointInRange === 'number'
         ? seed.carbPointInRange
         : profileDefaults.carbPointInRange,
-    dislikedFoodIds: [],
-    dislikedTags: seed.dislikedTags,
   };
 }
 

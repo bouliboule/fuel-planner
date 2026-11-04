@@ -34,7 +34,7 @@ export function BodyMassSettings() {
 
   return (
     <Screen title={t('bodyMass.title')}>
-      <BackLink to="/settings" />
+      <BackLink to="/profile" />
       <MassTrend values={list.map((e) => e.massKg)} />
       <form
         noValidate

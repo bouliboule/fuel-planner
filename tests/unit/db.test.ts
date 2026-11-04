@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto';
+import { Dexie } from 'dexie';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   FuelDatabase,
@@ -33,21 +34,71 @@ afterEach(async () => {
 });
 
 describe('schema', () => {
-  it('opens version 1 with every table', () => {
-    expect(SCHEMA_VERSION).toBe(1);
+  it('opens version 2 with the profile, goal, body mass and session tables', () => {
+    expect(SCHEMA_VERSION).toBe(2);
     expect(db.verno).toBe(SCHEMA_VERSION);
     expect(db.tables.map((t) => t.name).sort()).toEqual([...TABLES].sort());
   });
 
-  it('keeps data across reopening at the current version', async () => {
-    // Migration test pattern: write with the previous version, reopen with
-    // the current one, read back. With a single version both are v1.
-    await saveProfile(db, testProfile);
-    db.close();
-    const reopened = new FuelDatabase(db.name);
-    await reopened.open();
-    expect((await getProfile(reopened))?.massKg).toBe(75);
-    reopened.close();
+  it('migrates version 1 data: drops removed tables and fields (D43)', async () => {
+    const name = `${db.name}-v1`;
+    const v1 = new Dexie(name);
+    v1.version(1).stores({
+      profile: 'id',
+      goals: 'id, validFrom',
+      bodyMass: 'id, &date',
+      sessions: 'id, date',
+      weekTemplates: 'id',
+      foods: 'id, name, *tags',
+      mealTemplates: 'id',
+      plans: 'id, &date',
+      logEntries: 'id, date',
+    });
+    const meta = { createdAt: 'x', updatedAt: 'x' };
+    await v1.table('profile').add({
+      ...testProfile,
+      ...meta,
+      id: 'p',
+      dislikedFoodIds: [],
+      dislikedTags: ['fish'],
+    });
+    await v1.table('sessions').add({
+      ...meta,
+      id: 's',
+      date: '2026-11-08',
+      start: '09:00',
+      durationMin: 240,
+      sport: 'ride',
+      indoor: false,
+      intensity: { kind: 'zone', zone: 'Z2' },
+      key: true,
+      source: 'template',
+      templateId: 't',
+    });
+    await v1.table('foods').add({ ...meta, id: 'f', name: 'Oats', tags: [] });
+    v1.close();
+
+    const v2 = new FuelDatabase(name);
+    await v2.open();
+    expect(v2.verno).toBe(2);
+    expect(v2.tables.map((x) => x.name).sort()).toEqual([...TABLES].sort());
+    const profile = await getProfile(v2);
+    expect(profile && 'dislikedTags' in profile).toBe(false);
+    expect(profile?.massKg).toBe(75);
+    const session = await v2.sessions.get('s');
+    expect(session && Object.keys(session).sort()).toEqual([
+      'createdAt',
+      'date',
+      'durationMin',
+      'id',
+      'intensity',
+      'key',
+      'sport',
+      'start',
+      'updatedAt',
+    ]);
+    v2.close();
+    await v2.delete();
   });
 });
 
@@ -137,7 +188,7 @@ describe('export and import', () => {
       date: '2026-11-04',
     });
     const file = await exportData(db, new Date('2026-11-04T10:00:00Z'));
-    expect(file.schemaVersion).toBe(1);
+    expect(file.schemaVersion).toBe(2);
     expect(file.exportedAt).toBe('2026-11-04T10:00:00.000Z');
 
     const check = checkImport(JSON.stringify(file));
@@ -161,9 +212,56 @@ describe('export and import', () => {
 
   it('refuses a newer schema version', () => {
     const r = checkImport(
-      JSON.stringify({ app: 'fuel-planner', schemaVersion: 2, data: {} }),
+      JSON.stringify({ app: 'fuel-planner', schemaVersion: 3, data: {} }),
     );
-    expect(r).toEqual({ ok: false, reason: 'newer-version', detail: '2' });
+    expect(r).toEqual({ ok: false, reason: 'newer-version', detail: '3' });
+  });
+
+  it('imports a version 1 file without its removed tables and fields', () => {
+    const meta = { createdAt: 'x', updatedAt: 'x' };
+    const r = checkImport(
+      JSON.stringify({
+        app: 'fuel-planner',
+        schemaVersion: 1,
+        exportedAt: 'x',
+        data: {
+          profile: [
+            {
+              ...testProfile,
+              ...meta,
+              id: 'p',
+              dislikedFoodIds: [],
+              dislikedTags: [],
+            },
+          ],
+          goals: [],
+          bodyMass: [],
+          sessions: [
+            {
+              ...meta,
+              id: 's',
+              date: '2026-11-08',
+              start: '09:00',
+              durationMin: 60,
+              sport: 'run',
+              indoor: false,
+              intensity: { kind: 'pace', secPerKm: 300 },
+              key: false,
+              source: 'manual',
+            },
+          ],
+          weekTemplates: [],
+          foods: [{ id: 'f' }],
+          mealTemplates: [],
+          plans: [],
+          logEntries: [],
+        },
+      }),
+    );
+    if (!r.ok) throw new Error(r.reason);
+    expect(Object.keys(r.file.data).sort()).toEqual([...TABLES].sort());
+    expect('source' in (r.file.data.sessions[0] ?? {})).toBe(false);
+    expect('dislikedTags' in (r.file.data.profile[0] ?? {})).toBe(false);
   });
 
   it('refuses other files and invalid data', () => {

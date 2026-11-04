@@ -19,7 +19,7 @@ export function ProfileSettings() {
   const profile = useProfile();
   return (
     <Screen title={t('profile.title')}>
-      <BackLink to="/settings" />
+      <BackLink to="/profile" />
       {!profile.loading && profile.value && (
         <ProfileForm key={profile.value.id} profile={profile.value} />
       )}

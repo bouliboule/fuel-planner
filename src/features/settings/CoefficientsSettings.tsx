@@ -65,7 +65,7 @@ export function CoefficientsSettings() {
   const profile = useProfile();
   return (
     <Screen title={t('coefficients.title')}>
-      <BackLink to="/settings" />
+      <BackLink to="/profile" />
       {!profile.loading && profile.value && (
         <CoefficientsForm key={profile.value.id} profile={profile.value} />
       )}

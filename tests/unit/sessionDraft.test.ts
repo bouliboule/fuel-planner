@@ -30,7 +30,7 @@ describe('session draft', () => {
   it('defaults the intensity mode by sport', () => {
     expect(emptySessionDraft('ride').mode).toBe('zone');
     expect(emptySessionDraft('run').mode).toBe('pace');
-    expect(emptySessionDraft('strength').mode).toBe('rpe');
+    expect(emptySessionDraft('strength').mode).toBe('effort');
     expect(emptySessionDraft('walk').mode).toBe('met');
   });
 
@@ -44,7 +44,6 @@ describe('session draft', () => {
         sport: 'ride',
         start: '18:00',
         durationMin: 60,
-        indoor: false,
         key: true,
         intensity: { kind: 'zone', zone: 'SS' },
       },
@@ -81,7 +80,7 @@ describe('session draft', () => {
   it('keeps an explicit MET and compendium code', () => {
     const r = sessionFromDraft(
       base({
-        sport: 'strength',
+        sport: 'other',
         mode: 'met',
         met: '5',
         compendiumCode: '02035',
@@ -94,24 +93,49 @@ describe('session draft', () => {
     });
   });
 
+  it('builds Pilates from an effort', () => {
+    const r = sessionFromDraft(base({ sport: 'pilates', effort: 'hard' }));
+    expect(r.ok && r.session.intensity).toEqual({
+      kind: 'effort',
+      value: 'hard',
+    });
+  });
+
+  it('opens a stored RPE strength session as the effort of its band', () => {
+    // M2: RPE under 4 low, 4 to 6 moderate, 7 or more high (D44)
+    const d = (value: number) =>
+      draftFromSession({
+        sport: 'strength',
+        start: '07:00',
+        durationMin: 15,
+        key: false,
+        intensity: { kind: 'rpe', value },
+      }).effort;
+    expect([d(3), d(4), d(6.5), d(7)]).toEqual([
+      'easy',
+      'moderate',
+      'moderate',
+      'hard',
+    ]);
+  });
+
   it('reports missing and invalid fields', () => {
     const r = sessionFromDraft(
       base({
-        sport: 'pilates',
-        mode: 'rpe',
+        sport: 'walk',
         start: '',
         durationMin: '0',
-        rpe: '11',
+        met: '',
       }),
     );
     expect(r.ok).toBe(false);
     if (!r.ok) {
       expect(Object.keys(r.errors).sort()).toEqual([
         'durationMin',
-        'rpe',
+        'met',
         'start',
       ]);
-      expect(r.errors.rpe).toBe('Allowed range: 1 to 10.');
+      expect(r.errors.met).toBe('Required.');
     }
   });
 
@@ -128,30 +152,5 @@ describe('session draft', () => {
     if (!r.ok) throw new Error('invalid');
     const again = sessionFromDraft(draftFromSession(r.session));
     expect(again).toEqual(r);
-  });
-});
-
-describe('seed week template draft', () => {
-  it('keeps known values and leaves TODO values empty', async () => {
-    const { draftFromSeed, seedStrengthSessions, templateFromDraft } =
-      await import('../../src/features/templates/templateDraft.ts');
-    const draft = draftFromSeed();
-    expect(draft.name).toBe('Standard week');
-    expect(draft.sessions.map((s) => s.weekday)).toEqual([1, 2, 3, 4, 5, 6, 7]);
-    const [monday, , wednesday, , , , sunday] = draft.sessions;
-    expect(monday?.mode).toBe('pace');
-    expect(monday?.pace).toBe('');
-    expect(wednesday?.zone).toBe('SS');
-    expect(wednesday?.indoor).toBe(true);
-    expect(sunday?.durationMin).toBe('240');
-    expect(sunday?.start).toBe('');
-    // TODO values block saving until filled.
-    expect(templateFromDraft(draft).ok).toBe(false);
-
-    const strength = seedStrengthSessions([1, 3]);
-    expect(strength.map((s) => [s.weekday, s.sport, s.durationMin])).toEqual([
-      [1, 'strength', '15'],
-      [3, 'strength', '15'],
-    ]);
   });
 });

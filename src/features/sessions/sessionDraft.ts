@@ -1,47 +1,52 @@
+import { RPE_HIGH_MIN, RPE_MODERATE_MIN } from '../../engine/constants.ts';
 import { t } from '../../i18n/index.ts';
 import {
   sessionSchema,
   zoneSchema,
+  type Effort,
   type Session,
   type Sport,
   type Zone,
 } from '../../model/index.ts';
 import { parseNumber } from '../../ui/parse.ts';
 
-export type IntensityMode = 'zone' | 'kj' | 'rpe' | 'pace' | 'distance' | 'met';
+export type IntensityMode =
+  'zone' | 'kj' | 'pace' | 'distance' | 'effort' | 'met';
 
-/** Intensity inputs offered per sport (DECISIONS D28). First is the default. */
+/**
+ * Intensity inputs offered per sport (D44). The first is shown; the others
+ * sit under "More".
+ */
 export const MODES_BY_SPORT: Readonly<Record<Sport, readonly IntensityMode[]>> =
   {
-    ride: ['zone', 'kj', 'rpe'],
+    ride: ['zone', 'kj'],
     run: ['pace', 'distance'],
-    pilates: ['rpe', 'met'],
-    strength: ['rpe', 'met'],
+    pilates: ['effort'],
+    strength: ['effort'],
     walk: ['met'],
     other: ['met'],
   };
 
-/** Session fields as typed; numbers stay strings until saved. */
+/** Activity fields as typed; numbers stay strings until saved. */
 export interface SessionDraft {
   sport: Sport;
   title: string;
   start: string;
   durationMin: string;
-  indoor: boolean;
   key: boolean;
   mode: IntensityMode;
   zone: Zone;
   kj: string;
-  rpe: string;
   pace: string;
   distanceKm: string;
+  effort: Effort;
   met: string;
   compendiumCode: string;
 }
 
-export type SessionFields = Omit<Session, 'date' | 'source' | 'templateId'>;
+export type SessionFields = Omit<Session, 'date'>;
 export type SessionField =
-  'start' | 'durationMin' | 'kj' | 'rpe' | 'pace' | 'distanceKm' | 'met';
+  'start' | 'durationMin' | 'kj' | 'pace' | 'distanceKm' | 'met';
 export type SessionErrors = Partial<Record<SessionField, string>>;
 
 export function emptySessionDraft(sport: Sport = 'ride'): SessionDraft {
@@ -50,14 +55,13 @@ export function emptySessionDraft(sport: Sport = 'ride'): SessionDraft {
     title: '',
     start: '',
     durationMin: '',
-    indoor: false,
     key: false,
     mode: MODES_BY_SPORT[sport][0] ?? 'met',
     zone: 'Z2',
     kj: '',
-    rpe: '',
     pace: '',
     distanceKm: '',
+    effort: 'moderate',
     met: '',
     compendiumCode: '',
   };
@@ -76,14 +80,19 @@ export function formatPace(secPerKm: number): string {
   return `${String(Math.floor(total / 60))}:${String(total % 60).padStart(2, '0')}`;
 }
 
+/** RPE to the effort with the same M2 band (DOMAIN M2 table). */
+function effortFromRpe(rpe: number): Effort {
+  if (rpe < RPE_MODERATE_MIN) return 'easy';
+  if (rpe < RPE_HIGH_MIN) return 'moderate';
+  return 'hard';
+}
+
 export function draftFromSession(s: SessionFields): SessionDraft {
-  const d = emptySessionDraft(s.sport);
   const base: SessionDraft = {
-    ...d,
+    ...emptySessionDraft(s.sport),
     title: s.title ?? '',
     start: s.start,
     durationMin: String(s.durationMin),
-    indoor: s.indoor,
     key: s.key,
   };
   const i = s.intensity;
@@ -92,8 +101,14 @@ export function draftFromSession(s: SessionFields): SessionDraft {
       return { ...base, mode: 'zone', zone: i.zone };
     case 'kj':
       return { ...base, mode: 'kj', kj: String(i.value) };
+    case 'effort':
+      return { ...base, mode: 'effort', effort: i.value };
     case 'rpe':
-      return { ...base, mode: 'rpe', rpe: String(i.value) };
+      // Pilates and strength keep their band; a ride by RPE has no editable
+      // equivalent and opens on the zone input.
+      return s.sport === 'pilates' || s.sport === 'strength'
+        ? { ...base, mode: 'effort', effort: effortFromRpe(i.value) }
+        : { ...base, mode: 'zone' };
     case 'met':
       return {
         ...base,
@@ -144,14 +159,9 @@ export function sessionFromDraft(
       if (value !== undefined) intensity = { kind: 'kj', value };
       break;
     }
-    case 'rpe': {
-      const value = parseNumber(draft.rpe);
-      if (value === undefined) errors.rpe = t('form.required');
-      else if (!(value >= 1 && value <= 10))
-        errors.rpe = t('form.range', { min: 1, max: 10 });
-      else intensity = { kind: 'rpe', value };
+    case 'effort':
+      intensity = { kind: 'effort', value: draft.effort };
       break;
-    }
     case 'met': {
       const value = positive('met', draft.met);
       const code = draft.compendiumCode.trim();
@@ -199,16 +209,13 @@ export function sessionFromDraft(
     sport: draft.sport,
     start: draft.start,
     durationMin,
-    indoor: draft.indoor,
     key: draft.key,
     intensity,
     ...(distanceKm === undefined ? {} : { distanceKm }),
     ...(title ? { title } : {}),
   };
-  // Same rules as storage, without the date and source.
-  const parsed = sessionSchema
-    .omit({ date: true, source: true, templateId: true })
-    .safeParse(session);
+  // Same rules as storage, without the date.
+  const parsed = sessionSchema.omit({ date: true }).safeParse(session);
   if (!parsed.success)
     return { ok: false, errors: { durationMin: t('form.check') } };
   return { ok: true, session: parsed.data };

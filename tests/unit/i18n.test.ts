@@ -9,7 +9,7 @@ describe('i18n', () => {
   });
 
   it('resolves a key to its English string', () => {
-    const key: MessageKey = 'tab.today';
+    const key: MessageKey = 'day.today';
     expect(t(key)).toBe('Today');
   });
 });

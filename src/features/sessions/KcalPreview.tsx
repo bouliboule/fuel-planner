@@ -24,7 +24,6 @@ export function KcalPreview({
         ...result.session,
         id: 'preview',
         date: '2000-01-01',
-        source: 'manual',
       },
       profile,
     );
@@ -50,7 +49,7 @@ export function KcalPreview({
     <section
       aria-live="polite"
       aria-label={t('preview.title')}
-      className="mt-6 rounded-lg bg-slate-100 p-4 dark:bg-slate-900"
+      className="mt-6 rounded-xl bg-slate-100 p-4 dark:bg-slate-900"
     >
       <h2 className="text-sm font-medium">{t('preview.title')}</h2>
       {body}

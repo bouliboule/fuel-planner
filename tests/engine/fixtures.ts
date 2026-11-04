@@ -2,8 +2,7 @@ import type { PlannedSession } from '../../src/engine/types.ts';
 import type { Goal, Profile } from '../../src/model/index.ts';
 
 // Test profile. Age (birth year 1989, so 37 in 2026) and height are the
-// user's; sex, mass, FTP and times are labelled test values until
-// seed/profile.json is filled in (docs/DECISIONS.md Q9).
+// user's; sex, mass, FTP and times are labelled test values.
 export const testProfile: Profile = {
   sex: 'male', // test value
   birthYear: 1989,
@@ -22,8 +21,6 @@ export const testProfile: Profile = {
   grossEfficiency: 0.24,
   proteinGPerKg: 1.8,
   carbPointInRange: 0.5,
-  dislikedFoodIds: [],
-  dislikedTags: ['fish', 'olive'],
 };
 
 export const maintain: Goal = { kind: 'maintain', validFrom: '2026-01-01' };
@@ -36,9 +33,7 @@ export function session(
     id: 's1',
     date: '2026-11-02',
     start: '18:00',
-    indoor: false,
     key: false,
-    source: 'manual',
     ...overrides,
   };
 }

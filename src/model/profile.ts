@@ -40,8 +40,6 @@ export const profileSchema = z.object({
     .max(DURING_G_PER_H_OVERRIDE_MAX)
     .optional(),
   eatingWindow: z.object({ start: clockTime, end: clockTime }).optional(),
-  dislikedFoodIds: z.array(z.string()),
-  dislikedTags: z.array(z.string()),
 });
 
 export type Profile = z.infer<typeof profileSchema>;

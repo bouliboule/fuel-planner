@@ -33,7 +33,7 @@ export function DataSettings() {
 
   return (
     <Screen title={t('data.title')}>
-      <BackLink to="/settings" />
+      <BackLink to="/profile" />
 
       <h2 className="mt-4 text-lg font-semibold">{t('data.export')}</h2>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

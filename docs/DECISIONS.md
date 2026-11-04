@@ -7,6 +7,7 @@
 - D3. Engine is pure TypeScript, separate from UI and storage.
 - D4. Metric units, kcal, Europe/Paris default time zone.
 - D5. Suggestions come only from the user's foods and templates.
+      Superseded by D39.
 - D6. Hosting on GitHub Pages as a project site, deployed by GitHub Actions
       (resolves Q2). The origin and base path are fixed from the first
       install, because iOS ties the installed app and its IndexedDB data to
@@ -80,32 +81,34 @@
       after confirmation. The seed week imports Saturday as a normal
       session; the morning circuit becomes one 15 min strength session per
       chosen weekday. First run offers the seed week with TODO values to
-      fill, or skipping.
+      fill, or skipping. Superseded by D39.
 - D30. The Week view runs Monday to Sunday in the profile time zone and
       shows each day's energy target (kcal, whole number) and carbohydrate
       (g/kg, one decimal). Dates before the first goal use the earliest
-      goal. Overlapping sessions are allowed.
+      goal. Overlapping sessions are allowed. Superseded by D39.
 - D31. CIQUAL 2025 (released 2025-11-19, Etalab 2.0, credited in Settings)
       is the bundled table. Energy uses the EU 1169/2011 kcal column and
       protein the N x Jones factor column. "traces" and "< x" are stored as
       0 and listed in `belowDetection`; a missing required macro leaves the
       food out; missing optional values stay empty. Resolves Q7.
+      Superseded by D39.
 - D32. Portion objective in kcal units relative to the slot kcal, weight 1
       per term; zero-target tolerance as 10 % of slot kcal (DOMAIN S5).
+      Superseded by D39.
 - D33. Slot candidate tags, meal template priority and the 1 to 4 food
       search from at most 12 candidates (DOMAIN S5). Imported foods open in
       the editor with portion 0 to 300 g, step 5 g, default 100 g, marked to
-      check before saving.
+      check before saving. Superseded by D39.
 - D34. Swaps persist per date and slot as `foodChoices` in the plans table;
       plans are recomputed, not cached. "Why" shows trace steps for header
-      numbers, slots and sessions.
+      numbers, slots and sessions. Superseded by D39.
 - D35. Open Food Facts requests send the browser's own User-Agent (a custom
-      one cannot be set from a web page), only on submit.
+      one cannot be set from a web page), only on submit. Superseded by D39.
 - D36. Packing list: on-bike picks with total grams and unit counts; no
       bottle grouping. Shopping list: optional `shopSection` and
-      `purchaseUnit` on foods, rounding up to whole units.
+      `purchaseUnit` on foods, rounding up to whole units. Superseded by D39.
 - D37. The homemade ride drink is one manual food in M5 (ARCHITECTURE);
-      a proportional template stays open as Q4.
+      a proportional template stays open as Q4. Superseded by D39.
 - D38. Logging: ticking a planned food logs its planned grams at the
       slot's time with the slot id (new optional `slotId` on LogEntry, no
       schema version change); the grams are editable and unticking deletes
@@ -114,18 +117,53 @@
       grams, a time and an optional slot. Today shows target, eaten and
       difference (eaten - target) for kcal, C, P and F, and each slot shows
       what was eaten. Entries of deleted foods are not counted and flagged.
+      Superseded by D39.
+- D39. Scope cut to one day at a time (2026-11-04). The user logs food in a
+      separate tracking app, so foods, CIQUAL, Open Food Facts, portions,
+      shopping and packing lists, logging, the week view and week templates
+      are removed (ROADMAP M7). The profile, goal, body mass and the engine
+      rules E, M, T and S4 stay. The app makes no runtime network calls.
+- D40. Each meal card shows guidance chosen by slot kind and role, with a
+      one-line example meal (DOMAIN G1). The text has no amounts and lives
+      in the i18n module; the user can edit it.
+- D41. Targets show as single numbers. Tapping one shows its range, the
+      trace and, for carbohydrate and protein, a slider that moves the
+      profile point for every day. No per-day override.
+- D42. A day with no activity is a rest day and gets a full plan from the
+      same screen.
+- D43. Removed features are deleted, not hidden. Dexie schema v2 drops the
+      food, template, plan and log tables and the profile dislike fields.
+      Import reads v1 files and keeps their profile, goals, body mass and
+      sessions.
+- D44. Pilates and strength take an effort (easy, moderate, hard) that maps
+      straight to the M2 low, moderate and high bands; energy uses the E4
+      default MET. Rides use zones (kJ optional), runs pace (distance
+      optional), walk and other a MET. Existing `rpe` and `if` sessions stay
+      valid. The `indoor` field is dropped: no rule uses it.
+- D45. The Day screen offers today and tomorrow, defaulting to tomorrow
+      after the last usual meal time of today. Sessions are still stored by
+      date, so a plan sees the next day's sessions when they were entered,
+      which T4 fast recovery needs; otherwise fast recovery only reacts to
+      same-day sessions.
+
+- D46. Kcal and fat have no source range: their detail sheet shows how
+      the number is built (resting, daily life, exercise and goal for kcal;
+      the M3 remainder for fat), without a slider. Carbohydrate and protein
+      show their range in grams and a slider for the profile point. On a
+      rest day the carbohydrate slider is hidden, since rest days use the
+      lower bound (D15).
+- D47. Sessions stored from week templates before M7 stay and show on
+      their dates as normal activities.
+- D48. The profile sub-screens (profile, goal, body mass, coefficients,
+      eating window, data) stay as they were, under `/profile`. Profile
+      shows the iPhone install steps when the app is not running
+      standalone. The activity editor deletes an activity; the Day screen
+      has no swipe gesture.
 
 ## Open questions (defaults in brackets)
 
 - Q1. UI language for v1? [English, i18n-ready]
 - Q3. Body mass source: manual entry only, or also import from a scale app
       export? [manual]
-- Q4. Should the homemade ride drink become a template built from sugar,
-      maltodextrin, fructose and salt that scales together, so the
-      glucose:fructose ratio and sodium are computed? [one manual food in
-      M5, D37]
 - Q5. Default carbohydrate point inside M2 ranges? [midpoint]
 - Q6. Show a time-restricted eating window by default? [off]
-- Q9. Session start times and durations in `seed/week-template.json`.
-      Profile values are now entered in first run. [engine tests use
-      labelled test values]

@@ -63,6 +63,22 @@ describe('M2 session intensity band', () => {
   });
 
   it.each([
+    ['easy', 'low'],
+    ['moderate', 'moderate'],
+    ['hard', 'high'],
+  ] as const)('effort %s is %s (D44)', (value, expected) => {
+    expect(
+      band(
+        session({
+          sport: 'strength',
+          durationMin: 30,
+          intensity: { kind: 'effort', value },
+        }),
+      ),
+    ).toBe(expected);
+  });
+
+  it.each([
     [2.8, 'low'],
     [3, 'moderate'],
     [5.9, 'moderate'],

@@ -6,66 +6,61 @@ Training load changes a lot from day to day: a rest day, a 45-minute run, a
 Pilates class, a hard evening club ride, a four-hour Sunday ride. Eating the
 same thing every day under-fuels the big days and over-fuels the small ones.
 Under-fueling during and after long afternoon sessions is a known recurring
-problem. Planning by hand means redoing the same arithmetic every week.
+problem.
+
+The user already logs food in a separate tracking app. What is missing is a
+quick answer, the evening before or the same morning, to "given what I am
+training today, what should I aim for, and when?".
 
 ## What the app does
 
-Given a profile, a goal and the planned sessions for a day or a week, the app
-produces for each day:
+The user opens the app, picks today or tomorrow, and enters the activities
+planned for that day (or none, for a rest day). The app shows:
 
-1. An energy target in kcal, split into resting, non-exercise activity and
-   exercise components, so the number can be checked.
-2. Macro targets in grams (carbohydrate, protein, fat), with carbohydrate
-   scaled to that day's training load.
-3. A timeline of eating slots placed around the sessions: pre-session,
-   during-session fueling, recovery, and regular meals, each with its own
-   carbohydrate and protein amount.
-4. Concrete food suggestions per slot, picked from the user's own food list
-   and meal templates, with portions scaled to hit the slot target.
-5. A shopping list for the week.
+1. The day's energy target in kcal.
+2. The day's macro targets in grams: carbohydrate, protein, fat.
+3. The meals of the day in time order: breakfast, pre-workout, during the
+   session, post-workout, lunch, snack, dinner, before bed, as the day
+   requires. Each meal shows its kcal, its macros, the type of meal to aim for
+   and a one-line example.
 
-The user can then log what was actually eaten (optional) and see the gap.
+Each target is a single number. Tapping it shows the range it comes from and
+how it was computed.
 
 ## Inputs
 
-- Profile: sex, age, height, body mass, optional body-fat %, optional FTP,
-  time zone, wake and sleep times, usual meal times.
+- Profile, set once: sex, birth year, height, body mass, optional body-fat %,
+  optional FTP, time zone, wake and sleep times, usual meal times,
+  coefficients (non-exercise activity, efficiency, protein g/kg, carbohydrate
+  point in range), optional on-bike carbohydrate rate, optional eating window.
 - Goal: maintain, lose (kg per week, capped), or gain. Optional event date for
   carbohydrate loading.
-- Sessions: sport, start time, duration, intensity (zone, RPE, or planned
-  kJ / TSS for cycling), indoor or outdoor.
-- Recurring weekly template of sessions, editable per week.
-- Constraints: disliked foods, eating window (optional time-restricted
-  eating), foods to avoid during sessions, max caffeine.
-- Food list: foods with per-100 g nutrition, usual portion, and tags
-  (breakfast, pre-ride, on-bike, recovery, dinner).
-- Meal templates: named combinations of foods with scalable portions.
+- Activities for the day: sport, start time, duration, intensity, and whether
+  it is a key session.
 
-## Non-goals for v1
+## Non-goals
 
+- No food database, portions, shopping list or food logging. The user's food
+  tracking app covers these.
+- No week planning or week templates. The app plans one day at a time.
 - No social, sharing or coaching features.
-- No AI-generated recipes. Suggestions come from the user's foods and
-  templates.
 - No medical use. The app does not handle diabetes, allergies as a safety
   feature, or eating disorders. It shows a fixed notice that it is not medical
   advice.
 - No micronutrient planning beyond sodium and fluid around sessions.
 - No backend or account. Data stays on the device, with JSON export/import.
 
-## Later (not v1)
+## Later
 
 - Import planned workouts from intervals.icu (API) or from `.ics` / `.zwo` /
   `.fit` files.
-- Import completed rides to correct exercise energy with measured kJ.
-- Adaptive expenditure: estimate real maintenance from logged intake and a
-  smoothed body-mass trend.
-- Barcode scanning against Open Food Facts.
 - French UI.
-- Sync between devices through a JSON file in a synced folder.
 
 ## Success criteria
 
-- Planning a normal week takes under 5 minutes once the template exists.
-- Every number on screen can be traced to a formula and an input in one tap
-  ("why this number").
+- From opening the app to reading the plan for a day with one activity takes
+  under 30 seconds.
+- The plan screen is readable at arm's length on a phone: large numbers, one
+  card per meal, no tables.
+- Every number on screen can be traced to a formula and an input in one tap.
 - Works offline after first load, including on iPhone from the home screen.

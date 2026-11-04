@@ -70,6 +70,8 @@ checked against the compendium:
 - Pilates, general: 02105, 2.8 MET
 - strength, body weight resistance exercises, general: 02056, 3.0 MET
   (the morning circuit: push-ups, bridges, lunges, curls, holds)
+- Pilates and strength entered with an effort (easy, moderate, hard) use
+  these defaults; the effort only sets the M2 band (D44)
 - cycling without power data: see E3
 - walk and other sports: no default; the session needs a MET, otherwise the
   engine counts 0 kcal and warns
@@ -136,6 +138,7 @@ Session intensity band, from the session's intensity input:
 | zone  | Z1       | Z2, Z3   | sweet spot, Z4, Z5 |
 | RPE   | under 4  | 4 to 6   | 7 or more         |
 | MET   | under 3  | 3 to 6   | 6 or more         |
+| effort | easy   | moderate | hard              |
 
 - IF: the zone it maps to (E3).
 - kJ: the IF from FTP when known, otherwise the MET equivalent of the
@@ -207,8 +210,7 @@ Above 60 g/h, use glucose (or maltodextrin) plus fructose, ratio about 1:0.8
 athletes after gut training; allow as a user override with a warning, not as
 a default. The user's historical target is 60 to 90 g/h on long efforts.
 
-Output: total grams, grams per hour, and a schedule (every 20 to 30 min),
-mapped to the user's on-bike foods.
+Output: total grams, grams per hour, and a schedule (every 20 to 30 min).
 
 Engine rules (D18), for every sport:
 
@@ -321,43 +323,57 @@ Engine rules (D22):
   none; with no such meal, `fat-unassigned`.
 - Pre meals and pre snacks are fibre-limited (M4).
 
-## 5. Portion solving
+## 5. Meal guidance
 
-Each slot has targets (kcal, C, P, F) with tolerances (default: carbohydrate
-and protein within 10 %, energy within 10 %). Pick a meal template or food set
-tagged for that slot, then solve portion sizes:
+Rule ID: `G1` (D40). Each slot gets one guidance key, chosen by its kind and
+role. The key selects two lines of text in the i18n module: what kind of meal
+to aim for, and one example. The guidance carries no amounts; the slot's
+targets are the amounts. Examples avoid the user's known dislikes (fish,
+olives).
 
-- Variables: grams of each food, bounded by min and max portion and rounded to
-  the food's step (for example 5 g, 1 unit, 1 scoop).
-- Objective: minimise weighted squared deviation from slot targets.
-- Small problem (2 to 6 foods), so a bounded least-squares or a small brute
-  force over rounded steps is enough. No LP library needed in v1.
+Key selection, first match wins:
 
-If no combination reaches tolerance, return the best one and mark the gap.
+1. `during` slot with `mouthRinseOptional`: `during-rinse`.
+2. `during` slot: `during`.
+3. `pre-snack` slot: `pre-snack`.
+4. `pre` slot: `pre`.
+5. usual meal with role `pre`: `pre-meal`.
+6. usual meal with role `recovery`: `recovery-meal`.
+7. `recovery` slot in fast mode (T4): `recovery-fast`.
+8. `recovery` slot: `recovery`.
+9. `bedtime` slot: `bedtime`.
+10. `snack` slot: `snack`.
+11. any other meal: `meal`.
 
-Engine rules (rule ID `S5`, D31 to D33):
+| Key           | Aim for                                                    | Example                                                      |
+|---------------|------------------------------------------------------------|--------------------------------------------------------------|
+| pre-meal      | Carb-based meal with some lean protein. Low fat, low fibre. | White rice with chicken, or porridge with banana and honey. |
+| pre           | Carb-based and easy to digest. Low fat, low fibre.         | A bagel or white bread with jam, and a banana.               |
+| pre-snack     | A small, quick carb snack.                                 | A banana, a few dates or a cereal bar.                       |
+| during        | Carbs every 20 min, with fluid.                            | Drink mix, gels, bars or bananas.                            |
+| during-rinse  | Water. Some sports drink or a carb mouth rinse is optional. | Water bottle, sports drink optional.                        |
+| recovery-meal | A full meal with carbs and protein.                        | Pasta with chicken and vegetables.                           |
+| recovery      | Carbs and protein soon after the session.                  | Greek yogurt with granola and fruit, or a protein shake with a banana. |
+| recovery-fast | Quick carbs to refill before the next hard session.        | Rice cakes, bread with honey, fruit juice.                   |
+| meal          | A balanced plate: carbs, protein, vegetables, some fat.    | By meal name, below.                                         |
+| snack         | A small snack with carbs and protein.                      | Greek yogurt with fruit, or a fruit and a few almonds.       |
+| bedtime       | Protein, little else.                                      | Greek yogurt or cottage cheese.                              |
 
-- Objective: each deviation is converted to energy (kcal directly; carbohydrate
-  and protein x 4, fat x 9) and divided by the slot's kcal target; the
-  objective is the sum of the squares for kcal, carbohydrate, protein and fat,
-  each with weight 1.
-- Tolerance: kcal, carbohydrate and protein within 10 % of target. A macro with
-  a target of 0 is within tolerance when it supplies 10 % or less of the slot
-  kcal. Fat has no tolerance; it is only in the objective.
-- Candidate foods by slot: a meal uses foods tagged with its lower-case name
-  (`breakfast`, `lunch`, `dinner`), or `meal` when none has that tag; pre
-  and pre-snack `pre`;
-  during `on-bike`; recovery `recovery`; bedtime `bedtime`; snack `snack`.
-  Foods with a disliked id or tag are excluded.
-- A meal template whose slot kinds include the slot is used first (the first
-  by name); its fixed items keep their grams and its scalable items are
-  solved. Otherwise the solver tries every combination of 1 to 4 candidate
-  foods, from at most 12 candidates (in name order), and keeps the best.
-- Grams are multiples of the food's step between its minimum and maximum
-  portion. The solver is coordinate descent over those steps.
-- A user swap fixes the slot's food set; portions are solved again.
-- A slot with no candidate food has no picks and shows its full target as
-  the gap.
+`meal` examples by the usual meal name, compared in lower case:
+
+| Name      | Example                                          |
+|-----------|--------------------------------------------------|
+| breakfast | Oats with Greek yogurt, nuts and fruit.          |
+| lunch     | Chicken, quinoa and vegetable salad, with bread. |
+| dinner    | Rice or pasta, chicken or tofu, and vegetables.  |
+| other     | Rice or pasta, a protein, and vegetables.        |
+
+Extra lines on the card:
+
+- `during` with `needsMultipleTransportableCarbs`: "Use glucose plus
+  fructose: a 2:1 drink mix or dual-source gels." (T2)
+- Any slot with `fibreLimited` whose key is not `pre-meal` or `pre`: "Keep
+  fibre low: white bread, white rice, peeled fruit." (M4, T5)
 
 ## Sources
 
@@ -376,8 +392,6 @@ Engine rules (rule ID `S5`, D31 to D33):
   the effect of protein supplementation on resistance training-induced gains.
   Br J Sports Med 2018.
 - Jäger R et al. ISSN position stand: protein and exercise. JISSN 2017.
-- Anses. Table de composition nutritionnelle des aliments Ciqual 2025.
-  doi:10.57745/RDMHWY, Recherche Data Gouv, Licence Ouverte Etalab 2.0.
 - Mountjoy M et al. 2023 IOC consensus statement on Relative Energy Deficiency
   in Sport (REDs). Br J Sports Med 2023.
 

@@ -26,7 +26,7 @@ export function GoalSettings() {
   );
   return (
     <Screen title={t('goal.title')}>
-      <BackLink to="/settings" />
+      <BackLink to="/profile" />
       {!profile.loading && profile.value && !goal.loading && (
         <GoalForm
           key={goal.value?.id ?? 'none'}

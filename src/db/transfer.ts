@@ -1,14 +1,9 @@
 import { z } from 'zod';
 import {
   storedBodyMassEntrySchema,
-  storedFoodSchema,
   storedGoalSchema,
-  storedLogEntrySchema,
-  storedMealTemplateSchema,
-  storedPlanCacheSchema,
   storedProfileSchema,
   storedSessionSchema,
-  storedWeekTemplateSchema,
 } from '../model/index.ts';
 import {
   SCHEMA_VERSION,
@@ -17,16 +12,14 @@ import {
   type TableName,
 } from './database.ts';
 
+// Zod objects strip unknown keys, so a schema version 1 file parses to its
+// profile, goals, body mass and sessions without the removed tables and
+// fields (D43).
 const dataSchema = z.object({
   profile: z.array(storedProfileSchema).max(1),
   goals: z.array(storedGoalSchema),
   bodyMass: z.array(storedBodyMassEntrySchema),
   sessions: z.array(storedSessionSchema),
-  weekTemplates: z.array(storedWeekTemplateSchema),
-  foods: z.array(storedFoodSchema),
-  mealTemplates: z.array(storedMealTemplateSchema),
-  plans: z.array(storedPlanCacheSchema),
-  logEntries: z.array(storedLogEntrySchema),
 }) satisfies z.ZodType<Record<TableName, unknown[]>>;
 
 export const exportFileSchema = z.object({

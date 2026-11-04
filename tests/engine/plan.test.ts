@@ -68,7 +68,6 @@ describe('full-day fixtures', () => {
     const r = plan([
       session({
         sport: 'ride',
-        indoor: true,
         durationMin: 60,
         intensity: { kind: 'zone', zone: 'SS' },
         key: true,
@@ -271,5 +270,22 @@ describe('T5 carbohydrate loading day', () => {
     expect(r.macros.kcal).toBeCloseTo(4080, 6);
     expect(r.warnings.map((w) => w.code)).toContain('over-target');
     expect(r.slots.every((s) => s.fibreLimited === true)).toBe(true);
+  });
+});
+
+describe('day ranges in grams', () => {
+  it('scales the M2 and M1 ranges by body mass', () => {
+    // rest day -> light range 3 to 5 g/kg: 3*75 = 225, 5*75 = 375 g
+    // protein 1.6 to 2.2 g/kg: 1.6*75 = 120, 2.2*75 = 165 g
+    const r = planDay({
+      date: '2026-11-02',
+      profile: testProfile,
+      goal: maintain,
+      sessions: [],
+    });
+    expect(r.ranges.carbG[0]).toBeCloseTo(225, 6);
+    expect(r.ranges.carbG[1]).toBeCloseTo(375, 6);
+    expect(r.ranges.proteinG[0]).toBeCloseTo(120, 6);
+    expect(r.ranges.proteinG[1]).toBeCloseTo(165, 6);
   });
 });

@@ -1,8 +1,9 @@
 # Fuel Planner
 
-Personal PWA that turns planned training sessions into daily energy and macro
-targets, a meal-timing schedule, and a concrete list of what to eat. One user,
-local-first, no account, no backend in the first versions.
+Personal PWA that turns the activities planned for one day into that day's
+energy and macro targets and a list of meals with their timing, targets and
+the type of meal to aim for. One user, local-first, no account, no backend.
+Food logging stays in the user's separate tracking app.
 
 ## Read first
 
@@ -15,8 +16,7 @@ local-first, no account, no backend in the first versions.
 - `docs/ROADMAP.md`: milestones with acceptance criteria. Work on one milestone
   at a time, in order.
 - `docs/DECISIONS.md`: decision log and open questions.
-- `seed/`: example profile, weekly schedule and food list used for fixtures and
-  first-run data.
+- `seed/`: example profile used for fixtures and first-run data.
 
 ## Stack
 
@@ -63,8 +63,8 @@ pnpm check       # typecheck, lint, format check, test, build
   clock in the profile time zone (default Europe/Paris), stored as ISO strings.
 - The app shows ranges where the source gives ranges. A single target is the
   user-selected point inside the range, never a hidden choice.
-- No analytics, no third-party scripts at runtime. Network calls only to the
-  food databases listed in `docs/ARCHITECTURE.md`, and only on user action.
+- No analytics, no third-party scripts and no network calls at runtime, other
+  than the service worker update check (`docs/ARCHITECTURE.md`).
 - UI text in English, all strings through one i18n module so French can be
   added later.
 

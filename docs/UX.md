@@ -1,64 +1,72 @@
 # UX
 
-Mobile first (iPhone width), usable on desktop. One-handed use in the kitchen
-and on the bike stop. Large tap targets, dark mode following the system.
+Mobile first (iPhone width), usable on desktop. One screen does the job.
+Large text and tap targets (at least 48 px high), one column, no tables, dark
+mode following the system.
 
 ## Navigation
 
-Bottom tab bar: Today, Week, Foods, Settings.
+No tab bar. The Day screen is the home screen. A profile button in its header
+opens Profile; Profile has a back button.
 
-## Today
+## Day
 
-- Header: date, load badge (rest / light / moderate / high / very high),
-  target kcal, and C / P / F in grams with g/kg underneath.
-- Timeline, top to bottom, of slots and sessions. Each slot card shows time,
-  kind, targets, and the picked foods with grams. Tap a food to swap it with
-  another food carrying the same tag; portions re-solve.
-- Session card shows estimated kcal and the method (power, MET, distance).
-- During-session card shows total carbohydrate, g/h, fluid and sodium, the
-  feed schedule, and what to pack: each on-bike food with its grams, or a
-  unit count when the food has a unit (D36).
-- A slot outside tolerance shows a Gap badge and what its foods give.
-- Warnings inline on the card they concern (low EA, eating-window conflict,
-  slot target not reachable with current foods).
-- "Why" button on any number opens the trace: rule ID, formula, inputs.
-- Logging (M6): tick a picked food as eaten (logs its planned grams), edit
-  the grams eaten, add an eaten food that was not planned. The header shows
-  target, eaten and difference for kcal, C, P and F once anything is logged.
+Top to bottom:
 
-## Week
+1. **Day switch.** Two large buttons: Today, Tomorrow. The default is Today,
+   or Tomorrow once the last usual meal time of today has passed.
+2. **Activities.** One card per activity: sport, start time, duration,
+   intensity, and its kcal estimate. Tap to edit or delete.
+   A large "Add activity" button below. With no activity the section reads
+   "Rest day".
+3. **Day totals.** The kcal target in large type, then carbohydrate, protein
+   and fat in grams on one row.
+4. **Meals.** One card per slot of the plan, in time order. Each card shows:
+   - time and name (Breakfast, Pre-workout, Lunch, Post-workout, Snack,
+     Dinner, Before bed, or the usual meal name with a Pre-workout or
+     Post-workout tag when a usual meal takes that role);
+   - kcal in large type, then C / P / F grams;
+   - the meal guidance line and the example line (DOMAIN G1);
+   - for the during-session card instead: carbohydrate per hour and total,
+     the feed rhythm as one line ("25 g every 20 min"), fluid per hour,
+     sodium per hour when set, and "glucose + fructose" when required.
+5. **Warnings.** One plain sentence on the card it concerns (low energy
+   availability on the totals, eating-window conflict on the meal).
 
-- Seven rows, Monday to Sunday, with previous and next week: sessions,
-  target kcal, carbohydrate g/kg. Tap a day to add, edit or delete its
-  sessions.
-- Apply a week template (replaces the week after confirmation), then edit
-  sessions per day. Templates screen: create, edit, duplicate, delete.
-- Shopping list button: aggregates picked foods for the selected days, groups
-  by the food's shop section, rounds up to its purchase unit (D36).
+The plan recomputes as soon as an activity changes. No save or plan button.
 
-## Session editor
+## Number detail
 
-Sport, start, duration, intensity input adapted to the sport (zone or kJ for
-rides, pace or distance for runs, effort for strength), key session toggle.
-Live preview of the kcal estimate.
+Tapping any target opens a bottom sheet:
 
-## Foods
+- the range it comes from and where the target sits in it;
+- for carbohydrate and protein, a slider that moves the profile point inside
+  the range, labelled "applies to every day";
+- the trace: rule ID, formula, inputs, result.
 
-- List with search and tag filter.
-- Add: manual, search CIQUAL subset, search Open Food Facts (online only).
-- Food editor: per 100 g values, unit, portion bounds and step, tags.
-- Meal templates tab.
+## Activity editor
 
-## Settings
+A bottom sheet, one decision per row:
 
-Profile, goal, body mass entries (with a small trend chart), coefficients
-(NEA factor, efficiency, protein g/kg, carb point in range) each showing the
-allowed range, eating window, export/import, storage persistence status,
-app version and update check, the not-medical-advice notice.
+- Sport: large buttons for Ride, Run, Strength, Pilates, Walk, Other.
+- Start time.
+- Duration: chips for 30, 45, 60, 90, 120, 180, 240 min, and a custom field.
+- Intensity, by sport:
+  - Ride: zone buttons Z1, Z2, Z3, Sweet spot, Z4, Z5. "Planned kJ" under a
+    "More" link.
+  - Run: expected pace (min/km). "Distance" under "More".
+  - Strength, Pilates: Easy, Moderate, Hard (D44).
+  - Walk, Other: MET value, with the hint that it comes from the compendium.
+- Key session toggle, with a one-line explanation.
+- A live line with the activity's kcal estimate.
+
+## Profile
+
+Profile, goal, body mass entries with a small trend chart, coefficients each
+showing the allowed range, on-bike carbohydrate rate, eating window,
+export/import, storage persistence status, app version and update check,
+install steps on iPhone, the not-medical-advice notice.
 
 ## First run
 
-Short setup: profile, goal, week template (the seed standard week with its
-missing times filled in, or skip), the not-medical-advice notice, then the
-seed food list: each food filled from CIQUAL or the label, or skipped. Then
-land on Today.
+Profile, goal, the not-medical-advice notice, then the Day screen.

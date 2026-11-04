@@ -1,5 +1,5 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
-import { completeFirstRun } from './helpers.ts';
+import { completeFirstRun, waitForServiceWorker } from './helpers.ts';
 
 interface ManifestIcon {
   src: string;
@@ -30,7 +30,7 @@ test('the manifest and icons meet installability requirements', async ({
   page,
   request,
 }) => {
-  await page.goto('today');
+  await page.goto('day');
 
   const manifestHref = await page
     .locator('link[rel="manifest"]')
@@ -69,28 +69,13 @@ test('the app loads offline once the service worker is active', async ({
   context,
 }) => {
   await completeFirstRun(page);
-  // `ready` resolves while the worker may still be activating; precaching is
-  // done only once it reports 'activated'.
-  const state = await page.evaluate(async () => {
-    const registration = await navigator.serviceWorker.ready;
-    const worker = registration.active;
-    if (worker && worker.state !== 'activated') {
-      await new Promise<void>((resolve) => {
-        worker.addEventListener('statechange', () => {
-          if (worker.state === 'activated') resolve();
-        });
-      });
-    }
-    return worker?.state;
-  });
-  expect(state).toBe('activated');
+  await waitForServiceWorker(page);
 
   await context.setOffline(true);
 
-  await page.goto('week');
-  await expect(page.getByRole('heading', { name: 'Week' })).toBeVisible();
+  await page.goto('profile');
+  await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
 
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Week' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
 });

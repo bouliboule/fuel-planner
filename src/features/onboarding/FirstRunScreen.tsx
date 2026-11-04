@@ -9,7 +9,7 @@ import {
   useLiveQuery,
 } from '../../db/index.ts';
 import { t } from '../../i18n/index.ts';
-import type { Goal, Profile, WeekTemplate } from '../../model/index.ts';
+import type { Goal, Profile } from '../../model/index.ts';
 import { Button } from '../../ui/form.tsx';
 import { MedicalNotice } from '../../ui/Notice.tsx';
 import { Screen } from '../../ui/Screen.tsx';
@@ -27,9 +27,8 @@ import {
   type ProfileDraft,
 } from '../profile/profileDraft.ts';
 import { ImportBackup } from '../settings/ImportBackup.tsx';
-import { WeekStep } from './WeekStep.tsx';
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
 
 export function FirstRunScreen() {
   const existing = useLiveQuery(() => getProfile(db), []);
@@ -46,11 +45,10 @@ export function FirstRunScreen() {
   );
   const [goalErrors, setGoalErrors] = useState<GoalErrors>({});
   const [goal, setGoal] = useState<Goal | undefined>();
-  const [template, setTemplate] = useState<WeekTemplate | undefined>();
 
   if (existing.loading) return null;
   if (existing.value && step === 1 && !restoring)
-    return <Navigate to="/today" replace />;
+    return <Navigate to="/day" replace />;
 
   const date = todayIn(profile?.timeZone ?? profileDraft.timeZone);
 
@@ -109,7 +107,7 @@ export function FirstRunScreen() {
               {restoring && (
                 <ImportBackup
                   onImported={() => {
-                    void navigate('/today', { replace: true });
+                    void navigate('/day', { replace: true });
                   }}
                 />
               )}
@@ -153,27 +151,14 @@ export function FirstRunScreen() {
           </form>
         )}
 
-        {step === 3 && profile && (
-          <WeekStep
-            profile={profile}
-            onBack={() => {
-              setStep(2);
-            }}
-            onDone={(next) => {
-              setTemplate(next);
-              setStep(4);
-            }}
-          />
-        )}
-
-        {step === 4 && profile && goal && (
+        {step === 3 && profile && goal && (
           <>
             <MedicalNotice />
             <div className="mt-6 flex gap-2">
               <Button
                 variant="secondary"
                 onClick={() => {
-                  setStep(3);
+                  setStep(2);
                 }}
               >
                 {t('common.back')}
@@ -190,10 +175,7 @@ export function FirstRunScreen() {
                     profile: { ...profile, proteinGPerKg },
                     goal,
                     date,
-                    ...(template ? { template } : {}),
-                  }).then(() =>
-                    navigate('/foods/seed?firstRun=1', { replace: true }),
-                  );
+                  }).then(() => navigate('/day', { replace: true }));
                 }}
               >
                 {t('firstRun.start')}

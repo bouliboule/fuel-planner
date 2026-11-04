@@ -68,11 +68,39 @@ recent phone; every slot either meets tolerance or shows its gap.
 - [x] Tick foods as eaten, edit grams, add unplanned items.
 - [x] Planned vs actual per day.
 
+## M7. One-day planner
+
+M7 replaces the week, food, portion, shopping and logging features of M4 to
+M6 with a single Day screen (D39). Profile and the engine stay.
+
+- [x] Delete foods, meal templates, CIQUAL data and conversion script, Open
+      Food Facts search, portion solver, shopping and packing lists,
+      logging, week view, week templates, `planWeek`, and
+      `seed/foods.json` and `seed/week-template.json`, with their routes,
+      tests and i18n strings.
+- [x] Dexie schema v2: drop the `foods`, `mealTemplates`, `weekTemplates`,
+      `plans` and `log` tables, and the dislike fields on the profile.
+      Migration test from v1. Export writes v2; import reads v1 and v2
+      (D43).
+- [x] Engine: `effort` intensity for Pilates and strength (D44), meal
+      guidance keys (DOMAIN G1), carbohydrate and protein ranges on the day
+      plan, tests with hand-computed values.
+- [x] Day screen: today or tomorrow, activity cards, totals, meal cards
+      with guidance and example, warnings (UX Day).
+- [x] Activity editor sheet with live kcal estimate.
+- [x] Number detail sheet with range, profile point slider and trace.
+- [x] Profile screen without food settings; first run is profile, goal,
+      notice, then Day.
+- [x] Playwright: first run, add a long ride for tomorrow, see pre-workout,
+      during and post-workout cards, offline reload keeps the plan.
+
+Acceptance: a rest day shows totals and the usual meals with no activity
+entered; a 240 min Z2 ride from the seed profile shows pre-workout, during
+(rate, feed rhythm, fluid) and post-workout cards whose carbohydrate sums to
+the day target within 1 g; every meal card shows kcal, C / P / F, guidance
+and example; the app makes no network request after load (Playwright).
+
 ## Later
 
-- intervals.icu import of planned and completed workouts.
-- Adaptive maintenance estimate from intake log and smoothed mass trend
-  (exponentially weighted average, at least 3 weeks of data).
-- Open Food Facts barcode scanning.
+- intervals.icu import of planned workouts.
 - French UI.
-- File-based sync.

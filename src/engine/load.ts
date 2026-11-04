@@ -2,6 +2,7 @@
 
 import type { Profile, Zone } from '../model/index.ts';
 import {
+  EFFORT_BAND,
   JOG_MET,
   LOAD_HIGH_MIN,
   LOAD_MODERATE_MIN,
@@ -53,6 +54,8 @@ export function sessionIntensityBand(
       if (intensity.value < RPE_MODERATE_MIN) return 'low';
       if (intensity.value < RPE_HIGH_MIN) return 'moderate';
       return 'high';
+    case 'effort':
+      return EFFORT_BAND[intensity.value];
     case 'met':
       return metBand(intensity.value);
     case 'kj': {

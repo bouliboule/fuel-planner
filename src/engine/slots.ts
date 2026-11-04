@@ -63,12 +63,8 @@ export interface Slot {
   needsMultipleTransportableCarbs?: boolean;
   mouthRinseOptional?: boolean;
   fibreLimited?: boolean;
-  /** Filled by the portion solver (S5). */
-  picks?: { foodId: string; grams: number }[];
-  achieved?: Macros;
-  gap?: Macros;
-  withinTolerance?: boolean;
-  pickSource?: 'template' | 'search' | 'choice' | 'none';
+  /** Standalone recovery slots: T4 fast or normal mode. */
+  recoveryMode?: 'fast' | 'normal';
 }
 
 /** A session of the day with what the slot rules need. */
@@ -94,6 +90,7 @@ interface Work {
   fixedProteinG?: number;
   carbRange?: readonly [number, number];
   fibreLimited?: boolean;
+  recoveryMode?: 'fast' | 'normal';
   during?: DuringSession;
 }
 
@@ -286,6 +283,7 @@ export function buildSlots(input: {
           slots.push({
             id: `recovery-${main.id}-${String(k)}`,
             kind: 'recovery',
+            recoveryMode: 'fast',
             timeMin: t,
             sessionId: main.id,
             fixedCarbG: carbG,
@@ -324,6 +322,7 @@ export function buildSlots(input: {
         normalRecoverySlot = {
           id: `recovery-${main.id}`,
           kind: 'recovery',
+          recoveryMode: 'normal',
           timeMin: end,
           sessionId: main.id,
           fixedProteinG: OCCASION_PROTEIN_G_PER_KG * mass,
@@ -498,6 +497,7 @@ export function buildSlots(input: {
       ...(w.name === undefined ? {} : { name: w.name }),
       ...(w.role === undefined ? {} : { role: w.role }),
       ...(w.sessionId === undefined ? {} : { sessionId: w.sessionId }),
+      ...(w.recoveryMode === undefined ? {} : { recoveryMode: w.recoveryMode }),
       target: {
         kcal: KCAL_PER_G_CARB * c + KCAL_PER_G_PROTEIN * p + KCAL_PER_G_FAT * f,
         carbG: c,

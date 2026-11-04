@@ -14,7 +14,7 @@ export function EatingWindowSettings() {
   const profile = useProfile();
   return (
     <Screen title={t('window.title')}>
-      <BackLink to="/settings" />
+      <BackLink to="/profile" />
       {!profile.loading && profile.value && (
         <WindowForm key={profile.value.id} profile={profile.value} />
       )}
