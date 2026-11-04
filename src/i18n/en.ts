@@ -46,6 +46,12 @@ export const en = {
   'profile.meals': 'Usual meals',
   'profile.mealName': 'Meal name',
   'profile.mealTime': 'Time',
+  'profile.mealKcalMin': 'Usual kcal from',
+  'profile.mealKcalMax': 'to',
+  'profile.mealKcalHint':
+    'Sets how the day is shared across meals. Leave empty for an average share.',
+  'profile.mealKcalCheck':
+    'Enter both values, the first one not above the second.',
   'profile.addMeal': 'Add meal',
   'profile.mealsRequired': 'Add at least one meal.',
 
@@ -194,6 +200,10 @@ export const en = {
     '{unassignedG} g carbohydrate has no meal to go to.',
   'warning.protein-unassigned': '{unassignedG} g protein has no meal to go to.',
   'warning.fat-unassigned': '{unassignedG} g fat has no meal to go to.',
+  'warning.meal-kcal-above-range':
+    'Bigger than your usual size: the day needs more.',
+  'warning.meal-kcal-below-range':
+    'Smaller than your usual size: the day needs less.',
   'warning.during-rate-above-90': 'Above 90 g/h needs gut training.',
   'warning.during-rate-capped':
     'On-bike carbohydrate capped at {capGPerH} g/h.',
@@ -228,6 +238,7 @@ export const en = {
   'day.carbLoading': 'Carbohydrate loading day',
   'day.mealMacros': 'C {carb} g · P {protein} g · F {fat} g',
   'day.mealKcal': '{kcal} kcal',
+  'day.mealUsual': 'Usual {low} to {high} kcal',
   'day.editActivity': 'Edit {name}',
   'day.deleteActivity': 'Delete {name}',
   'day.activityKcal': 'about {kcal} kcal',

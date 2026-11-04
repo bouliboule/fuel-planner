@@ -189,6 +189,15 @@
 - D54. Tracking is the stored activities themselves: no done or skipped
       status. The calendar opens any date on the Day screen, so a past day
       can be corrected and a future day planned.
+- D55. Meal size. Meals are not equal shares: each usual meal has an
+      optional kcal range in the profile, user-set. Defaults, from the
+      user: breakfast 500 to 600, lunch 800 to 1200, dinner 400 to 600
+      kcal, matched by name on first run and by the version 3 migration.
+      The ranges act as ratios (midpoints 550, 1000, 500), so meals still
+      add up to the day target on any day; a meal outside its range gets
+      a warning. Carbohydrate and fat follow the ratio; protein stays
+      equal across meals (M1). The S4 1.5 weight around the main session
+      still applies on top (Q9).
 
 ## Open questions (defaults in brackets)
 
@@ -197,3 +206,6 @@
       export? [manual]
 - Q5. Default carbohydrate point inside M2 ranges? [midpoint]
 - Q6. Show a time-restricted eating window by default? [off]
+- Q9. Source for the S4 1.5 carbohydrate weight on the meals around the
+      main session, and whether it should scale with session length or
+      carbohydrate need. [1.5, flat]

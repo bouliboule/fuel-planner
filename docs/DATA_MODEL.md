@@ -21,7 +21,11 @@ type Profile = {
   timeZone: string;            // IANA, default 'Europe/Paris'
   wakeTime: string;            // 'HH:mm'
   sleepTime: string;
-  usualMeals: { name: string; time: string }[];
+  usualMeals: {
+    name: string;
+    time: string;
+    kcalRange?: [number, number];  // DOMAIN S4, D55; min <= max
+  }[];
   neaFactor: number;           // DOMAIN E2
   grossEfficiency: number;     // DOMAIN E3
   proteinGPerKg: number;       // DOMAIN M1

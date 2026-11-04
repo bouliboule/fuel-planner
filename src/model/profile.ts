@@ -23,7 +23,17 @@ export const profileSchema = z.object({
   timeZone: z.string().min(1),
   wakeTime: clockTime,
   sleepTime: clockTime,
-  usualMeals: z.array(z.object({ name: z.string().min(1), time: clockTime })),
+  usualMeals: z.array(
+    z.object({
+      name: z.string().min(1),
+      time: clockTime,
+      // DOMAIN S4, D55: user-set usual size in kcal, [min, max].
+      kcalRange: z
+        .tuple([z.number().positive(), z.number().positive()])
+        .refine(([lo, hi]) => lo <= hi)
+        .optional(),
+    }),
+  ),
   neaFactor: z.number().min(NEA_FACTOR_RANGE[0]).max(NEA_FACTOR_RANGE[1]),
   grossEfficiency: z
     .number()
@@ -60,3 +70,27 @@ export const profileDefaults = {
   proteinGPerKg: PROTEIN_G_PER_KG_DEFAULT,
   carbPointInRange: CARB_POINT_IN_RANGE_DEFAULT,
 } as const;
+
+/**
+ * Default usual meal sizes in kcal, set by the user (D55), matched by meal
+ * name in lower case. Used on first run and when migrating older data.
+ */
+export const DEFAULT_MEAL_KCAL_RANGES: Readonly<
+  Record<string, readonly [number, number]>
+> = {
+  breakfast: [500, 600],
+  lunch: [800, 1200],
+  dinner: [400, 600],
+};
+
+/** Adds the default kcal range to usual meals that have none, by name. */
+export function withDefaultMealRanges(
+  meals: readonly Profile['usualMeals'][number][],
+): Profile['usualMeals'] {
+  return meals.map((m) => {
+    const range = DEFAULT_MEAL_KCAL_RANGES[m.name.trim().toLowerCase()];
+    return m.kcalRange || !range
+      ? m
+      : { ...m, kcalRange: [range[0], range[1]] };
+  });
+}

@@ -35,8 +35,8 @@ afterEach(async () => {
 });
 
 describe('schema', () => {
-  it('opens version 2 with the profile, goal, body mass and session tables', () => {
-    expect(SCHEMA_VERSION).toBe(2);
+  it('opens version 3 with the profile, goal, body mass and session tables', () => {
+    expect(SCHEMA_VERSION).toBe(3);
     expect(db.verno).toBe(SCHEMA_VERSION);
     expect(db.tables.map((t) => t.name).sort()).toEqual([...TABLES].sort());
   });
@@ -81,7 +81,7 @@ describe('schema', () => {
 
     const v2 = new FuelDatabase(name);
     await v2.open();
-    expect(v2.verno).toBe(2);
+    expect(v2.verno).toBe(SCHEMA_VERSION);
     expect(v2.tables.map((x) => x.name).sort()).toEqual([...TABLES].sort());
     const profile = await getProfile(v2);
     expect(profile && 'dislikedTags' in profile).toBe(false);
@@ -100,6 +100,41 @@ describe('schema', () => {
     ]);
     v2.close();
     await v2.delete();
+  });
+
+  it('migrates version 2 data: adds default meal kcal ranges by name (D55)', async () => {
+    const name = `${db.name}-v2`;
+    const v2 = new Dexie(name);
+    v2.version(2).stores({
+      profile: 'id',
+      goals: 'id, validFrom',
+      bodyMass: 'id, &date',
+      sessions: 'id, date',
+    });
+    await v2.table('profile').add({
+      ...testProfile,
+      createdAt: 'x',
+      updatedAt: 'x',
+      id: 'p',
+      usualMeals: [
+        { name: 'Breakfast', time: '07:30' },
+        { name: ' LUNCH ', time: '12:30' },
+        { name: 'Dinner', time: '19:30', kcalRange: [700, 900] },
+        { name: 'Snack', time: '16:00' },
+      ],
+    });
+    v2.close();
+
+    const v3 = new FuelDatabase(name);
+    await v3.open();
+    expect((await getProfile(v3))?.usualMeals).toEqual([
+      { name: 'Breakfast', time: '07:30', kcalRange: [500, 600] },
+      { name: ' LUNCH ', time: '12:30', kcalRange: [800, 1200] },
+      { name: 'Dinner', time: '19:30', kcalRange: [700, 900] },
+      { name: 'Snack', time: '16:00' },
+    ]);
+    v3.close();
+    await v3.delete();
   });
 });
 
@@ -201,7 +236,7 @@ describe('export and import', () => {
       date: '2026-11-04',
     });
     const file = await exportData(db, new Date('2026-11-04T10:00:00Z'));
-    expect(file.schemaVersion).toBe(2);
+    expect(file.schemaVersion).toBe(3);
     expect(file.exportedAt).toBe('2026-11-04T10:00:00.000Z');
 
     const check = checkImport(JSON.stringify(file));
@@ -223,11 +258,22 @@ describe('export and import', () => {
     await other.delete();
   });
 
+  it('adds default meal kcal ranges when importing a version 2 file (D55)', async () => {
+    await saveProfile(db, testProfile);
+    const file = await exportData(db);
+    await replaceAllData(db, { ...file, schemaVersion: 2 });
+    expect((await getProfile(db))?.usualMeals.map((m) => m.kcalRange)).toEqual([
+      [500, 600],
+      [800, 1200],
+      [400, 600],
+    ]);
+  });
+
   it('refuses a newer schema version', () => {
     const r = checkImport(
-      JSON.stringify({ app: 'fuel-planner', schemaVersion: 3, data: {} }),
+      JSON.stringify({ app: 'fuel-planner', schemaVersion: 4, data: {} }),
     );
-    expect(r).toEqual({ ok: false, reason: 'newer-version', detail: '3' });
+    expect(r).toEqual({ ok: false, reason: 'newer-version', detail: '4' });
   });
 
   it('imports a version 1 file without its removed tables and fields', () => {

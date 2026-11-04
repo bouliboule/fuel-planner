@@ -1,16 +1,17 @@
 import { Dexie, type EntityTable } from 'dexie';
-import type {
-  StoredBodyMassEntry,
-  StoredGoal,
-  StoredProfile,
-  StoredSession,
+import {
+  withDefaultMealRanges,
+  type StoredBodyMassEntry,
+  type StoredGoal,
+  type StoredProfile,
+  type StoredSession,
 } from '../model/index.ts';
 
 /**
  * Current schema version. Every change bumps it, adds a `version(n)` block
  * with its upgrade, and adds a migration test (docs/DATA_MODEL.md).
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const TABLES = ['profile', 'goals', 'bodyMass', 'sessions'] as const;
 export type TableName = (typeof TABLES)[number];
@@ -65,6 +66,15 @@ export class FuelDatabase extends Dexie {
               Reflect.deleteProperty(s, f);
           });
       });
+    // Version 3: usual meals get the default kcal range by name (D55).
+    this.version(3).upgrade(async (tx) => {
+      await tx
+        .table('profile')
+        .toCollection()
+        .modify((p: StoredProfile) => {
+          p.usualMeals = withDefaultMealRanges(p.usualMeals);
+        });
+    });
   }
 }
 

@@ -53,6 +53,7 @@ export interface Slot {
   sessionId?: string;
   target: Macros;
   targetRanges?: {
+    kcal?: readonly [number, number];
     carbG?: readonly [number, number];
     proteinG?: readonly [number, number];
   };
@@ -89,6 +90,9 @@ interface Work {
   fixedCarbG?: number;
   fixedProteinG?: number;
   carbRange?: readonly [number, number];
+  /** Usual meals: user-set kcal range and size weight (DOMAIN S4, D55). */
+  kcalRange?: readonly [number, number];
+  sizeWeight?: number;
   fibreLimited?: boolean;
   recoveryMode?: 'fast' | 'normal';
   during?: DuringSession;
@@ -120,11 +124,20 @@ export function buildSlots(input: {
     sessions.find((s) => t >= s.startMin && t < endOf(s));
 
   // Step 3 first for usual meals, so later steps see their final times.
+  // Meal size weight (D55): range midpoint over the mean midpoint of the
+  // profile's usual meals with a range; 1 without a range.
+  const mid = (r: readonly [number, number]) => (r[0] + r[1]) / 2;
+  const mids = profile.usualMeals.flatMap((m) =>
+    m.kcalRange ? [mid(m.kcalRange)] : [],
+  );
+  const meanMid = mids.reduce((a, b) => a + b, 0) / mids.length;
   const usual = profile.usualMeals
     .map((m, i) => ({
       id: `meal-${String(i)}`,
       name: m.name,
       time: toMinutes(m.time),
+      kcalRange: m.kcalRange,
+      sizeWeight: m.kcalRange ? mid(m.kcalRange) / meanMid : 1,
     }))
     .sort((a, b) => a.time - b.time);
   // Skip breakfast (D49): the first usual meal goes unless a session that
@@ -156,7 +169,19 @@ export function buildSlots(input: {
     kind: 'meal',
     timeMin: m.time,
     name: m.name,
+    ...(m.kcalRange ? { kcalRange: m.kcalRange } : {}),
+    sizeWeight: m.sizeWeight,
   }));
+  if (mids.length > 0) {
+    trace.push(
+      step(
+        'S4',
+        'Meal size weight: kcal range midpoint / mean midpoint',
+        { meanMidpointKcal: meanMid },
+        mids.length,
+      ),
+    );
+  }
   let previousMeal: number | undefined;
   for (const meal of meals) {
     const inside = insideSession(meal.timeMin);
@@ -446,14 +471,18 @@ export function buildSlots(input: {
       w.fixedCarbG === undefined &&
       (w.kind === 'meal' || w === normalRecoverySlot),
   );
-  const weights = new Map<Work, number>(remainderSlots.map((w) => [w, 1]));
+  const size = (w: Work) => w.sizeWeight ?? 1;
+  const weights = new Map<Work, number>(
+    remainderSlots.map((w) => [w, size(w)]),
+  );
   if (main) {
     const before = remainderSlots
       .filter((w) => w.timeMin < main.startMin)
       .at(-1);
     const after = remainderSlots.find((w) => w.timeMin >= endOf(main));
-    if (before) weights.set(before, MAIN_SESSION_MEAL_WEIGHT);
-    if (after) weights.set(after, MAIN_SESSION_MEAL_WEIGHT);
+    for (const w of [before, after]) {
+      if (w) weights.set(w, size(w) * MAIN_SESSION_MEAL_WEIGHT);
+    }
   }
   const remainder = targets.carbG - fixedCarb;
   const totalWeight = [...weights.values()].reduce((a, b) => a + b, 0);
@@ -501,8 +530,12 @@ export function buildSlots(input: {
       values: { unassignedG: targets.fatG },
     });
   }
+  const fatWeight = fatSlots.reduce((sum, w) => sum + size(w), 0);
   for (const w of slots) {
-    fatG.set(w, fatSlots.includes(w) ? targets.fatG / fatSlots.length : 0);
+    fatG.set(
+      w,
+      fatSlots.includes(w) ? (targets.fatG * size(w)) / fatWeight : 0,
+    );
   }
 
   const proteinRange: readonly [number, number] = [
@@ -515,9 +548,22 @@ export function buildSlots(input: {
     const f = fatG.get(w) ?? 0;
     const hasProtein = w.kind === 'meal' || w.fixedProteinG !== undefined;
     const ranges = {
+      ...(w.kcalRange ? { kcal: w.kcalRange } : {}),
       ...(w.carbRange ? { carbG: w.carbRange } : {}),
       ...(hasProtein ? { proteinG: proteinRange } : {}),
     };
+    const kcal =
+      KCAL_PER_G_CARB * c + KCAL_PER_G_PROTEIN * p + KCAL_PER_G_FAT * f;
+    if (w.kcalRange && (kcal < w.kcalRange[0] || kcal > w.kcalRange[1])) {
+      warnings.push({
+        code:
+          kcal > w.kcalRange[1]
+            ? 'meal-kcal-above-range'
+            : 'meal-kcal-below-range',
+        ruleId: 'S4',
+        values: { slotId: w.id },
+      });
+    }
     const d = w.during;
     return {
       id: w.id,
@@ -528,7 +574,7 @@ export function buildSlots(input: {
       ...(w.sessionId === undefined ? {} : { sessionId: w.sessionId }),
       ...(w.recoveryMode === undefined ? {} : { recoveryMode: w.recoveryMode }),
       target: {
-        kcal: KCAL_PER_G_CARB * c + KCAL_PER_G_PROTEIN * p + KCAL_PER_G_FAT * f,
+        kcal,
         carbG: c,
         proteinG: p,
         fatG: f,
