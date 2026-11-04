@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+import { CalendarScreen } from '../features/calendar/CalendarScreen.tsx';
 import { DayScreen } from '../features/day/DayScreen.tsx';
 import { FirstRunScreen } from '../features/onboarding/FirstRunScreen.tsx';
 import { BodyMassSettings } from '../features/settings/BodyMassSettings.tsx';
@@ -23,6 +24,8 @@ export const router = createBrowserRouter(
       children: [
         { index: true, element: <Navigate to="day" replace /> },
         { path: 'day', element: <DayScreen /> },
+        { path: 'day/:date', element: <DayScreen /> },
+        { path: 'calendar', element: <CalendarScreen /> },
         { path: 'profile', element: <SettingsScreen /> },
         { path: 'profile/details', element: <ProfileSettings /> },
         { path: 'profile/goal', element: <GoalSettings /> },

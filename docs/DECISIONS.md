@@ -174,6 +174,22 @@
 - D51. lucide-react (ISC) is approved for icons. Icons are decorative and
       marked `aria-hidden`; every control keeps its text label.
 
+- D52. Hard, for the back-to-back check only (no effect on energy or
+      macros): a ride is hard when its M2 band is high (sweet spot, Z4, Z5,
+      or the same from IF or kJ) or it is a key session; a run is hard when
+      its run type is intervals or hard long. Run type is a new optional
+      field the user picks (easy by default), because every run from
+      6.44 km/h is already high in M2 and pace alone cannot tell an easy run
+      from intervals. No duration or pace threshold is used.
+- D53. Back-to-back: two profile preferences, "allow back-to-back hard
+      rides" and "allow back-to-back hard runs", off by default. When off,
+      a hard ride (or run) on the day before or the day after another hard
+      ride (or run) gets a warning in the editor and on its card. Rides and
+      runs are checked separately. It never blocks saving.
+- D54. Tracking is the stored activities themselves: no done or skipped
+      status. The calendar opens any date on the Day screen, so a past day
+      can be corrected and a future day planned.
+
 ## Open questions (defaults in brackets)
 
 - Q1. UI language for v1? [English, i18n-ready]

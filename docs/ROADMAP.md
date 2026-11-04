@@ -112,6 +112,24 @@ Acceptance: with the preference on, a rest day has no breakfast card and
 the same day totals as with it off; a morning session with a pre meal or
 during slot keeps breakfast; an evening session does not.
 
+## M9. Calendar, back-to-back warning, bolder icons
+
+- [x] Engine: hard ride and hard run (D52) and the back-to-back check (D53),
+      with tests.
+- [x] Session `runType` and the run type choice in the editor.
+- [x] Profile: the two back-to-back preferences.
+- [x] Calendar screen and the Day screen for any date (`/day/:date`).
+- [x] Back-to-back warning in the editor and on activity cards.
+- [x] Coloured icon tiles, hard badge, day load banner, icons on guidance,
+      during and profile lines.
+- [x] Playwright: calendar opens a day; a hard ride after a hard ride warns,
+      and stops warning once the preference allows it.
+
+Acceptance: a Z4 ride on a day after a key ride warns in the editor and on
+the card; with the preference on it does not; an easy run next to an
+intervals run does not warn; the calendar shows a month with sport icons
+and opens the tapped day.
+
 ## Later
 
 - intervals.icu import of planned workouts.

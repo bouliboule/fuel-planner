@@ -48,3 +48,27 @@ export function goalOn<G extends { validFrom: string }>(
   );
   return sorted.filter((g) => g.validFrom <= date).at(-1) ?? sorted[0];
 }
+
+/** 'YYYY-MM' of a date, and the month `delta` months after it. */
+export function monthOf(date: string, delta = 0): string {
+  const [y, m] = date.split('-').map(Number);
+  const index = (y ?? 0) * 12 + ((m ?? 1) - 1) + delta;
+  return `${String(Math.floor(index / 12))}-${String((index % 12) + 1).padStart(2, '0')}`;
+}
+
+/**
+ * The weeks of a 'YYYY-MM' month, Monday to Sunday, as dates. Days of the
+ * neighbouring months fill the first and last weeks.
+ */
+export function monthWeeks(month: string): string[][] {
+  const first = `${month}-01`;
+  const weekday = new Date(`${first}T00:00:00Z`).getUTCDay(); // 0 = Sunday
+  let day = addDays(first, -((weekday + 6) % 7));
+  const weeks: string[][] = [];
+  do {
+    const week = Array.from({ length: 7 }, (_, i) => addDays(day, i));
+    weeks.push(week);
+    day = addDays(day, 7);
+  } while (day.startsWith(month));
+  return weeks;
+}

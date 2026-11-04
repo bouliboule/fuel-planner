@@ -1,21 +1,35 @@
-import { useState } from 'react';
+import {
+  Database,
+  Goal,
+  Clock,
+  Scale,
+  SlidersHorizontal,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react';
+import { createElement, useState } from 'react';
 import { Link } from 'react-router';
 import { t, type MessageKey } from '../../i18n/index.ts';
 import { Button } from '../../ui/form.tsx';
 import { MedicalNotice } from '../../ui/Notice.tsx';
 import { BackLink } from '../../ui/BackLink.tsx';
 import { Screen } from '../../ui/Screen.tsx';
-import { SkipBreakfast } from './SkipBreakfast.tsx';
+import { Preferences } from './Preferences.tsx';
 import { useProfile } from './useProfile.ts';
 
-const sections: readonly { to: string; label: MessageKey }[] = [
-  { to: 'details', label: 'profile.title' },
-  { to: 'goal', label: 'goal.title' },
-  { to: 'body-mass', label: 'bodyMass.title' },
-  { to: 'coefficients', label: 'coefficients.title' },
-  { to: 'eating-window', label: 'window.title' },
-  { to: 'data', label: 'data.title' },
-];
+const sections: readonly { to: string; label: MessageKey; icon: LucideIcon }[] =
+  [
+    { to: 'details', label: 'profile.title', icon: UserRound },
+    { to: 'goal', label: 'goal.title', icon: Goal },
+    { to: 'body-mass', label: 'bodyMass.title', icon: Scale },
+    {
+      to: 'coefficients',
+      label: 'coefficients.title',
+      icon: SlidersHorizontal,
+    },
+    { to: 'eating-window', label: 'window.title', icon: Clock },
+    { to: 'data', label: 'data.title', icon: Database },
+  ];
 
 export function SettingsScreen() {
   const [updateStatus, setUpdateStatus] = useState<MessageKey | undefined>();
@@ -29,9 +43,13 @@ export function SettingsScreen() {
             <li key={s.to}>
               <Link
                 to={s.to}
-                className="flex min-h-12 items-center justify-between px-4"
+                className="flex min-h-14 items-center gap-3 px-4 text-lg"
               >
-                {t(s.label)}
+                {createElement(s.icon, {
+                  'aria-hidden': true,
+                  className: 'size-5 text-orange-600',
+                })}
+                <span className="flex-1">{t(s.label)}</span>
                 <span aria-hidden="true">›</span>
               </Link>
             </li>
@@ -39,7 +57,7 @@ export function SettingsScreen() {
         </ul>
 
         {!profile.loading && profile.value && (
-          <SkipBreakfast profile={profile.value} />
+          <Preferences profile={profile.value} />
         )}
 
         <MedicalNotice />

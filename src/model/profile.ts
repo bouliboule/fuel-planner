@@ -43,6 +43,9 @@ export const profileSchema = z.object({
   // DOMAIN S4, D49: leave out the first usual meal unless a session that
   // needs fueling starts before the second. Absent means off.
   skipBreakfast: z.boolean().optional(),
+  // D53: absent means warn about back-to-back hard rides or runs.
+  allowBackToBackHardRides: z.boolean().optional(),
+  allowBackToBackHardRuns: z.boolean().optional(),
 });
 
 export type Profile = z.infer<typeof profileSchema>;

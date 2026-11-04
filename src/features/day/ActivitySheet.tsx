@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { backToBackWarnings } from '../../engine/backToBack.ts';
 import { db, deleteSession, saveSession } from '../../db/index.ts';
 import { t } from '../../i18n/index.ts';
 import {
   effortSchema,
+  runTypeSchema,
   sportSchema,
   zoneSchema,
   type Profile,
@@ -18,6 +20,7 @@ import {
 import { SPORT_ICON } from '../../ui/icons.ts';
 import { Sheet } from '../../ui/Sheet.tsx';
 import { KcalPreview } from '../sessions/KcalPreview.tsx';
+import { WarningText } from './WarningText.tsx';
 import {
   MODES_BY_SPORT,
   draftFromSession,
@@ -35,11 +38,16 @@ export function ActivitySheet({
   date,
   existing,
   profile,
+  dayBefore,
+  dayAfter,
   onClose,
 }: {
   date: string;
   existing?: StoredSession | undefined;
   profile: Profile;
+  /** Sessions of the neighbouring days, for the D53 warning. */
+  dayBefore: readonly StoredSession[];
+  dayAfter: readonly StoredSession[];
   onClose: () => void;
 }) {
   const [draft, setDraft] = useState<SessionDraft>(() =>
@@ -57,6 +65,16 @@ export function ActivitySheet({
   };
   const modes = MODES_BY_SPORT[draft.sport];
   const custom = !(DURATIONS as readonly string[]).includes(draft.durationMin);
+  // Live D53 warning while editing; saving is never blocked.
+  const parsed = sessionFromDraft(draft);
+  const backToBack = parsed.ok
+    ? backToBackWarnings({
+        session: { ...parsed.session, date, id: existing?.id ?? 'draft' },
+        dayBefore,
+        dayAfter,
+        profile,
+      })
+    : [];
 
   return (
     <Sheet
@@ -151,6 +169,19 @@ export function ActivitySheet({
             }}
           />
         )}
+        {draft.sport === 'run' && (
+          <Choice
+            label={t('runType.label')}
+            value={draft.runType}
+            options={runTypeSchema.options.map((v) => ({
+              value: v,
+              label: t(`runType.${v}`),
+            }))}
+            onChange={(v) => {
+              set('runType', v);
+            }}
+          />
+        )}
         {draft.mode === 'kj' && (
           <NumberField
             integer
@@ -221,6 +252,12 @@ export function ActivitySheet({
         <p className="text-sm text-slate-500 dark:text-slate-400">
           {t('activity.keyHint')}
         </p>
+
+        <div data-testid="back-to-back">
+          {backToBack.map((w) => (
+            <WarningText key={w.code} warning={w} />
+          ))}
+        </div>
 
         <KcalPreview draft={draft} profile={profile} />
 

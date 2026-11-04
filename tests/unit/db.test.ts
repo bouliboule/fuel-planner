@@ -16,6 +16,7 @@ import {
   replaceAllData,
   saveGoal,
   saveProfile,
+  updateProfile,
 } from '../../src/db/index.ts';
 import { testProfile } from '../engine/fixtures.ts';
 
@@ -166,6 +167,18 @@ describe('repositories', () => {
     expect((await getProfile(db))?.proteinGPerKg).toBe(2.0);
     await saveGoal(db, { kind: 'maintain', validFrom: '2026-12-01' });
     expect((await getProfile(db))?.proteinGPerKg).toBe(1.8);
+  });
+
+  it('merges concurrent profile patches without losing either', async () => {
+    await saveProfile(db, testProfile);
+    await Promise.all([
+      updateProfile(db, { skipBreakfast: true }),
+      updateProfile(db, { allowBackToBackHardRides: true }),
+    ]);
+    const p = await getProfile(db);
+    expect(p?.skipBreakfast).toBe(true);
+    expect(p?.allowBackToBackHardRides).toBe(true);
+    expect(p?.massKg).toBe(75);
   });
 
   it('saves first-run data together', async () => {

@@ -1,68 +1,144 @@
-import { Fuel, Plus, UserRound } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router';
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Flame,
+  Fuel,
+  House,
+  Plus,
+  Sofa,
+  UserRound,
+} from 'lucide-react';
+import { createElement, useState } from 'react';
+import { Link, useParams } from 'react-router';
 import { addDays, nowClockIn, todayIn } from '../../app/dates.ts';
 import type { Warning } from '../../engine/trace.ts';
 import { formatNumber, t } from '../../i18n/index.ts';
 import type { StoredProfile, StoredSession } from '../../model/index.ts';
 import { Choice } from '../../ui/Choice.tsx';
-import { SPORT_ICON, TOTAL_ICON } from '../../ui/icons.ts';
+import {
+  LOAD_ICON,
+  LOAD_TONE,
+  SPORT_ICON,
+  SPORT_TONE,
+  TOTAL_ICON,
+} from '../../ui/icons.ts';
 import { describeSession } from '../sessions/describe.ts';
 import { useProfile } from '../settings/useProfile.ts';
 import { ActivitySheet } from './ActivitySheet.tsx';
-import { defaultDay } from './dayText.ts';
+import { defaultDay, longDate } from './dayText.ts';
 import { MealCard } from './MealCard.tsx';
 import { NumberSheet, type DayNumber } from './NumberSheet.tsx';
 import { useDay, type DayData } from './useDay.ts';
 import { WarningText } from './WarningText.tsx';
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Home (today or tomorrow) at `/day`, any date at `/day/:date`. */
 export function DayScreen() {
   const profile = useProfile();
+  const { date } = useParams();
   if (profile.loading || !profile.value) return null;
-  return <Day profile={profile.value} />;
+  return (
+    <Day
+      key={date ?? 'home'}
+      profile={profile.value}
+      fixedDate={date && ISO_DATE.test(date) ? date : undefined}
+    />
+  );
 }
 
 type Editing = { session?: StoredSession } | undefined;
 
-function Day({ profile }: { profile: StoredProfile }) {
+const headerButton =
+  'inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-xl border border-slate-300 px-3 text-base font-medium dark:border-slate-700';
+
+function Day({
+  profile,
+  fixedDate,
+}: {
+  profile: StoredProfile;
+  fixedDate: string | undefined;
+}) {
   const [which, setWhich] = useState<'today' | 'tomorrow'>(() =>
     defaultDay(profile.usualMeals, nowClockIn(profile.timeZone)),
   );
   const today = todayIn(profile.timeZone);
-  const date = which === 'today' ? today : addDays(today, 1);
+  const date = fixedDate ?? (which === 'today' ? today : addDays(today, 1));
   const day = useDay(profile, date);
   const [editing, setEditing] = useState<Editing>();
   const [detail, setDetail] = useState<DayNumber | undefined>();
 
   return (
     <section className="py-4">
-      <header className="flex items-center justify-between gap-4">
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <span className="grid size-11 place-items-center rounded-xl bg-amber-600 text-white">
-            <Fuel aria-hidden="true" className="size-6" />
+      <header className="flex items-center justify-between gap-2">
+        <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight">
+          <span className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow">
+            <Fuel aria-hidden="true" className="size-6" strokeWidth={2.5} />
           </span>
           {t('app.name')}
         </h1>
-        <Link
-          to="/profile"
-          className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-slate-300 px-4 text-lg dark:border-slate-700"
-        >
-          <UserRound aria-hidden="true" className="size-5" />
-          {t('nav.profile')}
-        </Link>
+        <nav className="flex gap-2">
+          <Link
+            to="/calendar"
+            className={headerButton}
+            aria-label={t('nav.calendar')}
+          >
+            <CalendarDays aria-hidden="true" className="size-5" />
+          </Link>
+          <Link
+            to="/profile"
+            className={headerButton}
+            aria-label={t('nav.profile')}
+          >
+            <UserRound aria-hidden="true" className="size-5" />
+          </Link>
+        </nav>
       </header>
-      <Choice
-        label={t('day.which')}
-        value={which}
-        options={[
-          { value: 'today', label: t('day.today') },
-          { value: 'tomorrow', label: t('day.tomorrow') },
-        ]}
-        onChange={setWhich}
-      />
-      <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
-        {longDate(date)}
-      </p>
+
+      {fixedDate ? (
+        <>
+          <div className="mt-4 flex items-center justify-between gap-2">
+            <Link
+              to={`/day/${addDays(fixedDate, -1)}`}
+              className="grid size-12 place-items-center rounded-xl border border-slate-300 dark:border-slate-700"
+              aria-label={t('day.previous')}
+            >
+              <ChevronLeft aria-hidden="true" className="size-6" />
+            </Link>
+            <p className="text-center text-xl font-bold">{longDate(date)}</p>
+            <Link
+              to={`/day/${addDays(fixedDate, 1)}`}
+              className="grid size-12 place-items-center rounded-xl border border-slate-300 dark:border-slate-700"
+              aria-label={t('day.next')}
+            >
+              <ChevronRight aria-hidden="true" className="size-6" />
+            </Link>
+          </div>
+          <Link
+            to="/day"
+            className="mt-3 inline-flex min-h-11 items-center gap-2 text-amber-700 dark:text-amber-400"
+          >
+            <House aria-hidden="true" className="size-5" />
+            {t('nav.home')}
+          </Link>
+        </>
+      ) : (
+        <>
+          <Choice
+            label={t('day.which')}
+            value={which}
+            options={[
+              { value: 'today', label: t('day.today') },
+              { value: 'tomorrow', label: t('day.tomorrow') },
+            ]}
+            onChange={setWhich}
+          />
+          <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+            {longDate(date)}
+          </p>
+        </>
+      )}
 
       {!day.loading && (
         <DayBody
@@ -77,12 +153,14 @@ function Day({ profile }: { profile: StoredProfile }) {
         />
       )}
 
-      {editing && (
+      {editing && !day.loading && (
         <ActivitySheet
           key={editing.session?.id ?? 'new'}
           date={date}
           existing={editing.session}
           profile={profile}
+          dayBefore={day.value.dayBefore}
+          dayAfter={day.value.dayAfter}
           onClose={() => {
             setEditing(undefined);
           }}
@@ -104,6 +182,9 @@ function Day({ profile }: { profile: StoredProfile }) {
 
 const g = (v: number) => formatNumber(v, 0);
 
+const sectionTitle =
+  'mt-8 text-sm font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400';
+
 function DayBody({
   data,
   onAdd,
@@ -118,10 +199,12 @@ function DayBody({
   const { plan, sessions } = data;
   const bySlot = (id: string) =>
     plan.warnings.filter((w) => w.values?.slotId === id);
-  const bySession = (id: string) =>
-    plan.warnings.filter(
+  const bySession = (id: string) => [
+    ...plan.warnings.filter(
       (w) => w.values?.sessionId === id && w.values.slotId === undefined,
-    );
+    ),
+    ...(data.backToBack.get(id) ?? []),
+  ];
   const dayWarnings = plan.warnings.filter(
     (w: Warning) =>
       w.values?.slotId === undefined && w.values?.sessionId === undefined,
@@ -134,11 +217,14 @@ function DayBody({
 
   return (
     <>
-      <h2 className="mt-6 text-lg font-semibold text-slate-500 dark:text-slate-400">
-        {t('day.activities')}
-      </h2>
+      <h2 className={sectionTitle}>{t('day.activities')}</h2>
       {sessions.length === 0 ? (
-        <p className="mt-2 text-xl">{t('day.rest')}</p>
+        <p className="mt-2 flex items-center gap-3 text-xl font-semibold">
+          <span className="grid size-12 place-items-center rounded-2xl bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+            <Sofa aria-hidden="true" className="size-7" />
+          </span>
+          {t('day.rest')}
+        </p>
       ) : (
         <ul className="mt-2 space-y-2">
           {sessions.map((s) => (
@@ -151,18 +237,32 @@ function DayBody({
                 aria-label={t('day.editActivity', {
                   name: describeSession(s),
                 })}
-                className="w-full rounded-2xl border border-slate-200 p-4 text-left dark:border-slate-800"
+                className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-slate-800 dark:bg-slate-900"
               >
                 <span className="flex items-start gap-3">
-                  <SportIcon sport={s.sport} />
-                  <span>
+                  <span
+                    className={`grid size-12 shrink-0 place-items-center rounded-2xl ${SPORT_TONE[s.sport]}`}
+                  >
+                    {createElement(SPORT_ICON[s.sport], {
+                      'aria-hidden': true,
+                      className: 'size-7',
+                      strokeWidth: 2.25,
+                    })}
+                  </span>
+                  <span className="flex-1">
                     <span className="block text-xl font-semibold">
                       {describeSession(s)}
                     </span>
-                    <span className="block text-base text-slate-600 dark:text-slate-300">
+                    <span className="mt-1 flex flex-wrap items-center gap-2 text-base text-slate-600 dark:text-slate-300">
                       {t('day.activityKcal', {
                         kcal: g(kcalBySession.get(s.id) ?? 0),
                       })}
+                      {data.hard.has(s.id) && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2 py-0.5 text-sm font-bold text-white uppercase">
+                          <Flame aria-hidden="true" className="size-4" />
+                          {t('day.hard')}
+                        </span>
+                      )}
                     </span>
                   </span>
                 </span>
@@ -177,31 +277,45 @@ function DayBody({
       <button
         type="button"
         onClick={onAdd}
-        className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-amber-600 text-xl font-semibold text-white"
+        className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-xl font-bold text-white shadow"
       >
-        <Plus aria-hidden="true" className="size-6" />
+        <Plus aria-hidden="true" className="size-6" strokeWidth={2.75} />
         {t('day.addActivity')}
       </button>
 
-      <h2 className="mt-8 text-lg font-semibold text-slate-500 dark:text-slate-400">
-        {t('day.totals')}
-      </h2>
+      <h2 className={sectionTitle}>{t('day.totals')}</h2>
+      <div
+        className={`mt-2 flex items-center gap-3 rounded-2xl p-4 ${LOAD_TONE[plan.load]}`}
+        data-testid="day-load"
+      >
+        {createElement(LOAD_ICON[plan.load], {
+          'aria-hidden': true,
+          className: 'size-9 shrink-0',
+          strokeWidth: 2.25,
+        })}
+        <div>
+          <p className="text-xl font-black uppercase">
+            {t(`day.load.${plan.load}`)}
+          </p>
+          <p className="text-base">{t(`day.loadHint.${plan.load}`)}</p>
+        </div>
+      </div>
       {plan.carbLoading && (
-        <p className="mt-1 font-medium">{t('day.carbLoading')}</p>
+        <p className="mt-2 font-semibold">{t('day.carbLoading')}</p>
       )}
       <button
         type="button"
         onClick={() => {
           onDetail('kcal');
         }}
-        className="mt-1 block text-left"
+        className="mt-3 block text-left"
         data-testid="day-kcal"
       >
         <TOTAL_ICON.kcal
           aria-hidden="true"
           className="mr-2 inline size-9 align-[-0.15em] text-orange-500"
         />
-        <span className="text-5xl font-bold tabular-nums">
+        <span className="text-5xl font-black tabular-nums">
           {g(plan.macros.kcal)}
         </span>{' '}
         <span className="text-2xl">{t('day.kcal')}</span>
@@ -209,11 +323,11 @@ function DayBody({
       <div className="mt-3 grid grid-cols-3 gap-2">
         {(
           [
-            ['carb', plan.macros.carbG],
-            ['protein', plan.macros.proteinG],
-            ['fat', plan.macros.fatG],
+            ['carb', plan.macros.carbG, 'text-amber-600'],
+            ['protein', plan.macros.proteinG, 'text-rose-600'],
+            ['fat', plan.macros.fatG, 'text-sky-600'],
           ] as const
-        ).map(([key, grams]) => (
+        ).map(([key, grams, tone]) => (
           <button
             key={key}
             type="button"
@@ -223,11 +337,14 @@ function DayBody({
             className="rounded-2xl bg-slate-100 p-3 text-left dark:bg-slate-900"
             data-testid={`day-${key}`}
           >
-            <span className="flex items-center gap-1 text-base">
-              <MacroIcon which={key} />
+            <span className="flex items-center gap-1 text-base font-medium">
+              {createElement(TOTAL_ICON[key], {
+                'aria-hidden': true,
+                className: `size-5 ${tone}`,
+              })}
               {t(`day.${key}`)}
             </span>
-            <span className="block text-2xl font-semibold tabular-nums">
+            <span className="block text-2xl font-bold tabular-nums">
               {t('day.grams', { grams: g(grams) })}
             </span>
           </button>
@@ -237,9 +354,7 @@ function DayBody({
         <WarningText key={i} warning={w} />
       ))}
 
-      <h2 className="mt-8 text-lg font-semibold text-slate-500 dark:text-slate-400">
-        {t('day.meals')}
-      </h2>
+      <h2 className={sectionTitle}>{t('day.meals')}</h2>
       <ul className="mt-2 space-y-3">
         {plan.slots.map((slot) => (
           <MealCard
@@ -252,29 +367,4 @@ function DayBody({
       </ul>
     </>
   );
-}
-
-function SportIcon({ sport }: { sport: StoredSession['sport'] }) {
-  const Icon = SPORT_ICON[sport];
-  return (
-    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
-      <Icon aria-hidden="true" className="size-6" />
-    </span>
-  );
-}
-
-function MacroIcon({ which }: { which: 'carb' | 'protein' | 'fat' }) {
-  const Icon = TOTAL_ICON[which];
-  return <Icon aria-hidden="true" className="size-4 text-slate-500" />;
-}
-
-/** "Thursday 5 November", in the UI language. */
-function longDate(date: string): string {
-  const [y, m, d] = date.split('-').map(Number);
-  return new Intl.DateTimeFormat('en-GB', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'UTC',
-  }).format(new Date(Date.UTC(y ?? 0, (m ?? 1) - 1, d ?? 1)));
 }

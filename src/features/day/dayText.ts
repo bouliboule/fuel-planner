@@ -52,3 +52,14 @@ export function showLowFibre(slot: PlanSlot): boolean {
     slot.guidance !== 'pre'
   );
 }
+
+/** "Thursday 5 November" for a YYYY-MM-DD date, in the UI language. */
+export function longDate(date: string): string {
+  const [y, m, d] = date.split('-').map(Number);
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y ?? 0, (m ?? 1) - 1, d ?? 1)));
+}

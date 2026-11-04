@@ -15,11 +15,12 @@ src/
     timing.ts      T1 to T6
     slots.ts       slot construction and macro split (section 4)
     guidance.ts    meal guidance key per slot (G1)
+    backToBack.ts  hard ride and run, back-to-back warning (D52, D53)
     plan.ts        planDay(inputs)
     trace.ts
   model/           Zod schemas and inferred types
   db/              Dexie database, migrations, repositories
-  features/        one folder per screen: onboarding, day, profile
+  features/        one folder per screen: onboarding, day, calendar, settings
   ui/              shared components
   i18n/            every UI string, including guidance and example text
   pwa/             service worker registration, update prompt

@@ -15,6 +15,8 @@ export function describeSession(s: Omit<Session, 'date'>): string {
   if (i.kind === 'effort') parts.push(t(`effort.${i.value}`));
   if (i.kind === 'met') parts.push(`MET ${String(i.value)}`);
   if (i.kind === 'pace') parts.push(`${formatPace(i.secPerKm)} /km`);
+  if (s.sport === 'run' && s.runType && s.runType !== 'easy')
+    parts.push(t(`runType.${s.runType}`));
   if (i.kind === 'if') parts.push(`IF ${String(i.value)}`);
   return parts.join(' · ');
 }

@@ -27,6 +27,14 @@ planned for that day (or none, for a rest day). The app shows:
 Each target is a single number. Tapping it shows the range it comes from and
 how it was computed.
 
+Activities stay stored by date, so they are also the training record: the
+user adds or edits them as the day goes. A calendar shows a month at a time
+with each day's activities, and any day opens on its own Day screen.
+
+When the user adds a hard ride the day before or after another hard ride
+(or a hard run next to another hard run), the app warns, unless the profile
+allows back-to-back hard rides or runs.
+
 ## Inputs
 
 - Profile, set once: sex, birth year, height, body mass, optional body-fat %,
@@ -42,7 +50,8 @@ how it was computed.
 
 - No food database, portions, shopping list or food logging. The user's food
   tracking app covers these.
-- No week planning or week templates. The app plans one day at a time.
+- No week planning or week templates. The app plans one day at a time; the
+  calendar is for looking back and jumping to a day.
 - No social, sharing or coaching features.
 - No medical use. The app does not handle diabetes, allergies as a safety
   feature, or eating disorders. It shows a fixed notice that it is not medical

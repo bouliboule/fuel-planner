@@ -29,6 +29,8 @@ type Profile = {
   onBikeCarbTargetGPerH?: number;
   eatingWindow?: { start: string; end: string };  // DOMAIN T6
   skipBreakfast?: boolean;     // DOMAIN S4, D49; absent means off
+  allowBackToBackHardRides?: boolean;  // D53; absent means warn
+  allowBackToBackHardRuns?: boolean;   // D53; absent means warn
 };
 ```
 
@@ -72,6 +74,7 @@ type Session = {
     | { kind: 'pace'; secPerKm: number };   // runs: expected pace
   distanceKm?: number;         // measured distance, replaces the pace estimate
   key: boolean;                // key session: no deficit that day (E6)
+  runType?: 'easy' | 'intervals' | 'hard-long';  // runs only, D52
   title?: string;
 };
 ```

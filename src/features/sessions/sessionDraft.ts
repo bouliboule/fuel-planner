@@ -4,6 +4,7 @@ import {
   sessionSchema,
   zoneSchema,
   type Effort,
+  type RunType,
   type Session,
   type Sport,
   type Zone,
@@ -40,6 +41,7 @@ export interface SessionDraft {
   pace: string;
   distanceKm: string;
   effort: Effort;
+  runType: RunType;
   met: string;
   compendiumCode: string;
 }
@@ -62,6 +64,7 @@ export function emptySessionDraft(sport: Sport = 'ride'): SessionDraft {
     pace: '',
     distanceKm: '',
     effort: 'moderate',
+    runType: 'easy',
     met: '',
     compendiumCode: '',
   };
@@ -94,6 +97,7 @@ export function draftFromSession(s: SessionFields): SessionDraft {
     start: s.start,
     durationMin: String(s.durationMin),
     key: s.key,
+    runType: s.runType ?? 'easy',
   };
   const i = s.intensity;
   switch (i.kind) {
@@ -212,6 +216,7 @@ export function sessionFromDraft(
     key: draft.key,
     intensity,
     ...(distanceKm === undefined ? {} : { distanceKm }),
+    ...(draft.sport === 'run' ? { runType: draft.runType } : {}),
     ...(title ? { title } : {}),
   };
   // Same rules as storage, without the date.

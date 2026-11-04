@@ -17,6 +17,9 @@ export type Zone = z.infer<typeof zoneSchema>;
 export const effortSchema = z.enum(['easy', 'moderate', 'hard']);
 export type Effort = z.infer<typeof effortSchema>;
 
+export const runTypeSchema = z.enum(['easy', 'intervals', 'hard-long']);
+export type RunType = z.infer<typeof runTypeSchema>;
+
 export const intensitySchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('zone'), zone: zoneSchema }),
   z.object({ kind: z.literal('if'), value: z.number().positive() }),
@@ -43,6 +46,9 @@ export const sessionSchema = z.object({
   // Measured distance; replaces the pace estimate for runs.
   distanceKm: z.number().positive().optional(),
   key: z.boolean(),
+  // Runs only: easy, intervals or hard long, for the back-to-back check
+  // (D52). Absent means easy.
+  runType: runTypeSchema.optional(),
   title: z.string().optional(),
 });
 

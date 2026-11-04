@@ -58,6 +58,18 @@ describe('session draft', () => {
       kind: 'pace',
       secPerKm: 300,
     });
+    expect(r.ok && r.session.runType).toBe('easy');
+  });
+
+  it('keeps the run type for runs only (D52)', () => {
+    const r = sessionFromDraft(
+      base({ sport: 'run', pace: '4:30', runType: 'intervals' }),
+    );
+    expect(r.ok && r.session.runType).toBe('intervals');
+    const ride = sessionFromDraft(
+      base({ sport: 'ride', runType: 'intervals' }),
+    );
+    expect(ride.ok && 'runType' in ride.session).toBe(false);
   });
 
   it('builds a run from distance with the implied pace', () => {

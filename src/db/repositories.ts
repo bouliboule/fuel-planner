@@ -49,6 +49,27 @@ export async function saveProfile(
   });
 }
 
+/**
+ * Merges `patch` into the stored profile inside one transaction, so two
+ * quick toggles never overwrite each other with a stale copy.
+ */
+export async function updateProfile(
+  db: FuelDatabase,
+  patch: Partial<Profile>,
+): Promise<StoredProfile | undefined> {
+  return db.transaction('rw', db.profile, async () => {
+    const existing = await getProfile(db);
+    if (!existing) return undefined;
+    const { id: _id, createdAt: _c, updatedAt: _u, ...current } = existing;
+    const record = withMeta(
+      profileSchema.parse({ ...current, ...patch }),
+      existing,
+    );
+    await db.profile.put(record);
+    return record;
+  });
+}
+
 /** The goal in force on `date`: the latest `validFrom` on or before it. */
 export async function currentGoal(
   db: FuelDatabase,

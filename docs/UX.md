@@ -4,15 +4,28 @@ Mobile first (iPhone width), usable on desktop. One screen does the job.
 Large text and tap targets (at least 48 px high), one column, no tables, dark
 mode following the system.
 
-Icons (lucide-react, D51) mark each sport on activity cards and sport
-buttons, and each meal kind on meal cards (sunrise for breakfast, bottle for
-during, and so on). The header carries the app icon and name. Icons are
-decorative; text labels stay.
+Icons (lucide-react, D51) are used everywhere a thing has a kind, each on a
+coloured tile: one colour per sport (ride amber, run rose, strength violet,
+Pilates teal, walk green, other slate) and per meal role (pre-workout amber,
+during sky, post-workout emerald, other meals slate). Hard activities carry
+a flame badge. A day load banner (rest, light, moderate, high, very high)
+with its own icon and colour heads the totals. Guidance, example and
+during-session lines each start with an icon. Icons are decorative; text
+labels stay.
 
 ## Navigation
 
-No tab bar. The Day screen is the home screen. A profile button in its header
-opens Profile; Profile has a back button.
+No tab bar. The Day screen is the home screen. Its header has a Calendar
+button and a Profile button; both screens have a back button. A day opened
+from the calendar has the URL `/day/YYYY-MM-DD`, shows its date with previous
+and next day arrows, and a Today button back to the home screen.
+
+## Calendar
+
+A month grid, Monday to Sunday, with previous and next month buttons. Each
+day shows its activities as sport icons, a hard activity (D52) with a flame
+mark, and today outlined. Tapping a day opens it. Below the grid, the
+month's count of activities by sport.
 
 ## Day
 
@@ -62,14 +75,18 @@ A bottom sheet, one decision per row:
   - Run: expected pace (min/km). "Distance" under "More".
   - Strength, Pilates: Easy, Moderate, Hard (D44).
   - Walk, Other: MET value, with the hint that it comes from the compendium.
+- Run type for runs: Easy, Intervals, Hard long (D52).
 - Key session toggle, with a one-line explanation.
+- A back-to-back warning when the activity is a hard ride or hard run and
+  the day before or after has one too, unless the profile allows it (D53).
+  The warning also shows on the activity card. Saving is never blocked.
 - A live line with the activity's kcal estimate.
 
 ## Profile
 
 Profile, goal, body mass entries with a small trend chart, coefficients each
 showing the allowed range, on-bike carbohydrate rate, eating window, the
-skip-breakfast preference (D49),
+skip-breakfast preference (D49), the two back-to-back preferences (D53),
 export/import, storage persistence status, app version and update check,
 install steps on iPhone, the not-medical-advice notice.
 
