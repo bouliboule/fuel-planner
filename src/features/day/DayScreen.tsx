@@ -3,11 +3,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Flame,
-  Fuel,
   House,
   Plus,
   Sofa,
   UserRound,
+  UtensilsCrossed,
 } from 'lucide-react';
 import { createElement, useState } from 'react';
 import { Link, useParams } from 'react-router';
@@ -74,7 +74,11 @@ function Day({
       <header className="flex items-center justify-between gap-2">
         <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight">
           <span className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow">
-            <Fuel aria-hidden="true" className="size-6" strokeWidth={2.5} />
+            <UtensilsCrossed
+              aria-hidden="true"
+              className="size-6"
+              strokeWidth={2.5}
+            />
           </span>
           {t('app.name')}
         </h1>
