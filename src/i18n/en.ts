@@ -406,6 +406,29 @@ export const en = {
   'settings.credits': 'Food data',
   'settings.creditsBody':
     'CIQUAL 2025 food composition table, Anses, Licence Ouverte Etalab 2.0. Open Food Facts data, Open Database Licence (ODbL).',
+
+  'log.eaten': 'Eaten',
+  'log.tick': 'Eaten: {name}',
+  'log.grams': 'Grams eaten of {name}',
+  'log.notPlanned': 'logged, not planned',
+  'log.remove': 'Remove {name} from the log',
+  'log.slotEaten': 'Eaten {kcal} kcal · C {carb} g · P {protein} g · F {fat} g',
+  'log.compare': 'Target and eaten',
+  'log.target': 'Target',
+  'log.difference': 'Difference',
+  'log.kcal': 'kcal',
+  'log.carb': 'C g',
+  'log.protein': 'P g',
+  'log.fat': 'F g',
+  'log.add': 'Add eaten food',
+  'log.food': 'Food',
+  'log.gramsField': 'Grams',
+  'log.time': 'Time',
+  'log.slot': 'Slot',
+  'log.noSlot': 'Not part of a slot',
+  'log.added': 'Added to the log.',
+  'log.unattached': 'Other eaten foods',
+  'log.missingFood': 'Some logged foods were deleted and are not counted.',
 } as const;
 
 export type MessageKey = keyof typeof en;

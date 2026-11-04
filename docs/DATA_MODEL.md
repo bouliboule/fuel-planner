@@ -166,7 +166,14 @@ produces a displayed value appends a `TraceStep`.
 ## LogEntry (optional, milestone M6)
 
 ```ts
-type LogEntry = { date: string; time: string; slotKind?: SlotKind; foodId: string; grams: number };
+type LogEntry = {
+  date: string;
+  time: string;
+  slotKind?: SlotKind;
+  slotId?: string;             // plan slot, e.g. 'meal-1'; absent for unattached items (D38)
+  foodId: string;
+  grams: number;
+};
 ```
 
 ## Export format

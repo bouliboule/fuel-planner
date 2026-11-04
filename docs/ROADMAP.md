@@ -65,8 +65,8 @@ recent phone; every slot either meets tolerance or shows its gap.
 
 ## M6. Logging (optional)
 
-- [ ] Tick foods as eaten, edit grams, add unplanned items.
-- [ ] Planned vs actual per day.
+- [x] Tick foods as eaten, edit grams, add unplanned items.
+- [x] Planned vs actual per day.
 
 ## Later
 

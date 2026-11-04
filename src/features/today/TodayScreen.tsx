@@ -10,6 +10,8 @@ import { Screen } from '../../ui/Screen.tsx';
 import { describeSession } from '../sessions/describe.ts';
 import { energyMethodText } from '../sessions/energyText.ts';
 import { useProfile } from '../settings/useProfile.ts';
+import { intakeTotals } from '../../engine/intake.ts';
+import { AddEatenFood, IntakeComparison, LoggedLine } from './LogControls.tsx';
 import { SlotCard } from './SlotCard.tsx';
 import { useDayPlan, type DayData } from './useDayPlan.ts';
 import { WarningText } from './WarningText.tsx';
@@ -73,7 +75,12 @@ function Day({
   profile: StoredProfile;
   date: string;
 }) {
-  const { plan, sessions, foods, choices } = data;
+  const { plan, sessions, foods, choices, log } = data;
+  const slotIds = new Set(plan.slots.map((s) => s.id));
+  const unattached = log.filter(
+    (e) => e.slotId === undefined || !slotIds.has(e.slotId),
+  );
+  const eaten = intakeTotals(log, foods);
   const mass = profile.massKg;
   const slotWarnings = (slotId: string) =>
     plan.warnings.filter(
@@ -160,6 +167,14 @@ function Day({
         {dayWarnings.map((w, i) => (
           <WarningText key={i} warning={w} />
         ))}
+        {log.length > 0 && (
+          <IntakeComparison target={plan.macros} eaten={eaten.totals} />
+        )}
+        {eaten.missingFoodIds.length > 0 && (
+          <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+            {t('log.missingFood')}
+          </p>
+        )}
       </section>
 
       {foods.length === 0 && (
@@ -190,10 +205,32 @@ function Day({
               choice={choices[item.slot.id]}
               warnings={slotWarnings(item.slot.id)}
               trace={plan.trace}
+              log={log.filter((e) => e.slotId === item.slot.id)}
             />
           ),
         )}
       </div>
+
+      {unattached.length > 0 && (
+        <section className="mt-6">
+          <h2 className="text-lg font-semibold">{t('log.unattached')}</h2>
+          <ul>
+            {unattached.map((e) => (
+              <LoggedLine
+                key={e.id}
+                entry={e}
+                food={foods.find((f) => f.id === e.foodId)}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+      <AddEatenFood
+        date={date}
+        timeZone={profile.timeZone}
+        foods={foods}
+        slots={plan.slots}
+      />
     </>
   );
 }

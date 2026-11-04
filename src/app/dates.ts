@@ -12,3 +12,13 @@ export function todayIn(timeZone: string, now: Date = new Date()): string {
 export function timeZones(): string[] {
   return Intl.supportedValuesOf('timeZone');
 }
+
+/** Current local time (HH:mm) in an IANA time zone. */
+export function nowClockIn(timeZone: string, now: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(now);
+}

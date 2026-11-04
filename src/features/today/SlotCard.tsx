@@ -1,11 +1,17 @@
 import { useState } from 'react';
+import { intakeTotals } from '../../engine/intake.ts';
 import { candidateFoods } from '../../engine/portions.ts';
 import type { Slot } from '../../engine/slots.ts';
 import type { TraceStep, Warning } from '../../engine/trace.ts';
 import { db, setFoodChoice } from '../../db/index.ts';
 import { formatNumber, t } from '../../i18n/index.ts';
-import type { StoredFood, StoredProfile } from '../../model/index.ts';
+import type {
+  StoredFood,
+  StoredLogEntry,
+  StoredProfile,
+} from '../../model/index.ts';
 import { Button } from '../../ui/form.tsx';
+import { LoggedGrams, LoggedLine, TickPick } from './LogControls.tsx';
 import { WarningText } from './WarningText.tsx';
 import { Why } from './Why.tsx';
 
@@ -28,6 +34,7 @@ export function SlotCard({
   choice,
   warnings,
   trace,
+  log,
 }: {
   slot: Slot;
   date: string;
@@ -36,6 +43,7 @@ export function SlotCard({
   choice: string[] | undefined;
   warnings: Warning[];
   trace: TraceStep[];
+  log: StoredLogEntry[];
 }) {
   const [swapping, setSwapping] = useState<string | undefined>();
   const byId = new Map(foods.map((f) => [f.id, f]));
@@ -157,17 +165,38 @@ export function SlotCard({
           ).filter((f) => !picks.some((x) => x.foodId === f.id));
           return (
             <li key={p.foodId}>
-              <button
-                type="button"
-                className="flex min-h-11 w-full items-center justify-between text-left"
-                aria-expanded={swapping === p.foodId}
-                onClick={() => {
-                  setSwapping(swapping === p.foodId ? undefined : p.foodId);
-                }}
-              >
-                <span>{food?.name ?? p.foodId}</span>
-                <span className="font-medium">{amount(food, p.grams)}</span>
-              </button>
+              <div className="flex min-h-11 items-center gap-2">
+                <TickPick
+                  key={log.find((e) => e.foodId === p.foodId)?.id ?? 'none'}
+                  slot={slot}
+                  date={date}
+                  foodId={p.foodId}
+                  grams={p.grams}
+                  name={food?.name ?? p.foodId}
+                  entry={log.find((e) => e.foodId === p.foodId)}
+                />
+                <button
+                  type="button"
+                  className="flex min-h-11 flex-1 items-center justify-between text-left"
+                  aria-expanded={swapping === p.foodId}
+                  onClick={() => {
+                    setSwapping(swapping === p.foodId ? undefined : p.foodId);
+                  }}
+                >
+                  <span>{food?.name ?? p.foodId}</span>
+                  <span className="font-medium">{amount(food, p.grams)}</span>
+                </button>
+                {(() => {
+                  const entry = log.find((e) => e.foodId === p.foodId);
+                  return entry ? (
+                    <LoggedGrams
+                      key={entry.id}
+                      entry={entry}
+                      name={food?.name ?? p.foodId}
+                    />
+                  ) : null;
+                })()}
+              </div>
               {swapping === p.foodId && (
                 <div className="mb-2 rounded-lg bg-slate-100 p-2 dark:bg-slate-900">
                   <p className="text-sm">
@@ -196,6 +225,28 @@ export function SlotCard({
           );
         })}
       </ul>
+      {log.some((e) => !picks.some((p) => p.foodId === e.foodId)) && (
+        <ul>
+          {log
+            .filter((e) => !picks.some((p) => p.foodId === e.foodId))
+            .map((e) => (
+              <LoggedLine key={e.id} entry={e} food={byId.get(e.foodId)} />
+            ))}
+        </ul>
+      )}
+      {log.length > 0 && (
+        <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-400">
+          {(() => {
+            const eaten = intakeTotals(log, foods).totals;
+            return t('log.slotEaten', {
+              kcal: g(eaten.kcal),
+              carb: g(eaten.carbG),
+              protein: g(eaten.proteinG),
+              fat: g(eaten.fatG),
+            });
+          })()}
+        </p>
+      )}
       {choice && (
         <Button
           variant="secondary"

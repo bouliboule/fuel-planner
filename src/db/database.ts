@@ -1,11 +1,11 @@
 import { Dexie, type EntityTable } from 'dexie';
 import type {
-  LogEntry,
   PlanCache,
   RecordMeta,
   StoredBodyMassEntry,
   StoredFood,
   StoredGoal,
+  StoredLogEntry,
   StoredMealTemplate,
   StoredProfile,
   StoredSession,
@@ -40,7 +40,7 @@ export class FuelDatabase extends Dexie {
   foods!: EntityTable<StoredFood, 'id'>;
   mealTemplates!: EntityTable<StoredMealTemplate, 'id'>;
   plans!: EntityTable<PlanCache & RecordMeta, 'id'>;
-  logEntries!: EntityTable<LogEntry & RecordMeta, 'id'>;
+  logEntries!: EntityTable<StoredLogEntry, 'id'>;
 
   constructor(name = 'fuel-planner') {
     super(name);

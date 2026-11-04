@@ -106,6 +106,14 @@
       `purchaseUnit` on foods, rounding up to whole units.
 - D37. The homemade ride drink is one manual food in M5 (ARCHITECTURE);
       a proportional template stays open as Q4.
+- D38. Logging: ticking a planned food logs its planned grams at the
+      slot's time with the slot id (new optional `slotId` on LogEntry, no
+      schema version change); the grams are editable and unticking deletes
+      the entry. Logged foods stay when the plan changes and show as
+      "logged, not planned". Unplanned items need a food from the list, with
+      grams, a time and an optional slot. Today shows target, eaten and
+      difference (eaten - target) for kcal, C, P and F, and each slot shows
+      what was eaten. Entries of deleted foods are not counted and flagged.
 
 ## Open questions (defaults in brackets)
 

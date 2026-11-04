@@ -69,8 +69,11 @@ export const logEntrySchema = z.object({
   date: isoDate,
   time: clockTime,
   slotKind: slotKindSchema.optional(),
+  // The plan slot the entry belongs to, e.g. 'meal-1' (D38).
+  slotId: z.string().min(1).optional(),
   foodId: z.string().min(1),
   grams: z.number().positive(),
 });
 export type LogEntry = z.infer<typeof logEntrySchema>;
 export const storedLogEntrySchema = stored(logEntrySchema);
+export type StoredLogEntry = z.infer<typeof storedLogEntrySchema>;

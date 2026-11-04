@@ -22,7 +22,9 @@ Bottom tab bar: Today, Week, Foods, Settings.
 - Warnings inline on the card they concern (low EA, eating-window conflict,
   slot target not reachable with current foods).
 - "Why" button on any number opens the trace: rule ID, formula, inputs.
-- Optional: tick picked foods as eaten (M6).
+- Logging (M6): tick a picked food as eaten (logs its planned grams), edit
+  the grams eaten, add an eaten food that was not planned. The header shows
+  target, eaten and difference for kcal, C, P and F once anything is logged.
 
 ## Week
 
