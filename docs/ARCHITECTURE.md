@@ -49,13 +49,15 @@ result keyed by `date` and `inputsHash`. The engine never reads storage.
 
 ## Food data
 
-- CIQUAL (ANSES French food composition table): bundle a curated subset as a
-  static JSON at build time (raw foods, common staples), with a script in
-  `scripts/` that converts the official download. Check the licence terms of
-  the current release before bundling and record them in DECISIONS.md.
-- Open Food Facts: search and barcode lookup on user action, over HTTPS, with
-  a user-agent string identifying the app as their API asks. Results are
-  copied into the local Food table; the app never depends on OFF at plan time.
+- CIQUAL 2025 (ANSES, Licence Ouverte Etalab 2.0, D31): `scripts/ciqual-convert.mjs`
+  converts the official XML download (kept in the git-ignored `data-src/`)
+  into `src/data/ciqual.json`, committed. All groups except mixed dishes and
+  baby food; foods missing energy, carbohydrate, protein or fat are left out.
+- Open Food Facts (ODbL): search on user action, over HTTPS. Browsers cannot
+  set the User-Agent header their API asks for, so requests carry the
+  browser's own; searches run only on submit, under their 10 per minute
+  limit (D35). Results are copied into the local Food table; the app never
+  depends on OFF at plan time.
 - Manual foods: always possible, and the default for homemade drink mixes.
 
 Barcode scanning (later milestone): `BarcodeDetector` where available,

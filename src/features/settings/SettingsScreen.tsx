@@ -34,6 +34,9 @@ export function SettingsScreen() {
 
       <MedicalNotice />
 
+      <h2 className="mt-6 text-lg font-semibold">{t('settings.credits')}</h2>
+      <p className="mt-1 text-sm">{t('settings.creditsBody')}</p>
+
       <h2 className="mt-6 text-lg font-semibold">{t('settings.about')}</h2>
       <p className="mt-1 text-sm">
         {t('settings.version', { version: __APP_VERSION__ })}

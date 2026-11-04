@@ -92,9 +92,12 @@ type Food = {
   };
   unit?: { name: string; grams: number };     // '1 scoop' = 30 g
   portion: { minG: number; maxG: number; stepG: number; defaultG: number };
-  tags: string[];   // 'breakfast', 'pre', 'on-bike', 'recovery', 'meal', 'snack'
+  tags: string[];   // 'breakfast', 'lunch', 'dinner', 'meal', 'pre', 'on-bike', 'recovery', 'snack', 'bedtime'
   source: 'manual' | 'ciqual' | 'off';
   sourceRef?: string;          // CIQUAL code or barcode
+  belowDetection?: string[];   // CIQUAL fields reported as traces or '< x', stored as 0
+  shopSection?: string;        // shopping list group, e.g. 'dairy'
+  purchaseUnit?: { name: string; grams: number };  // shopping list rounding
 };
 ```
 
@@ -109,6 +112,10 @@ type MealTemplate = {
 ```
 
 ## Plan (computed, cached)
+
+The `plans` table stores, per date, the user's food choices from swaps:
+`{ date, inputsHash, plan, foodChoices?: Record<slotId, foodId[]> }`. The
+plan itself is recomputed when shown (D34).
 
 ```ts
 type SlotKind = 'meal' | 'pre' | 'pre-snack' | 'during' | 'recovery' | 'snack' | 'bedtime';

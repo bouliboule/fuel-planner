@@ -1,6 +1,7 @@
 import { sessionEnergy } from '../../engine/energy.ts';
 import { formatNumber, t, type MessageKey } from '../../i18n/index.ts';
 import type { Profile } from '../../model/index.ts';
+import { energyMethodText } from './energyText.ts';
 import { sessionFromDraft, type SessionDraft } from './sessionDraft.ts';
 
 /** Live E3/E4 estimate for the session being edited. */
@@ -27,19 +28,7 @@ export function KcalPreview({
       },
       profile,
     );
-    const last = energy.trace.at(-1);
-    const work = energy.trace.find((s) => s.label === 'Mechanical work (kJ)');
-    let method = '';
-    if (energy.method === 'power' && work) {
-      method = t('preview.power', { kj: formatNumber(work.output, 0) });
-    } else if (energy.method === 'met' && last) {
-      const code = energy.compendiumCode ? `, ${energy.compendiumCode}` : '';
-      method = t('preview.met', { met: String(last.inputs.met), code });
-    } else if (energy.method === 'distance' && last) {
-      method = t('preview.distance', {
-        km: formatNumber(Number(last.inputs.km), 2),
-      });
-    }
+    const method = energyMethodText(energy);
     body = (
       <>
         <p className="text-2xl font-semibold" data-testid="kcal-preview">

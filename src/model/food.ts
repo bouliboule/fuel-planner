@@ -29,9 +29,16 @@ export const foodSchema = z.object({
   tags: z.array(z.string()),
   source: z.enum(['manual', 'ciqual', 'off']),
   sourceRef: z.string().optional(),
+  // CIQUAL fields reported as traces or '< x', stored as 0 (D31).
+  belowDetection: z.array(z.string()).optional(),
+  shopSection: z.string().min(1).optional(),
+  purchaseUnit: z
+    .object({ name: z.string().min(1), grams: z.number().positive() })
+    .optional(),
 });
 export type Food = z.infer<typeof foodSchema>;
 export const storedFoodSchema = stored(foodSchema);
+export type StoredFood = z.infer<typeof storedFoodSchema>;
 
 export const slotKindSchema = z.enum([
   'meal',
@@ -56,6 +63,7 @@ export const mealTemplateSchema = z.object({
 });
 export type MealTemplate = z.infer<typeof mealTemplateSchema>;
 export const storedMealTemplateSchema = stored(mealTemplateSchema);
+export type StoredMealTemplate = z.infer<typeof storedMealTemplateSchema>;
 
 export const logEntrySchema = z.object({
   date: isoDate,

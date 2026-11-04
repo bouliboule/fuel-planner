@@ -85,18 +85,39 @@
       shows each day's energy target (kcal, whole number) and carbohydrate
       (g/kg, one decimal). Dates before the first goal use the earliest
       goal. Overlapping sessions are allowed.
+- D31. CIQUAL 2025 (released 2025-11-19, Etalab 2.0, credited in Settings)
+      is the bundled table. Energy uses the EU 1169/2011 kcal column and
+      protein the N x Jones factor column. "traces" and "< x" are stored as
+      0 and listed in `belowDetection`; a missing required macro leaves the
+      food out; missing optional values stay empty. Resolves Q7.
+- D32. Portion objective in kcal units relative to the slot kcal, weight 1
+      per term; zero-target tolerance as 10 % of slot kcal (DOMAIN S5).
+- D33. Slot candidate tags, meal template priority and the 1 to 4 food
+      search from at most 12 candidates (DOMAIN S5). Imported foods open in
+      the editor with portion 0 to 300 g, step 5 g, default 100 g, marked to
+      check before saving.
+- D34. Swaps persist per date and slot as `foodChoices` in the plans table;
+      plans are recomputed, not cached. "Why" shows trace steps for header
+      numbers, slots and sessions.
+- D35. Open Food Facts requests send the browser's own User-Agent (a custom
+      one cannot be set from a web page), only on submit.
+- D36. Packing list: on-bike picks with total grams and unit counts; no
+      bottle grouping. Shopping list: optional `shopSection` and
+      `purchaseUnit` on foods, rounding up to whole units.
+- D37. The homemade ride drink is one manual food in M5 (ARCHITECTURE);
+      a proportional template stays open as Q4.
 
 ## Open questions (defaults in brackets)
 
 - Q1. UI language for v1? [English, i18n-ready]
 - Q3. Body mass source: manual entry only, or also import from a scale app
       export? [manual]
-- Q4. Should homemade ride drink be one food with a fixed recipe, or a
-      template built from sugar, maltodextrin, fructose and salt? [template,
-      so the glucose:fructose ratio and sodium are computed]
+- Q4. Should the homemade ride drink become a template built from sugar,
+      maltodextrin, fructose and salt that scales together, so the
+      glucose:fructose ratio and sodium are computed? [one manual food in
+      M5, D37]
 - Q5. Default carbohydrate point inside M2 ranges? [midpoint]
 - Q6. Show a time-restricted eating window by default? [off]
-- Q7. CIQUAL licence terms for bundling: to verify at M5.
 - Q9. Session start times and durations in `seed/week-template.json`.
       Profile values are now entered in first run. [engine tests use
       labelled test values]

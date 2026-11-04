@@ -2,7 +2,8 @@
 // template, and the per-day targets shown in the Week view.
 
 import type { Goal, Profile, Session, WeekTemplate } from '../model/index.ts';
-import { planDayTargets } from './plan.ts';
+import { planDayTargets, planDayWithFoods, type DayPlan } from './plan.ts';
+import type { SolverFood, SolverTemplate } from './portions.ts';
 import type { DayLoad, PlannedSession } from './types.ts';
 
 const MS_PER_DAY = 86_400_000;
@@ -93,4 +94,32 @@ export function weekSummary(input: {
       load: targets.load,
     };
   });
+}
+
+/** Full day plans with foods for each date (S5); tomorrow feeds T4. */
+export function planWeek(input: {
+  dates: readonly string[];
+  profile: Profile;
+  goals: readonly Goal[];
+  /** Sessions of the dates and of the day after the last one. */
+  sessions: readonly PlannedSession[];
+  foods: readonly SolverFood[];
+  templates: readonly SolverTemplate[];
+  foodChoices?: Readonly<
+    Record<string, Readonly<Record<string, readonly string[]>>>
+  >;
+}): DayPlan[] {
+  const on = (date: string) => input.sessions.filter((s) => s.date === date);
+  return input.dates.map((date) =>
+    planDayWithFoods({
+      date,
+      profile: input.profile,
+      goal: goalOn(input.goals, date) ?? { kind: 'maintain', validFrom: date },
+      sessions: on(date),
+      nextDaySessions: on(addDays(date, 1)),
+      foods: input.foods,
+      templates: input.templates,
+      foodChoices: input.foodChoices?.[date],
+    }),
+  );
 }

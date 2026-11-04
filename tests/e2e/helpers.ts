@@ -36,5 +36,51 @@ export async function completeFirstRun(
     page.getByRole('heading', { name: 'Not medical advice' }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Start planning' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Your seed foods' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Done' }).click();
   await expect(page).toHaveURL(/\/fuel-planner\/today$/);
+}
+
+/** Today's date in Europe/Paris, the profile time zone in tests. */
+export function todayParis(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Paris',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
+/** Adds a food by hand. Values are labelled test values. */
+export async function addFood(
+  page: Page,
+  food: {
+    name: string;
+    per100g: [kcal: number, carb: number, protein: number, fat: number];
+    tags: string;
+    portion?: [min: number, max: number, step: number, usual: number];
+    shopSection?: string;
+  },
+) {
+  await page.goto('foods/new');
+  await page.getByLabel('Name', { exact: true }).fill(food.name);
+  const [kcal, carb, protein, fat] = food.per100g;
+  await page.getByLabel('Energy (kcal)').fill(String(kcal));
+  await page.getByLabel('Carbohydrate (g)').fill(String(carb));
+  await page.getByLabel('Protein (g)').fill(String(protein));
+  await page.getByLabel('Fat (g)', { exact: true }).fill(String(fat));
+  if (food.portion) {
+    const [min, max, step, usual] = food.portion;
+    await page.getByLabel('Minimum (g)').fill(String(min));
+    await page.getByLabel('Maximum (g)').fill(String(max));
+    await page.getByLabel('Step (g)').fill(String(step));
+    await page.getByLabel('Usual portion (g)').fill(String(usual));
+  }
+  await page.getByLabel('Tags').fill(food.tags);
+  if (food.shopSection)
+    await page.getByLabel('Shop section (optional)').fill(food.shopSection);
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).toHaveURL(/\/foods$/);
 }

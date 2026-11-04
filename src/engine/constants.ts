@@ -167,3 +167,15 @@ export const MEAL_BEFORE_HARD_MIN = 90;
 export const MEAL_MIN_GAP_MIN = 120;
 export const MEAL_AFTER_SESSION_MIN = 30;
 export const MAIN_SESSION_MEAL_WEIGHT = 1.5;
+
+// S5. Portion solving (DOMAIN section 5, D32, D33).
+export const PORTION_TOLERANCE_FRACTION = 0.1; // kcal, carbohydrate, protein within 10 %
+export const PORTION_MAX_FOODS = 4;
+export const PORTION_MAX_CANDIDATES = 12;
+
+// D33. Portion fields for imported foods, which have no portion sizes. Not
+// nutrition values: the user checks them in the food editor.
+export const IMPORT_PORTION_MIN_G = 0;
+export const IMPORT_PORTION_MAX_G = 300;
+export const IMPORT_PORTION_STEP_G = 5;
+export const IMPORT_PORTION_DEFAULT_G = 100;

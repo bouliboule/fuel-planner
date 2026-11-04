@@ -1,12 +1,12 @@
 import { Dexie, type EntityTable } from 'dexie';
 import type {
-  Food,
   LogEntry,
-  MealTemplate,
   PlanCache,
   RecordMeta,
   StoredBodyMassEntry,
+  StoredFood,
   StoredGoal,
+  StoredMealTemplate,
   StoredProfile,
   StoredSession,
   WeekTemplate,
@@ -37,8 +37,8 @@ export class FuelDatabase extends Dexie {
   bodyMass!: EntityTable<StoredBodyMassEntry, 'id'>;
   sessions!: EntityTable<StoredSession, 'id'>;
   weekTemplates!: EntityTable<WeekTemplate & RecordMeta, 'id'>;
-  foods!: EntityTable<Food & RecordMeta, 'id'>;
-  mealTemplates!: EntityTable<MealTemplate & RecordMeta, 'id'>;
+  foods!: EntityTable<StoredFood, 'id'>;
+  mealTemplates!: EntityTable<StoredMealTemplate, 'id'>;
   plans!: EntityTable<PlanCache & RecordMeta, 'id'>;
   logEntries!: EntityTable<LogEntry & RecordMeta, 'id'>;
 

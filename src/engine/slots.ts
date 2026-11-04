@@ -63,6 +63,12 @@ export interface Slot {
   needsMultipleTransportableCarbs?: boolean;
   mouthRinseOptional?: boolean;
   fibreLimited?: boolean;
+  /** Filled by the portion solver (S5). */
+  picks?: { foodId: string; grams: number }[];
+  achieved?: Macros;
+  gap?: Macros;
+  withinTolerance?: boolean;
+  pickSource?: 'template' | 'search' | 'choice' | 'none';
 }
 
 /** A session of the day with what the slot rules need. */

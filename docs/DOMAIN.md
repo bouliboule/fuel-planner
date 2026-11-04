@@ -335,6 +335,30 @@ tagged for that slot, then solve portion sizes:
 
 If no combination reaches tolerance, return the best one and mark the gap.
 
+Engine rules (rule ID `S5`, D31 to D33):
+
+- Objective: each deviation is converted to energy (kcal directly; carbohydrate
+  and protein x 4, fat x 9) and divided by the slot's kcal target; the
+  objective is the sum of the squares for kcal, carbohydrate, protein and fat,
+  each with weight 1.
+- Tolerance: kcal, carbohydrate and protein within 10 % of target. A macro with
+  a target of 0 is within tolerance when it supplies 10 % or less of the slot
+  kcal. Fat has no tolerance; it is only in the objective.
+- Candidate foods by slot: a meal uses foods tagged with its lower-case name
+  (`breakfast`, `lunch`, `dinner`), or `meal` when none has that tag; pre
+  and pre-snack `pre`;
+  during `on-bike`; recovery `recovery`; bedtime `bedtime`; snack `snack`.
+  Foods with a disliked id or tag are excluded.
+- A meal template whose slot kinds include the slot is used first (the first
+  by name); its fixed items keep their grams and its scalable items are
+  solved. Otherwise the solver tries every combination of 1 to 4 candidate
+  foods, from at most 12 candidates (in name order), and keeps the best.
+- Grams are multiples of the food's step between its minimum and maximum
+  portion. The solver is coordinate descent over those steps.
+- A user swap fixes the slot's food set; portions are solved again.
+- A slot with no candidate food has no picks and shows its full target as
+  the gap.
+
 ## Sources
 
 - Mifflin MD et al. A new predictive equation for resting energy expenditure
@@ -352,6 +376,8 @@ If no combination reaches tolerance, return the best one and mark the gap.
   the effect of protein supplementation on resistance training-induced gains.
   Br J Sports Med 2018.
 - Jäger R et al. ISSN position stand: protein and exercise. JISSN 2017.
+- Anses. Table de composition nutritionnelle des aliments Ciqual 2025.
+  doi:10.57745/RDMHWY, Recherche Data Gouv, Licence Ouverte Etalab 2.0.
 - Mountjoy M et al. 2023 IOC consensus statement on Relative Energy Deficiency
   in Sport (REDs). Br J Sports Med 2023.
 

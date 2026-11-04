@@ -14,6 +14,7 @@ import {
 } from './energy.ts';
 import { classifyDayLoad, sessionIntensityBand } from './load.ts';
 import { carbohydrateTarget, fatTarget, proteinTarget } from './macros.ts';
+import { pickFoods, type SolverFood, type SolverTemplate } from './portions.ts';
 import { buildSlots, type Slot } from './slots.ts';
 import { toMinutes } from './time.ts';
 import {
@@ -227,4 +228,44 @@ export function planDay(input: DayPlanInput): DayPlan {
     warnings,
     trace: [...targets.trace, ...built.trace],
   };
+}
+
+export interface DayPlanWithFoodsInput extends DayPlanInput {
+  foods: readonly SolverFood[];
+  templates: readonly SolverTemplate[];
+  /** Swaps: slot id to the chosen food ids (D34). */
+  foodChoices?: Readonly<Record<string, readonly string[]>> | undefined;
+}
+
+/** planDay plus foods and grams for every slot (S5). */
+export function planDayWithFoods(input: DayPlanWithFoodsInput): DayPlan {
+  const plan = planDay(input);
+  const { profile } = input;
+  const warnings = [...plan.warnings];
+  const slots = plan.slots.map((slot) => {
+    const r = pickFoods({
+      slot: { kind: slot.kind, name: slot.name },
+      target: slot.target,
+      foods: input.foods,
+      templates: input.templates,
+      choice: input.foodChoices?.[slot.id],
+      dislikes: profile,
+    });
+    if (!r.withinTolerance) {
+      warnings.push({
+        code: 'slot-gap',
+        ruleId: 'S5',
+        values: { slotId: slot.id },
+      });
+    }
+    return {
+      ...slot,
+      picks: r.picks,
+      achieved: r.achieved,
+      gap: r.gap,
+      withinTolerance: r.withinTolerance,
+      pickSource: r.source,
+    };
+  });
+  return { ...plan, slots, warnings };
 }

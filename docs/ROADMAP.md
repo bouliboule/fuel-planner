@@ -52,12 +52,12 @@ meal slots whose carbohydrate sums to the day target within 1 g.
 
 ## M5. Foods, portions, Today
 
-- [ ] Food list and editor, meal templates.
-- [ ] Bundled CIQUAL subset and conversion script.
-- [ ] Portion solver (DOMAIN section 5) with tests.
-- [ ] Today screen with timeline, swaps, warnings and "why" traces.
-- [ ] Shopping list.
-- [ ] First-run step: load the seed food list, completing its nutrition
+- [x] Food list and editor, meal templates.
+- [x] Bundled CIQUAL subset and conversion script.
+- [x] Portion solver (DOMAIN section 5) with tests.
+- [x] Today screen with timeline, swaps, warnings and "why" traces.
+- [x] Shopping list.
+- [x] First-run step: load the seed food list, completing its nutrition
       values in the food editor.
 
 Acceptance: a full week from the seed template plans in under 200 ms on a

@@ -1,5 +1,11 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+import { CiqualSearchScreen } from '../features/foods/CiqualSearchScreen.tsx';
+import { FoodEditorScreen } from '../features/foods/FoodEditorScreen.tsx';
 import { FoodsScreen } from '../features/foods/FoodsScreen.tsx';
+import { MealTemplateScreen } from '../features/foods/MealTemplateScreen.tsx';
+import { OffSearchScreen } from '../features/foods/OffSearchScreen.tsx';
+import { SeedFoodsScreen } from '../features/foods/SeedFoodsScreen.tsx';
+import { ShoppingScreen } from '../features/week/ShoppingScreen.tsx';
 import { FirstRunScreen } from '../features/onboarding/FirstRunScreen.tsx';
 import { BodyMassSettings } from '../features/settings/BodyMassSettings.tsx';
 import { CoefficientsSettings } from '../features/settings/CoefficientsSettings.tsx';
@@ -37,6 +43,14 @@ export const router = createBrowserRouter(
         { path: 'templates/new', element: <TemplateScreen /> },
         { path: 'templates/:id', element: <TemplateScreen /> },
         { path: 'foods', element: <FoodsScreen /> },
+        { path: 'foods/new', element: <FoodEditorScreen /> },
+        { path: 'foods/ciqual', element: <CiqualSearchScreen /> },
+        { path: 'foods/off', element: <OffSearchScreen /> },
+        { path: 'foods/seed', element: <SeedFoodsScreen /> },
+        { path: 'foods/templates/new', element: <MealTemplateScreen /> },
+        { path: 'foods/templates/:id', element: <MealTemplateScreen /> },
+        { path: 'foods/:id', element: <FoodEditorScreen /> },
+        { path: 'shopping', element: <ShoppingScreen /> },
         { path: 'settings', element: <SettingsScreen /> },
         { path: 'settings/profile', element: <ProfileSettings /> },
         { path: 'settings/goal', element: <GoalSettings /> },

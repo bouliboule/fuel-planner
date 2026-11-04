@@ -15,8 +15,10 @@ Bottom tab bar: Today, Week, Foods, Settings.
   kind, targets, and the picked foods with grams. Tap a food to swap it with
   another food carrying the same tag; portions re-solve.
 - Session card shows estimated kcal and the method (power, MET, distance).
-- During-session card shows total carbohydrate, g/h, fluid and sodium, and a
-  checklist of what to pack ("2 bottles of drink mix at 60 g, 1 bar").
+- During-session card shows total carbohydrate, g/h, fluid and sodium, the
+  feed schedule, and what to pack: each on-bike food with its grams, or a
+  unit count when the food has a unit (D36).
+- A slot outside tolerance shows a Gap badge and what its foods give.
 - Warnings inline on the card they concern (low EA, eating-window conflict,
   slot target not reachable with current foods).
 - "Why" button on any number opens the trace: rule ID, formula, inputs.
@@ -30,7 +32,7 @@ Bottom tab bar: Today, Week, Foods, Settings.
 - Apply a week template (replaces the week after confirmation), then edit
   sessions per day. Templates screen: create, edit, duplicate, delete.
 - Shopping list button: aggregates picked foods for the selected days, groups
-  by store section tag, rounds to purchase units.
+  by the food's shop section, rounds up to its purchase unit (D36).
 
 ## Session editor
 
@@ -55,5 +57,6 @@ app version and update check, the not-medical-advice notice.
 ## First run
 
 Short setup: profile, goal, week template (the seed standard week with its
-missing times filled in, or skip), the not-medical-advice notice. Loading
-the seed food list comes with M5. Then land on Today.
+missing times filled in, or skip), the not-medical-advice notice, then the
+seed food list: each food filled from CIQUAL or the label, or skipped. Then
+land on Today.

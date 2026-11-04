@@ -105,6 +105,14 @@ function Week({ profile }: { profile: StoredProfile }) {
       )}
       <p className="mt-4">
         <Link
+          to={`/shopping?date=${dates[0] ?? date}`}
+          className="inline-flex min-h-11 items-center text-amber-700 dark:text-amber-400"
+        >
+          {t('week.shopping')} ›
+        </Link>
+      </p>
+      <p>
+        <Link
           to="/templates"
           className="inline-flex min-h-11 items-center text-amber-700 dark:text-amber-400"
         >

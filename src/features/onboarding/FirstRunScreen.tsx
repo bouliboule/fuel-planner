@@ -191,7 +191,9 @@ export function FirstRunScreen() {
                     goal,
                     date,
                     ...(template ? { template } : {}),
-                  }).then(() => navigate('/today', { replace: true }));
+                  }).then(() =>
+                    navigate('/foods/seed?firstRun=1', { replace: true }),
+                  );
                 }}
               >
                 {t('firstRun.start')}

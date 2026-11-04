@@ -11,7 +11,6 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "skipLibCheck": true,
-
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
@@ -25,6 +24,7 @@
     "vite.config.ts",
     "vitest.config.ts",
     "playwright.config.ts",
-    "tests"
+    "tests",
+    "scripts/*.ts"
   ]
 }
