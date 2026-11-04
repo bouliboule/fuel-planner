@@ -11,15 +11,27 @@
   "usualMeals": [
     {
       "name": "Breakfast",
-      "time": "TODO"
+      "time": "TODO",
+      "kcalRange": [
+        500,
+        600
+      ]
     },
     {
       "name": "Lunch",
-      "time": "TODO"
+      "time": "TODO",
+      "kcalRange": [
+        800,
+        1200
+      ]
     },
     {
       "name": "Dinner",
-      "time": "TODO"
+      "time": "TODO",
+      "kcalRange": [
+        400,
+        600
+      ]
     }
   ],
   "neaFactor": 1.35,

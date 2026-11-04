@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { timeZones } from '../../app/dates.ts';
 import { t } from '../../i18n/index.ts';
 import { Button, NumberField, SelectField, TextField } from '../../ui/form.tsx';
-import type { DraftErrors, ProfileDraft } from './profileDraft.ts';
+import type { DraftErrors, DraftMeal, ProfileDraft } from './profileDraft.ts';
 
 export function ProfileFields({
   draft,
@@ -25,10 +25,7 @@ export function ProfileFields({
   ) => {
     onChange({ ...draft, [key]: value });
   };
-  const setMeal = (
-    index: number,
-    patch: Partial<{ name: string; time: string }>,
-  ) => {
+  const setMeal = (index: number, patch: Partial<DraftMeal>) => {
     set(
       'usualMeals',
       draft.usualMeals.map((m, i) => (i === index ? { ...m, ...patch } : m)),
@@ -133,7 +130,7 @@ export function ProfileFields({
         {draft.usualMeals.map((meal, i) => (
           <div
             key={i}
-            className="mt-2 grid grid-cols-[1fr_8rem_auto] items-end gap-2"
+            className="mt-2 grid grid-cols-[1fr_8rem_auto] items-end gap-2 border-b border-slate-200 pb-3 dark:border-slate-700"
           >
             <TextField
               label={t('profile.mealName')}
@@ -161,8 +158,27 @@ export function ProfileFields({
             >
               {t('common.remove')}
             </Button>
+            <NumberField
+              integer
+              label={t('profile.mealKcalMin')}
+              value={meal.kcalMin}
+              onChange={(kcalMin) => {
+                setMeal(i, { kcalMin });
+              }}
+            />
+            <NumberField
+              integer
+              label={t('profile.mealKcalMax')}
+              value={meal.kcalMax}
+              onChange={(kcalMax) => {
+                setMeal(i, { kcalMax });
+              }}
+            />
           </div>
         ))}
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          {t('profile.mealKcalHint')}
+        </p>
         {errors.usualMeals && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
             {errors.usualMeals}
@@ -172,7 +188,10 @@ export function ProfileFields({
           <Button
             variant="secondary"
             onClick={() => {
-              set('usualMeals', [...draft.usualMeals, { name: '', time: '' }]);
+              set('usualMeals', [
+                ...draft.usualMeals,
+                { name: '', time: '', kcalMin: '', kcalMax: '' },
+              ]);
             }}
           >
             {t('profile.addMeal')}

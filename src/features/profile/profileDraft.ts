@@ -20,7 +20,15 @@ export interface ProfileDraft {
   timeZone: string;
   wakeTime: string;
   sleepTime: string;
-  usualMeals: { name: string; time: string }[];
+  usualMeals: DraftMeal[];
+}
+
+/** A usual meal as typed; the kcal range stays as two strings (D55). */
+export interface DraftMeal {
+  name: string;
+  time: string;
+  kcalMin: string;
+  kcalMax: string;
 }
 
 export type DraftErrors<K extends string> = Partial<Record<K, string>>;
@@ -41,7 +49,12 @@ export function draftFromProfile(p: Profile): ProfileDraft {
     timeZone: p.timeZone,
     wakeTime: p.wakeTime,
     sleepTime: p.sleepTime,
-    usualMeals: p.usualMeals.map((m) => ({ ...m })),
+    usualMeals: p.usualMeals.map((m) => ({
+      name: m.name,
+      time: m.time,
+      kcalMin: text(m.kcalRange?.[0]),
+      kcalMax: text(m.kcalRange?.[1]),
+    })),
   };
 }
 
@@ -63,6 +76,8 @@ export function draftFromSeed(): ProfileDraft {
     usualMeals: seed.usualMeals.map((m) => ({
       name: m.name,
       time: isClock(m.time) ? m.time : '',
+      kcalMin: num(m.kcalRange[0]),
+      kcalMax: num(m.kcalRange[1]),
     })),
   };
 }
@@ -120,7 +135,15 @@ export function profileFromDraft(
     timeZone: draft.timeZone,
     wakeTime: draft.wakeTime,
     sleepTime: draft.sleepTime,
-    usualMeals: draft.usualMeals,
+    usualMeals: draft.usualMeals.map((m) => {
+      const lo = parseNumber(m.kcalMin);
+      const hi = parseNumber(m.kcalMax);
+      if ((lo === undefined) !== (hi === undefined) || (lo ?? 0) > (hi ?? 0))
+        errors.usualMeals = t('profile.mealKcalCheck');
+      return lo === undefined || hi === undefined
+        ? { name: m.name, time: m.time }
+        : { name: m.name, time: m.time, kcalRange: [lo, hi] };
+    }),
   };
   if (draft.usualMeals.length === 0)
     errors.usualMeals = t('profile.mealsRequired');

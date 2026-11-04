@@ -79,7 +79,7 @@ test('export then import restores data in a fresh browser', async ({
   const text = await readFile(file, 'utf8');
   expect(JSON.parse(text)).toMatchObject({
     app: 'fuel-planner',
-    schemaVersion: 2,
+    schemaVersion: 3,
   });
 
   const fresh = await browser.newContext();

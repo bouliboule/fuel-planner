@@ -135,6 +135,14 @@ export function MealCard({
               fat: g(slot.target.fatG),
             })}
           </p>
+          {slot.targetRanges?.kcal && (
+            <p className="text-sm text-slate-600 tabular-nums dark:text-slate-300">
+              {t('day.mealUsual', {
+                low: g(slot.targetRanges.kcal[0]),
+                high: g(slot.targetRanges.kcal[1]),
+              })}
+            </p>
+          )}
         </div>
       )}
 

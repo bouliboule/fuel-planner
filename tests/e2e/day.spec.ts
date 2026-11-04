@@ -15,6 +15,10 @@ test('a rest day shows totals and the usual meals', async ({ page }) => {
   await expect(cards.filter({ hasText: 'Lunch' })).toBeVisible();
   await expect(cards.filter({ hasText: 'Dinner' })).toBeVisible();
   await expect(cards.first()).toContainText('For example:');
+  // Seed meal sizes (D55) show on each card.
+  await expect(cards.filter({ hasText: 'Lunch' })).toContainText(
+    /Usual 800 to 1.?200 kcal/,
+  );
 });
 
 test('a long ride for tomorrow gives pre, during and post-workout meals, offline too', async ({

@@ -315,12 +315,21 @@ Engine rules (D22):
   shows the 0.3 to 0.4 g/kg range; a meal above it is allowed.
 - Carbohydrate: pre, pre-snack, during and fast-recovery amounts first. The
   remainder goes to the other meals and to a standalone normal-mode recovery
-  slot, by weight: 1.5 for the last of them before the main session and the
-  first of them after it, 1.0 otherwise. A negative remainder gives those
+  slot, by weight: the meal size weight times 1.5 for the last of them
+  before the main session and the first of them after it, times 1.0
+  otherwise. A negative remainder gives those
   slots 0 and a `carb-over-target` warning; a remainder with no slot to
   take it gives a `carb-unassigned` warning.
-- Fat: split equally across meals that are not the pre meal. Other slots get
-  none; with no such meal, `fat-unassigned`.
+- Fat: split across meals that are not the pre meal by meal size weight.
+  Other slots get none; with no such meal, `fat-unassigned`.
+- Meal size (D55): each usual meal may carry a kcal range set by the user.
+  Its size weight is the range midpoint divided by the mean midpoint of the
+  profile's usual meals that have a range. A meal without a range, and a
+  standalone normal-mode recovery slot, weigh 1.0. With no ranges, every
+  meal weighs 1.0. The range is a reference shown on the meal: the meal
+  target follows the day target, and a meal whose kcal falls outside its
+  range gets a `meal-kcal-above-range` or `meal-kcal-below-range` warning.
+  Protein ignores size.
 - Pre meals and pre snacks are fibre-limited (M4).
 - Skip breakfast (D49), a profile preference, off by default. With it on
   and at least two usual meals, the first usual meal by time is left out of

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+  withDefaultMealRanges,
   storedBodyMassEntrySchema,
   storedGoalSchema,
   storedProfileSchema,
@@ -95,9 +96,21 @@ export async function replaceAllData(
     'rw',
     TABLES.map((name) => db.table(name)),
     async () => {
+      // A file from before version 3 gets the same meal ranges as the
+      // version 3 migration (D55).
+      const data =
+        file.schemaVersion < 3
+          ? {
+              ...file.data,
+              profile: file.data.profile.map((p) => ({
+                ...p,
+                usualMeals: withDefaultMealRanges(p.usualMeals),
+              })),
+            }
+          : file.data;
       for (const name of TABLES) {
         await db.table(name).clear();
-        await db.table(name).bulkAdd(file.data[name]);
+        await db.table(name).bulkAdd(data[name]);
       }
     },
   );
