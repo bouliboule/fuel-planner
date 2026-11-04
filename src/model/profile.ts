@@ -40,6 +40,9 @@ export const profileSchema = z.object({
     .max(DURING_G_PER_H_OVERRIDE_MAX)
     .optional(),
   eatingWindow: z.object({ start: clockTime, end: clockTime }).optional(),
+  // DOMAIN S4, D49: leave out the first usual meal unless a session that
+  // needs fueling starts before the second. Absent means off.
+  skipBreakfast: z.boolean().optional(),
 });
 
 export type Profile = z.infer<typeof profileSchema>;

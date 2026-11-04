@@ -160,6 +160,20 @@
       standalone. The activity editor deletes an activity; the Day screen
       has no swipe gesture.
 
+- D49. Skip breakfast is a profile preference. Breakfast is the first usual
+      meal by time; the morning ends at the second usual meal's time; a
+      session needs fueling when it has a pre meal (T1) or a during slot
+      (T2), which also covers every pre snack and recovery case. Breakfast's
+      share is not removed from the day: the other meals take it through the
+      S4 split, so protein per meal can exceed 0.3 to 0.4 g/kg, which S4
+      already allows. With fewer than two usual meals nothing is skipped.
+- D50. The bedtime gap (S4) keeps using the next day's first usual meal
+      even when the next day may skip it: the engine does not know the next
+      day's full sessions, and the user's usual 19:30 dinner already gives a
+      gap over 10 h.
+- D51. lucide-react (ISC) is approved for icons. Icons are decorative and
+      marked `aria-hidden`; every control keeps its text label.
+
 ## Open questions (defaults in brackets)
 
 - Q1. UI language for v1? [English, i18n-ready]

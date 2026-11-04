@@ -1,3 +1,4 @@
+import { Fuel, Plus, UserRound } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { addDays, nowClockIn, todayIn } from '../../app/dates.ts';
@@ -5,6 +6,7 @@ import type { Warning } from '../../engine/trace.ts';
 import { formatNumber, t } from '../../i18n/index.ts';
 import type { StoredProfile, StoredSession } from '../../model/index.ts';
 import { Choice } from '../../ui/Choice.tsx';
+import { SPORT_ICON, TOTAL_ICON } from '../../ui/icons.ts';
 import { describeSession } from '../sessions/describe.ts';
 import { useProfile } from '../settings/useProfile.ts';
 import { ActivitySheet } from './ActivitySheet.tsx';
@@ -35,23 +37,32 @@ function Day({ profile }: { profile: StoredProfile }) {
   return (
     <section className="py-4">
       <header className="flex items-center justify-between gap-4">
-        <h1 className="sr-only">{t('app.name')}</h1>
-        <Choice
-          label={t('day.which')}
-          value={which}
-          options={[
-            { value: 'today', label: t('day.today') },
-            { value: 'tomorrow', label: t('day.tomorrow') },
-          ]}
-          onChange={setWhich}
-        />
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <span className="grid size-11 place-items-center rounded-xl bg-amber-600 text-white">
+            <Fuel aria-hidden="true" className="size-6" />
+          </span>
+          {t('app.name')}
+        </h1>
         <Link
           to="/profile"
-          className="mt-4 inline-flex min-h-12 items-center rounded-xl border border-slate-300 px-4 text-lg dark:border-slate-700"
+          className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-slate-300 px-4 text-lg dark:border-slate-700"
         >
+          <UserRound aria-hidden="true" className="size-5" />
           {t('nav.profile')}
         </Link>
       </header>
+      <Choice
+        label={t('day.which')}
+        value={which}
+        options={[
+          { value: 'today', label: t('day.today') },
+          { value: 'tomorrow', label: t('day.tomorrow') },
+        ]}
+        onChange={setWhich}
+      />
+      <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+        {longDate(date)}
+      </p>
 
       {!day.loading && (
         <DayBody
@@ -142,13 +153,18 @@ function DayBody({
                 })}
                 className="w-full rounded-2xl border border-slate-200 p-4 text-left dark:border-slate-800"
               >
-                <span className="block text-xl font-semibold">
-                  {describeSession(s)}
-                </span>
-                <span className="block text-base text-slate-600 dark:text-slate-300">
-                  {t('day.activityKcal', {
-                    kcal: g(kcalBySession.get(s.id) ?? 0),
-                  })}
+                <span className="flex items-start gap-3">
+                  <SportIcon sport={s.sport} />
+                  <span>
+                    <span className="block text-xl font-semibold">
+                      {describeSession(s)}
+                    </span>
+                    <span className="block text-base text-slate-600 dark:text-slate-300">
+                      {t('day.activityKcal', {
+                        kcal: g(kcalBySession.get(s.id) ?? 0),
+                      })}
+                    </span>
+                  </span>
                 </span>
               </button>
               {bySession(s.id).map((w, i) => (
@@ -161,8 +177,9 @@ function DayBody({
       <button
         type="button"
         onClick={onAdd}
-        className="mt-3 min-h-14 w-full rounded-2xl bg-amber-600 text-xl font-semibold text-white"
+        className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-amber-600 text-xl font-semibold text-white"
       >
+        <Plus aria-hidden="true" className="size-6" />
         {t('day.addActivity')}
       </button>
 
@@ -180,6 +197,10 @@ function DayBody({
         className="mt-1 block text-left"
         data-testid="day-kcal"
       >
+        <TOTAL_ICON.kcal
+          aria-hidden="true"
+          className="mr-2 inline size-9 align-[-0.15em] text-orange-500"
+        />
         <span className="text-5xl font-bold tabular-nums">
           {g(plan.macros.kcal)}
         </span>{' '}
@@ -202,7 +223,10 @@ function DayBody({
             className="rounded-2xl bg-slate-100 p-3 text-left dark:bg-slate-900"
             data-testid={`day-${key}`}
           >
-            <span className="block text-base">{t(`day.${key}`)}</span>
+            <span className="flex items-center gap-1 text-base">
+              <MacroIcon which={key} />
+              {t(`day.${key}`)}
+            </span>
             <span className="block text-2xl font-semibold tabular-nums">
               {t('day.grams', { grams: g(grams) })}
             </span>
@@ -228,4 +252,29 @@ function DayBody({
       </ul>
     </>
   );
+}
+
+function SportIcon({ sport }: { sport: StoredSession['sport'] }) {
+  const Icon = SPORT_ICON[sport];
+  return (
+    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
+      <Icon aria-hidden="true" className="size-6" />
+    </span>
+  );
+}
+
+function MacroIcon({ which }: { which: 'carb' | 'protein' | 'fat' }) {
+  const Icon = TOTAL_ICON[which];
+  return <Icon aria-hidden="true" className="size-4 text-slate-500" />;
+}
+
+/** "Thursday 5 November", in the UI language. */
+function longDate(date: string): string {
+  const [y, m, d] = date.split('-').map(Number);
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y ?? 0, (m ?? 1) - 1, d ?? 1)));
 }

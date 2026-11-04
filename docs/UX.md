@@ -4,6 +4,11 @@ Mobile first (iPhone width), usable on desktop. One screen does the job.
 Large text and tap targets (at least 48 px high), one column, no tables, dark
 mode following the system.
 
+Icons (lucide-react, D51) mark each sport on activity cards and sport
+buttons, and each meal kind on meal cards (sunrise for breakfast, bottle for
+during, and so on). The header carries the app icon and name. Icons are
+decorative; text labels stay.
+
 ## Navigation
 
 No tab bar. The Day screen is the home screen. A profile button in its header
@@ -63,7 +68,8 @@ A bottom sheet, one decision per row:
 ## Profile
 
 Profile, goal, body mass entries with a small trend chart, coefficients each
-showing the allowed range, on-bike carbohydrate rate, eating window,
+showing the allowed range, on-bike carbohydrate rate, eating window, the
+skip-breakfast preference (D49),
 export/import, storage persistence status, app version and update check,
 install steps on iPhone, the not-medical-advice notice.
 

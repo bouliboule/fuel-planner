@@ -100,6 +100,18 @@ entered; a 240 min Z2 ride from the seed profile shows pre-workout, during
 the day target within 1 g; every meal card shows kcal, C / P / F, guidance
 and example; the app makes no network request after load (Playwright).
 
+## M8. Skip breakfast and icons
+
+- [x] Engine: skip-breakfast rule (DOMAIN S4, D49) with hand-computed tests.
+- [x] Profile: `skipBreakfast` field and its toggle in Profile.
+- [x] Icons on the Day screen and activity editor (lucide-react, D51).
+- [x] Playwright: with the preference on, a rest day shows no breakfast and
+      a morning long ride keeps it.
+
+Acceptance: with the preference on, a rest day has no breakfast card and
+the same day totals as with it off; a morning session with a pre meal or
+during slot keeps breakfast; an evening session does not.
+
 ## Later
 
 - intervals.icu import of planned workouts.

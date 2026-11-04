@@ -88,3 +88,28 @@ test('an activity can be edited and deleted', async ({ page }) => {
   await edit.getByRole('button', { name: 'Delete activity' }).click();
   await expect(page.getByText('Rest day')).toBeVisible();
 });
+
+test('skip breakfast drops it on a rest day and keeps it for a morning ride', async ({
+  page,
+}) => {
+  await completeFirstRun(page);
+  await page.getByRole('link', { name: 'Profile' }).click();
+  await page
+    .getByLabel('Skip Breakfast when no morning session needs fueling')
+    .check();
+  await page.getByRole('link', { name: /Back/ }).click();
+
+  await page.getByRole('button', { name: 'Tomorrow' }).click();
+  const cards = page.getByTestId('meal-card');
+  await expect(cards.filter({ hasText: 'Lunch' })).toBeVisible();
+  await expect(cards.filter({ hasText: 'Breakfast' })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Add activity' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Add activity' });
+  await sheet.getByLabel('Start').fill('09:00');
+  await sheet.getByRole('button', { name: '240 min' }).click();
+  await sheet.getByRole('button', { name: 'Save activity' }).click();
+  await expect(cards.filter({ hasText: 'Breakfast' })).toContainText(
+    'Pre-workout',
+  );
+});

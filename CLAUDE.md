@@ -29,7 +29,7 @@ Food logging stays in the user's separate tracking app.
 - pnpm as package manager.
 - Tooling: ESLint (typescript-eslint, react-hooks, react-refresh), Prettier,
   `@vitejs/plugin-react`, `@tailwindcss/vite`, `workbox-window`,
-  `fake-indexeddb` (tests only).
+  `fake-indexeddb` (tests only), `lucide-react` (icons, D51).
 
 Ask before adding any dependency not listed here.
 

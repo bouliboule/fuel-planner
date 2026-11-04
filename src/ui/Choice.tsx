@@ -1,4 +1,6 @@
-/** A row of large toggle buttons for a single choice. */
+import type { LucideIcon } from 'lucide-react';
+
+/** A row of large toggle buttons for a single choice, with optional icons. */
 export function Choice<T extends string>({
   label,
   value,
@@ -7,7 +9,7 @@ export function Choice<T extends string>({
 }: {
   label: string;
   value: T | undefined;
-  options: readonly { value: T; label: string }[];
+  options: readonly { value: T; label: string; icon?: LucideIcon }[];
   onChange: (value: T) => void;
 }) {
   return (
@@ -16,6 +18,7 @@ export function Choice<T extends string>({
       <div className="mt-2 flex flex-wrap gap-2">
         {options.map((o) => {
           const selected = o.value === value;
+          const Icon = o.icon;
           return (
             <button
               key={o.value}
@@ -24,12 +27,13 @@ export function Choice<T extends string>({
               onClick={() => {
                 onChange(o.value);
               }}
-              className={`min-h-12 min-w-16 rounded-xl px-4 text-lg font-medium ${
+              className={`inline-flex min-h-12 min-w-16 items-center gap-2 rounded-xl px-4 text-lg font-medium ${
                 selected
                   ? 'bg-amber-600 text-white'
                   : 'border border-slate-300 dark:border-slate-700'
               }`}
             >
+              {Icon && <Icon aria-hidden="true" className="size-5 shrink-0" />}
               {o.label}
             </button>
           );

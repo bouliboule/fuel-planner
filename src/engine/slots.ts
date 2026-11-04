@@ -120,14 +120,43 @@ export function buildSlots(input: {
     sessions.find((s) => t >= s.startMin && t < endOf(s));
 
   // Step 3 first for usual meals, so later steps see their final times.
-  const meals: Work[] = profile.usualMeals
+  const usual = profile.usualMeals
     .map((m, i) => ({
       id: `meal-${String(i)}`,
       name: m.name,
       time: toMinutes(m.time),
     }))
-    .sort((a, b) => a.time - b.time)
-    .map((m) => ({ id: m.id, kind: 'meal', timeMin: m.time, name: m.name }));
+    .sort((a, b) => a.time - b.time);
+  // Skip breakfast (D49): the first usual meal goes unless a session that
+  // needs fueling (pre meal or during slot) starts before the second one.
+  const [breakfast, second] = usual;
+  if (profile.skipBreakfast && breakfast && second) {
+    const fueledMorning = sessions.some(
+      (s) =>
+        s.startMin < second.time &&
+        (s.preMealGPerKg > 0 || s.during !== undefined),
+    );
+    if (!fueledMorning) {
+      usual.shift();
+      trace.push(
+        step(
+          'S4',
+          'Breakfast skipped: no session needing fuel before the second meal',
+          {
+            mealTime: toClock(breakfast.time),
+            morningEndsAt: toClock(second.time),
+          },
+          0,
+        ),
+      );
+    }
+  }
+  const meals: Work[] = usual.map((m) => ({
+    id: m.id,
+    kind: 'meal',
+    timeMin: m.time,
+    name: m.name,
+  }));
   let previousMeal: number | undefined;
   for (const meal of meals) {
     const inside = insideSession(meal.timeMin);

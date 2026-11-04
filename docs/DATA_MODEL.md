@@ -28,6 +28,7 @@ type Profile = {
   carbPointInRange: number;    // 0..1, position inside the M2 range
   onBikeCarbTargetGPerH?: number;
   eatingWindow?: { start: string; end: string };  // DOMAIN T6
+  skipBreakfast?: boolean;     // DOMAIN S4, D49; absent means off
 };
 ```
 

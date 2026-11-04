@@ -1,6 +1,8 @@
+import { createElement } from 'react';
 import type { DayPlan } from '../../engine/plan.ts';
 import type { Warning } from '../../engine/trace.ts';
 import { formatNumber, t } from '../../i18n/index.ts';
+import { mealIcon } from '../../ui/icons.ts';
 import { exampleKey, mealTag, mealTitle, showLowFibre } from './dayText.ts';
 import { WarningText } from './WarningText.tsx';
 
@@ -31,15 +33,23 @@ export function MealCard({
       data-testid="meal-card"
       data-guidance={slot.guidance}
     >
-      <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-xl font-semibold">
-          <span className="mr-2 tabular-nums text-slate-500 dark:text-slate-400">
-            {slot.time}
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="flex items-center gap-3 text-xl font-semibold">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            {createElement(mealIcon(slot.guidance, slot.name), {
+              'aria-hidden': true,
+              className: 'size-6',
+            })}
           </span>
-          {name}
+          <span>
+            <span className="mr-2 tabular-nums text-slate-500 dark:text-slate-400">
+              {slot.time}
+            </span>
+            {name}
+          </span>
         </h3>
         {tag && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">
+          <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium whitespace-nowrap text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">
             {t(tag)}
           </span>
         )}

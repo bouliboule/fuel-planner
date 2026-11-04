@@ -5,6 +5,8 @@ import { Button } from '../../ui/form.tsx';
 import { MedicalNotice } from '../../ui/Notice.tsx';
 import { BackLink } from '../../ui/BackLink.tsx';
 import { Screen } from '../../ui/Screen.tsx';
+import { SkipBreakfast } from './SkipBreakfast.tsx';
+import { useProfile } from './useProfile.ts';
 
 const sections: readonly { to: string; label: MessageKey }[] = [
   { to: 'details', label: 'profile.title' },
@@ -17,6 +19,7 @@ const sections: readonly { to: string; label: MessageKey }[] = [
 
 export function SettingsScreen() {
   const [updateStatus, setUpdateStatus] = useState<MessageKey | undefined>();
+  const profile = useProfile();
   return (
     <>
       <BackLink to="/day" />
@@ -34,6 +37,10 @@ export function SettingsScreen() {
             </li>
           ))}
         </ul>
+
+        {!profile.loading && profile.value && (
+          <SkipBreakfast profile={profile.value} />
+        )}
 
         <MedicalNotice />
 

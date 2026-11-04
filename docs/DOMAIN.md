@@ -322,6 +322,13 @@ Engine rules (D22):
 - Fat: split equally across meals that are not the pre meal. Other slots get
   none; with no such meal, `fat-unassigned`.
 - Pre meals and pre snacks are fibre-limited (M4).
+- Skip breakfast (D49), a profile preference, off by default. With it on
+  and at least two usual meals, the first usual meal by time is left out of
+  the day unless a session that needs fueling starts before the second usual
+  meal's time. A session needs fueling when it gets a pre meal (T1) or a
+  during slot (T2). The day's energy and macro targets do not change; the
+  remaining slots share them by the rules above. The bedtime gap still runs
+  to the next day's first usual meal.
 
 ## 5. Meal guidance
 

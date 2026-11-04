@@ -15,6 +15,7 @@ import {
   NumberField,
   TextField,
 } from '../../ui/form.tsx';
+import { SPORT_ICON } from '../../ui/icons.ts';
 import { Sheet } from '../../ui/Sheet.tsx';
 import { KcalPreview } from '../sessions/KcalPreview.tsx';
 import {
@@ -80,6 +81,7 @@ export function ActivitySheet({
           options={sportSchema.options.map((s) => ({
             value: s,
             label: t(`sport.${s}`),
+            icon: SPORT_ICON[s],
           }))}
           onChange={(sport) => {
             // A new sport keeps the shared fields and resets the intensity.

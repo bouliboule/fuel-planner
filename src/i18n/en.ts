@@ -204,6 +204,10 @@ export const en = {
     'No window of the same length includes all fueling; consider moving the session.',
 
   'nav.profile': 'Profile',
+  'skipBreakfast.title': 'Meals',
+  'skipBreakfast.label': 'Skip {meal} when no morning session needs fueling',
+  'skipBreakfast.hint':
+    'A session before {next} with a pre-workout meal or fueling during it keeps {meal}. Otherwise its share moves to your other meals; the day totals stay the same.',
   'install.title': 'Install on iPhone',
   'install.body':
     'In Safari, tap Share, then Add to Home Screen. The app then works offline.',
