@@ -15,6 +15,7 @@ import { MedicalNotice } from '../../ui/Notice.tsx';
 import { BackLink } from '../../ui/BackLink.tsx';
 import { Screen } from '../../ui/Screen.tsx';
 import { Preferences } from './Preferences.tsx';
+import { ThemeSetting } from './ThemeSetting.tsx';
 import { useProfile } from './useProfile.ts';
 
 const sections: readonly { to: string; label: MessageKey; icon: LucideIcon }[] =
@@ -59,6 +60,8 @@ export function SettingsScreen() {
         {!profile.loading && profile.value && (
           <Preferences profile={profile.value} />
         )}
+
+        <ThemeSetting />
 
         <MedicalNotice />
 

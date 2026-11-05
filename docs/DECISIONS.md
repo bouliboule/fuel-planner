@@ -198,6 +198,10 @@
       a warning. Carbohydrate and fat follow the ratio; protein stays
       equal across meals (M1). The S4 1.5 weight around the main session
       still applies on top (Q9).
+- D56. Theme: System (default), Light or Dark, chosen under Appearance on
+      the Profile screen. It is a per-device setting in localStorage, not a
+      profile field and not exported, so index.html can apply it before
+      first paint without a flash. System follows prefers-color-scheme live.
 
 ## Open questions (defaults in brackets)
 

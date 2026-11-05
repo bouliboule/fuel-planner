@@ -99,3 +99,27 @@ test('export then import restores data in a fresh browser', async ({
   await expect(other.getByText('Body mass: 71.5 kg')).toBeVisible();
   await fresh.close();
 });
+
+test('theme follows the system by default and can be overridden', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await completeFirstRun(page);
+  const html = page.locator('html');
+  await expect(html).toHaveClass(/\bdark\b/);
+
+  await page.goto('profile');
+  await expect(page.getByRole('button', { name: 'System' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await page.getByRole('button', { name: 'Light' }).click();
+  await expect(html).not.toHaveClass(/\bdark\b/);
+  await page.reload();
+  await expect(html).not.toHaveClass(/\bdark\b/);
+
+  await page.getByRole('button', { name: 'System' }).click();
+  await expect(html).toHaveClass(/\bdark\b/);
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(html).not.toHaveClass(/\bdark\b/);
+});

@@ -2,7 +2,8 @@
 
 Mobile first (iPhone width), usable on desktop. One screen does the job.
 Large text and tap targets (at least 48 px high), one column, no tables, dark
-mode following the system.
+mode following the system unless the Profile screen's Appearance choice sets
+light or dark (D56).
 
 Icons (lucide-react, D51) are used everywhere a thing has a kind, each on a
 coloured tile: one colour per sport (ride amber, run rose, strength violet,

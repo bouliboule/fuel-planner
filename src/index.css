@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 
-/* Dark mode follows the system setting (Tailwind's default media strategy). */
+/*
+ * Dark mode is the `dark` class on <html>, set from the theme preference
+ * (src/app/theme.ts). The "system" theme sets it from prefers-color-scheme.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   color-scheme: light dark;
