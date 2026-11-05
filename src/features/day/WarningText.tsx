@@ -9,7 +9,7 @@ export function WarningText({ warning }: { warning: Warning }) {
     ]),
   );
   return (
-    <p role="note" className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+    <p role="note" className="mt-1 text-sm font-bold text-warn-ink">
       {t(`warning.${warning.code}` as MessageKey, values)}
     </p>
   );

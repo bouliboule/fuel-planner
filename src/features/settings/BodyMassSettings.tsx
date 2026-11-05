@@ -89,11 +89,11 @@ export function BodyMassSettings() {
         </div>
       </form>
 
-      <h2 className="mt-6 text-lg font-semibold">{t('bodyMass.entries')}</h2>
+      <h2 className="mt-6 text-lg font-black">{t('bodyMass.entries')}</h2>
       {list.length === 0 ? (
-        <p className="mt-2 text-sm text-slate-500">{t('bodyMass.empty')}</p>
+        <p className="mt-2 text-sm text-ink-muted">{t('bodyMass.empty')}</p>
       ) : (
-        <ul className="mt-2 divide-y divide-slate-200 dark:divide-slate-800">
+        <ul className="mt-2 divide-y-2 divide-edge">
           {[...list].reverse().map((entry) => (
             <li
               key={entry.id}

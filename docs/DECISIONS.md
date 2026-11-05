@@ -202,6 +202,14 @@
       the Profile screen. It is a per-device setting in localStorage, not a
       profile field and not exported, so index.html can apply it before
       first paint without a flash. System follows prefers-color-scheme live.
+- D57. Visual style: neubrutalism (neobrutalism.com). Flat saturated
+      colours, a 2px black outline and a hard 4px offset black shadow on
+      raised surfaces, 6px corners, heavy type, no gradients. Pressable boxes
+      drop onto their shadow when pressed. Colours are tokens in
+      src/index.css (page, surface, sunken, ink, ink-muted, edge, main,
+      danger, warn-ink) that swap for dark mode; outlines and shadows stay
+      black in both. System fonts only, since the app makes no runtime
+      network calls.
 
 ## Open questions (defaults in brackets)
 

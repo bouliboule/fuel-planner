@@ -51,7 +51,7 @@ export function DayScreen() {
 type Editing = { session?: StoredSession } | undefined;
 
 const headerButton =
-  'inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-xl border border-slate-300 px-3 text-base font-medium dark:border-slate-700';
+  'brutal brutal-press inline-flex min-h-12 min-w-12 items-center justify-center gap-2 bg-surface px-3 text-base font-bold';
 
 function Day({
   profile,
@@ -73,7 +73,7 @@ function Day({
     <section className="py-4">
       <header className="flex items-center justify-between gap-2">
         <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight">
-          <span className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow">
+          <span className="brutal grid size-11 place-items-center bg-main text-main-ink shadow-brutal-sm">
             <UtensilsCrossed
               aria-hidden="true"
               className="size-6"
@@ -105,7 +105,7 @@ function Day({
           <div className="mt-4 flex items-center justify-between gap-2">
             <Link
               to={`/day/${addDays(fixedDate, -1)}`}
-              className="grid size-12 place-items-center rounded-xl border border-slate-300 dark:border-slate-700"
+              className="brutal brutal-press grid size-12 place-items-center bg-surface"
               aria-label={t('day.previous')}
             >
               <ChevronLeft aria-hidden="true" className="size-6" />
@@ -113,7 +113,7 @@ function Day({
             <p className="text-center text-xl font-bold">{longDate(date)}</p>
             <Link
               to={`/day/${addDays(fixedDate, 1)}`}
-              className="grid size-12 place-items-center rounded-xl border border-slate-300 dark:border-slate-700"
+              className="brutal brutal-press grid size-12 place-items-center bg-surface"
               aria-label={t('day.next')}
             >
               <ChevronRight aria-hidden="true" className="size-6" />
@@ -121,7 +121,7 @@ function Day({
           </div>
           <Link
             to="/day"
-            className="mt-3 inline-flex min-h-11 items-center gap-2 text-amber-700 dark:text-amber-400"
+            className="mt-3 inline-flex min-h-11 items-center gap-2 font-bold underline decoration-main decoration-4 underline-offset-4"
           >
             <House aria-hidden="true" className="size-5" />
             {t('nav.home')}
@@ -138,7 +138,7 @@ function Day({
             ]}
             onChange={setWhich}
           />
-          <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+          <p className="mt-2 text-base font-bold text-ink-muted">
             {longDate(date)}
           </p>
         </>
@@ -187,7 +187,7 @@ function Day({
 const g = (v: number) => formatNumber(v, 0);
 
 const sectionTitle =
-  'mt-8 text-sm font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400';
+  'mt-8 inline-block bg-ink px-2 py-0.5 text-sm font-black tracking-wider text-page uppercase';
 
 function DayBody({
   data,
@@ -224,7 +224,7 @@ function DayBody({
       <h2 className={sectionTitle}>{t('day.activities')}</h2>
       {sessions.length === 0 ? (
         <p className="mt-2 flex items-center gap-3 text-xl font-semibold">
-          <span className="grid size-12 place-items-center rounded-2xl bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+          <span className="brutal-flat grid size-12 place-items-center bg-stone-200 text-black">
             <Sofa aria-hidden="true" className="size-7" />
           </span>
           {t('day.rest')}
@@ -241,11 +241,11 @@ function DayBody({
                 aria-label={t('day.editActivity', {
                   name: describeSession(s),
                 })}
-                className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                className="brutal brutal-press w-full bg-surface p-4 text-left"
               >
                 <span className="flex items-start gap-3">
                   <span
-                    className={`grid size-12 shrink-0 place-items-center rounded-2xl ${SPORT_TONE[s.sport]}`}
+                    className={`brutal-flat grid size-12 shrink-0 place-items-center ${SPORT_TONE[s.sport]}`}
                   >
                     {createElement(SPORT_ICON[s.sport], {
                       'aria-hidden': true,
@@ -254,15 +254,15 @@ function DayBody({
                     })}
                   </span>
                   <span className="flex-1">
-                    <span className="block text-xl font-semibold">
+                    <span className="block text-xl font-black">
                       {describeSession(s)}
                     </span>
-                    <span className="mt-1 flex flex-wrap items-center gap-2 text-base text-slate-600 dark:text-slate-300">
+                    <span className="mt-1 flex flex-wrap items-center gap-2 text-base font-medium text-ink-muted">
                       {t('day.activityKcal', {
                         kcal: g(kcalBySession.get(s.id) ?? 0),
                       })}
                       {data.hard.has(s.id) && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2 py-0.5 text-sm font-bold text-white uppercase">
+                        <span className="brutal-flat inline-flex items-center gap-1 bg-red-500 px-2 py-0.5 text-sm font-black text-black uppercase">
                           <Flame aria-hidden="true" className="size-4" />
                           {t('day.hard')}
                         </span>
@@ -281,7 +281,7 @@ function DayBody({
       <button
         type="button"
         onClick={onAdd}
-        className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-xl font-bold text-white shadow"
+        className="brutal brutal-press mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 bg-main text-xl font-black text-main-ink"
       >
         <Plus aria-hidden="true" className="size-6" strokeWidth={2.75} />
         {t('day.addActivity')}
@@ -289,7 +289,7 @@ function DayBody({
 
       <h2 className={sectionTitle}>{t('day.totals')}</h2>
       <div
-        className={`mt-2 flex items-center gap-3 rounded-2xl p-4 ${LOAD_TONE[plan.load]}`}
+        className={`brutal mt-2 flex items-center gap-3 p-4 ${LOAD_TONE[plan.load]}`}
         data-testid="day-load"
       >
         {createElement(LOAD_ICON[plan.load], {
@@ -312,7 +312,7 @@ function DayBody({
         onClick={() => {
           onDetail('kcal');
         }}
-        className="mt-3 block text-left"
+        className="brutal brutal-press mt-3 block w-full bg-surface p-4 text-left"
         data-testid="day-kcal"
       >
         <TOTAL_ICON.kcal
@@ -327,9 +327,13 @@ function DayBody({
       <div className="mt-3 grid grid-cols-3 gap-2">
         {(
           [
-            ['carb', plan.macros.carbG, 'text-amber-600'],
-            ['protein', plan.macros.proteinG, 'text-rose-600'],
-            ['fat', plan.macros.fatG, 'text-sky-600'],
+            ['carb', plan.macros.carbG, 'text-amber-600 dark:text-amber-400'],
+            [
+              'protein',
+              plan.macros.proteinG,
+              'text-rose-600 dark:text-rose-400',
+            ],
+            ['fat', plan.macros.fatG, 'text-sky-600 dark:text-sky-400'],
           ] as const
         ).map(([key, grams, tone]) => (
           <button
@@ -338,17 +342,17 @@ function DayBody({
             onClick={() => {
               onDetail(key);
             }}
-            className="rounded-2xl bg-slate-100 p-3 text-left dark:bg-slate-900"
+            className="brutal brutal-press bg-surface p-3 text-left"
             data-testid={`day-${key}`}
           >
-            <span className="flex items-center gap-1 text-base font-medium">
+            <span className="flex items-center gap-1 text-base font-bold">
               {createElement(TOTAL_ICON[key], {
                 'aria-hidden': true,
                 className: `size-5 ${tone}`,
               })}
               {t(`day.${key}`)}
             </span>
-            <span className="block text-2xl font-bold tabular-nums">
+            <span className="block text-2xl font-black tabular-nums">
               {t('day.grams', { grams: g(grams) })}
             </span>
           </button>

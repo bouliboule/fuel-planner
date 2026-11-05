@@ -74,7 +74,7 @@ export function ProfileFields({
           error={errors.massKg}
         />
       ) : (
-        <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mt-4 text-sm text-ink-muted">
           {t('profile.massFromEntries', { mass: draft.massKg })}
         </p>
       )}
@@ -126,11 +126,11 @@ export function ProfileFields({
       />
 
       <fieldset className="mt-6">
-        <legend className="text-sm font-medium">{t('profile.meals')}</legend>
+        <legend className="text-sm font-bold">{t('profile.meals')}</legend>
         {draft.usualMeals.map((meal, i) => (
           <div
             key={i}
-            className="mt-2 grid grid-cols-[1fr_8rem_auto] items-end gap-2 border-b border-slate-200 pb-3 dark:border-slate-700"
+            className="mt-2 grid grid-cols-[1fr_8rem_auto] items-end gap-2 border-b-2 border-edge pb-3"
           >
             <TextField
               label={t('profile.mealName')}
@@ -176,11 +176,11 @@ export function ProfileFields({
             />
           </div>
         ))}
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mt-2 text-sm text-ink-muted">
           {t('profile.mealKcalHint')}
         </p>
         {errors.usualMeals && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          <p className="mt-1 text-sm font-bold text-danger">
             {errors.usualMeals}
           </p>
         )}

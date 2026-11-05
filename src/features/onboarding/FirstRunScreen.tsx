@@ -55,10 +55,8 @@ export function FirstRunScreen() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pt-[env(safe-area-inset-top)] pb-12">
       <Screen title={t('firstRun.title')}>
-        <p className="mt-2 text-slate-600 dark:text-slate-300">
-          {t('firstRun.intro')}
-        </p>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-2 text-ink-muted">{t('firstRun.intro')}</p>
+        <p className="mt-1 text-sm text-ink-muted">
           {t('firstRun.step', { step, total: TOTAL_STEPS })}
         </p>
 
@@ -77,7 +75,7 @@ export function FirstRunScreen() {
               }
             }}
           >
-            <h2 className="mt-6 text-lg font-semibold">{t('profile.title')}</h2>
+            <h2 className="mt-6 text-lg font-black">{t('profile.title')}</h2>
             <ProfileFields
               draft={profileDraft}
               onChange={setProfileDraft}
@@ -85,10 +83,7 @@ export function FirstRunScreen() {
               editMass
             />
             {Object.keys(profileErrors).length > 0 && (
-              <p
-                role="alert"
-                className="mt-4 text-sm text-red-600 dark:text-red-400"
-              >
+              <p role="alert" className="mt-4 text-sm font-bold text-danger">
                 {t('form.fixErrors')}
               </p>
             )}
@@ -130,7 +125,7 @@ export function FirstRunScreen() {
               }
             }}
           >
-            <h2 className="mt-6 text-lg font-semibold">{t('goal.title')}</h2>
+            <h2 className="mt-6 text-lg font-black">{t('goal.title')}</h2>
             <GoalFields
               draft={goalDraft}
               onChange={setGoalDraft}

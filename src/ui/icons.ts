@@ -45,22 +45,22 @@ export const SPORT_ICON: Readonly<Record<Sport, LucideIcon>> = {
 
 /** Tile classes per sport: one colour each. */
 export const SPORT_TONE: Readonly<Record<Sport, string>> = {
-  ride: 'bg-amber-500 text-white',
-  run: 'bg-rose-500 text-white',
-  strength: 'bg-violet-500 text-white',
-  pilates: 'bg-teal-500 text-white',
-  walk: 'bg-green-600 text-white',
-  other: 'bg-slate-500 text-white',
+  ride: 'bg-amber-400 text-black',
+  run: 'bg-rose-400 text-black',
+  strength: 'bg-violet-400 text-black',
+  pilates: 'bg-teal-300 text-black',
+  walk: 'bg-lime-400 text-black',
+  other: 'bg-stone-300 text-black',
 };
 
 /** Text colour per sport, for small icons such as calendar cells. */
 export const SPORT_TEXT: Readonly<Record<Sport, string>> = {
-  ride: 'text-amber-600 dark:text-amber-400',
-  run: 'text-rose-600 dark:text-rose-400',
-  strength: 'text-violet-600 dark:text-violet-400',
-  pilates: 'text-teal-600 dark:text-teal-400',
-  walk: 'text-green-700 dark:text-green-400',
-  other: 'text-slate-600 dark:text-slate-400',
+  ride: 'text-amber-700 dark:text-amber-400',
+  run: 'text-rose-700 dark:text-rose-400',
+  strength: 'text-violet-700 dark:text-violet-400',
+  pilates: 'text-teal-700 dark:text-teal-300',
+  walk: 'text-lime-700 dark:text-lime-400',
+  other: 'text-stone-600 dark:text-stone-300',
 };
 
 const GUIDANCE_ICON: Readonly<Record<GuidanceKey, LucideIcon>> = {
@@ -93,32 +93,25 @@ export function mealIcon(guidance: GuidanceKey, name?: string): LucideIcon {
 
 /** Meal card accent: pre-workout amber, during sky, post-workout emerald. */
 export function mealTone(guidance: GuidanceKey): {
+  /** Icon tile background and text. */
   tile: string;
+  /** Background of the strip along the card's left edge. */
   card: string;
 } {
   switch (guidance) {
     case 'pre-meal':
     case 'pre':
     case 'pre-snack':
-      return {
-        tile: 'bg-amber-500 text-white',
-        card: 'border-l-amber-500',
-      };
+      return { tile: 'bg-amber-400 text-black', card: 'bg-amber-400' };
     case 'during':
     case 'during-rinse':
-      return { tile: 'bg-sky-500 text-white', card: 'border-l-sky-500' };
+      return { tile: 'bg-sky-300 text-black', card: 'bg-sky-300' };
     case 'recovery-meal':
     case 'recovery':
     case 'recovery-fast':
-      return {
-        tile: 'bg-emerald-500 text-white',
-        card: 'border-l-emerald-500',
-      };
+      return { tile: 'bg-emerald-300 text-black', card: 'bg-emerald-300' };
     default:
-      return {
-        tile: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100',
-        card: 'border-l-slate-300 dark:border-l-slate-600',
-      };
+      return { tile: 'bg-stone-200 text-black', card: 'bg-stone-200' };
   }
 }
 
@@ -132,11 +125,11 @@ export const LOAD_ICON: Readonly<Record<DayLoad, LucideIcon>> = {
 
 /** Banner classes per day load, calm to loud. */
 export const LOAD_TONE: Readonly<Record<DayLoad, string>> = {
-  rest: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100',
-  light: 'bg-teal-50 text-teal-900 dark:bg-teal-950 dark:text-teal-100',
-  moderate: 'bg-sky-50 text-sky-900 dark:bg-sky-950 dark:text-sky-100',
-  high: 'bg-orange-100 text-orange-900 dark:bg-orange-950 dark:text-orange-100',
-  'very-high': 'bg-red-600 text-white',
+  rest: 'bg-stone-200 text-black',
+  light: 'bg-teal-300 text-black',
+  moderate: 'bg-sky-300 text-black',
+  high: 'bg-orange-400 text-black',
+  'very-high': 'bg-red-500 text-black',
 };
 
 export const TOTAL_ICON = {

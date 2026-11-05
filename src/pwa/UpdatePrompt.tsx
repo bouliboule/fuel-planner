@@ -15,12 +15,12 @@ export function UpdatePrompt() {
   return (
     <div
       role="status"
-      className="flex items-center gap-3 bg-amber-100 px-4 py-2 text-sm text-amber-950 dark:bg-amber-900 dark:text-amber-50"
+      className="flex items-center gap-3 border-b-2 border-edge bg-main px-4 py-2 text-sm font-bold text-main-ink"
     >
       <span className="flex-1">{t('update.available')}</span>
       <button
         type="button"
-        className="min-h-11 rounded px-3 font-medium"
+        className="min-h-11 px-3 font-bold underline underline-offset-4"
         onClick={() => {
           setNeedRefresh(false);
         }}
@@ -29,7 +29,7 @@ export function UpdatePrompt() {
       </button>
       <button
         type="button"
-        className="min-h-11 rounded bg-amber-600 px-3 font-medium text-white"
+        className="brutal brutal-press min-h-11 bg-surface px-3 font-bold text-ink"
         onClick={() => {
           void updateServiceWorker(true);
         }}

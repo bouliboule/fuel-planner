@@ -23,7 +23,7 @@ function Toggle({
   const [on, setOn] = useState(profile[flag] === true);
   return (
     <label className="mt-3 flex min-h-12 items-center gap-3 text-base">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-slate-100 dark:bg-slate-800">
+      <span className="brutal-flat grid size-10 shrink-0 place-items-center bg-main text-main-ink">
         {icon}
       </span>
       <span className="flex-1">{label}</span>
@@ -51,25 +51,25 @@ export function Preferences({ profile }: { profile: StoredProfile }) {
     <>
       {first && second && (
         <section className="mt-6">
-          <h2 className="text-lg font-semibold">{t('skipBreakfast.title')}</h2>
+          <h2 className="text-lg font-black">{t('skipBreakfast.title')}</h2>
           <Toggle
             flag="skipBreakfast"
             profile={profile}
             label={t('skipBreakfast.label', { meal: first.name })}
             icon={<Coffee aria-hidden="true" className="size-5" />}
           />
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-ink-muted">
             {t('skipBreakfast.hint', { meal: first.name, next: second.name })}
           </p>
         </section>
       )}
       <section className="mt-6">
-        <h2 className="text-lg font-semibold">{t('training.title')}</h2>
+        <h2 className="text-lg font-black">{t('training.title')}</h2>
         <Toggle
           flag="allowBackToBackHardRides"
           profile={profile}
           label={t('training.allowRides')}
-          icon={<Bike aria-hidden="true" className="size-5 text-amber-600" />}
+          icon={<Bike aria-hidden="true" className="size-5" />}
         />
         <Toggle
           flag="allowBackToBackHardRuns"
@@ -79,9 +79,7 @@ export function Preferences({ profile }: { profile: StoredProfile }) {
             <HeartPulse aria-hidden="true" className="size-5 text-rose-600" />
           }
         />
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          {t('training.hint')}
-        </p>
+        <p className="text-sm text-ink-muted">{t('training.hint')}</p>
       </section>
     </>
   );

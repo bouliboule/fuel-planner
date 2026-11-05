@@ -6,11 +6,94 @@
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Neubrutalist design tokens (D57). Flat colours, a 2px black outline and a
+ * hard offset shadow on every raised surface. Components use these names
+ * (bg-page, bg-surface, text-ink, border-edge, bg-main, shadow-brutal) rather
+ * than raw palette colours, so light and dark swap in one place.
+ */
+:root {
+  --page: #fdf3e1;
+  --surface: #ffffff;
+  --sunken: #f4e6cc;
+  --ink: #000000;
+  --ink-muted: #3f3a33;
+  --edge: #000000;
+  --main: #ffb000;
+  --main-ink: #000000;
+  --danger: #ff4d4d;
+  --warn-ink: #8a4b00;
+}
+
+.dark {
+  --page: #2b2d37;
+  --surface: #3c3e4b;
+  --sunken: #333541;
+  --ink: #f2f2f2;
+  --ink-muted: #b9b9c2;
+  --edge: #000000;
+  --main: #ffb000;
+  --main-ink: #000000;
+  --danger: #ff5c5c;
+  --warn-ink: #ffc44d;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-edge: var(--edge);
+  --color-main: var(--main);
+  --color-main-ink: var(--main-ink);
+  --color-danger: var(--danger);
+  --color-warn-ink: var(--warn-ink);
+  --radius-base: 6px;
+  --shadow-brutal: 4px 4px 0 0 var(--edge);
+  --shadow-brutal-sm: 2px 2px 0 0 var(--edge);
+}
+
+/* A raised neubrutalist box: outline, corner radius and hard shadow. */
+@utility brutal {
+  border: 2px solid var(--edge);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-brutal);
+}
+
+/* A flat outlined box with no shadow, for tiles, chips and inputs. */
+@utility brutal-flat {
+  border: 2px solid var(--edge);
+  border-radius: var(--radius-base);
+}
+
+/* Pressable: the box drops onto its shadow when pressed or hovered. */
+@utility brutal-press {
+  transition:
+    translate 100ms ease-out,
+    box-shadow 100ms ease-out;
+  &:active:not(:disabled) {
+    translate: 4px 4px;
+    box-shadow: none;
+  }
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      translate: 4px 4px;
+      box-shadow: none;
+    }
+  }
+}
+
 :root {
   color-scheme: light dark;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+  @apply bg-page text-ink antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
 }

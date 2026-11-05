@@ -14,9 +14,7 @@ export function KcalPreview({
 }) {
   const result = sessionFromDraft(draft);
   let body: React.ReactNode = (
-    <p className="text-sm text-slate-500 dark:text-slate-400">
-      {t('preview.incomplete')}
-    </p>
+    <p className="text-sm text-ink-muted">{t('preview.incomplete')}</p>
   );
   if (result.ok) {
     const energy = sessionEnergy(
@@ -30,15 +28,12 @@ export function KcalPreview({
     const method = energyMethodText(energy);
     body = (
       <>
-        <p className="text-2xl font-semibold" data-testid="kcal-preview">
+        <p className="text-2xl font-black" data-testid="kcal-preview">
           {t('preview.kcal', { kcal: formatNumber(energy.kcal, 0) })}
         </p>
         {method && <p className="text-sm">{method}</p>}
         {energy.warnings.map((w) => (
-          <p
-            key={w.code}
-            className="mt-1 text-sm text-amber-700 dark:text-amber-400"
-          >
+          <p key={w.code} className="mt-1 text-sm font-bold text-warn-ink">
             {t(`warning.${w.code}` as MessageKey)}
           </p>
         ))}
@@ -49,9 +44,9 @@ export function KcalPreview({
     <section
       aria-live="polite"
       aria-label={t('preview.title')}
-      className="mt-6 rounded-xl bg-slate-100 p-4 dark:bg-slate-900"
+      className="brutal mt-6 bg-sunken p-4"
     >
-      <h2 className="text-sm font-medium">{t('preview.title')}</h2>
+      <h2 className="text-sm font-black uppercase">{t('preview.title')}</h2>
       {body}
     </section>
   );

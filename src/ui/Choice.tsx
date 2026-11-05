@@ -14,7 +14,7 @@ export function Choice<T extends string>({
 }) {
   return (
     <fieldset className="mt-4">
-      <legend className="text-base font-medium">{label}</legend>
+      <legend className="text-base font-bold">{label}</legend>
       <div className="mt-2 flex flex-wrap gap-2">
         {options.map((o) => {
           const selected = o.value === value;
@@ -27,10 +27,10 @@ export function Choice<T extends string>({
               onClick={() => {
                 onChange(o.value);
               }}
-              className={`inline-flex min-h-12 min-w-16 items-center gap-2 rounded-xl px-4 text-lg font-medium ${
+              className={`brutal-flat inline-flex min-h-12 min-w-16 items-center gap-2 px-4 text-lg font-bold transition-[translate,box-shadow] duration-100 ${
                 selected
-                  ? 'bg-amber-600 text-white'
-                  : 'border border-slate-300 dark:border-slate-700'
+                  ? 'translate-x-1 translate-y-1 bg-main text-main-ink'
+                  : 'bg-surface text-ink shadow-brutal'
               }`}
             >
               {Icon && <Icon aria-hidden="true" className="size-5 shrink-0" />}

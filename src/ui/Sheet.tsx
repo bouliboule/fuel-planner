@@ -24,15 +24,15 @@ export function Sheet({
       onClick={(e) => {
         if (e.target === ref.current) ref.current.close();
       }}
-      className="mx-auto mt-auto mb-0 max-h-[90dvh] w-full max-w-3xl rounded-t-2xl bg-white p-0 text-slate-900 backdrop:bg-black/50 dark:bg-slate-950 dark:text-slate-100"
+      className="mx-auto mt-auto mb-0 max-h-[90dvh] w-full max-w-3xl rounded-t-base border-2 border-b-0 border-edge bg-page p-0 text-ink backdrop:bg-black/60"
     >
       <div className="px-4 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
+          <h2 className="text-xl font-black">{title}</h2>
           <button
             type="button"
             onClick={() => ref.current?.close()}
-            className="min-h-12 min-w-12 rounded-lg text-2xl"
+            className="brutal brutal-press min-h-12 min-w-12 bg-surface text-2xl font-bold"
             aria-label={t('detail.close')}
           >
             ×

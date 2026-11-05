@@ -15,7 +15,7 @@ export function ThemeSetting() {
   const [theme, setTheme] = useState<Theme>(readTheme);
   return (
     <section className="mt-6">
-      <h2 className="text-lg font-semibold">{t('theme.title')}</h2>
+      <h2 className="text-lg font-black">{t('theme.title')}</h2>
       <Choice
         label={t('theme.label')}
         value={theme}

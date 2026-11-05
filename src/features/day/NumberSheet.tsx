@@ -61,7 +61,7 @@ export function NumberSheet({
 
       {which === 'carb' && (
         <>
-          <p className="mt-3 text-2xl font-semibold">
+          <p className="mt-3 text-2xl font-black">
             {t('detail.target', { value: g(plan.macros.carbG) })}
           </p>
           <p className="text-lg">
@@ -74,7 +74,7 @@ export function NumberSheet({
             <p className="mt-3">{t('detail.restDay')}</p>
           ) : (
             <label className="mt-4 block">
-              <span className="block text-base font-medium">
+              <span className="block text-base font-bold">
                 {t('detail.carbPoint')}
               </span>
               <input
@@ -88,7 +88,7 @@ export function NumberSheet({
                 }}
                 className="mt-2 h-12 w-full"
               />
-              <span className="text-sm text-slate-500 dark:text-slate-400">
+              <span className="text-sm text-ink-muted">
                 {t('detail.everyDay')}
               </span>
             </label>
@@ -98,7 +98,7 @@ export function NumberSheet({
 
       {which === 'protein' && (
         <>
-          <p className="mt-3 text-2xl font-semibold">
+          <p className="mt-3 text-2xl font-black">
             {t('detail.target', { value: g(plan.macros.proteinG) })}
           </p>
           <p className="text-lg">
@@ -108,7 +108,7 @@ export function NumberSheet({
             })}
           </p>
           <label className="mt-4 block">
-            <span className="block text-base font-medium">
+            <span className="block text-base font-bold">
               {t('detail.proteinPerKg')}:{' '}
               {formatNumber(profile.proteinGPerKg, 1)}
             </span>
@@ -123,7 +123,7 @@ export function NumberSheet({
               }}
               className="mt-2 h-12 w-full"
             />
-            <span className="text-sm text-slate-500 dark:text-slate-400">
+            <span className="text-sm text-ink-muted">
               {t('detail.everyDay')}
             </span>
           </label>

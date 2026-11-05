@@ -239,7 +239,7 @@ export function ActivitySheet({
         {modes.length > 1 && (
           <button
             type="button"
-            className="mt-3 min-h-11 text-amber-700 dark:text-amber-400"
+            className="mt-3 min-h-11 font-bold underline decoration-main decoration-4 underline-offset-4"
             onClick={() => {
               const next = !more;
               setMore(next);
@@ -259,9 +259,7 @@ export function ActivitySheet({
             set('key', v);
           }}
         />
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          {t('activity.keyHint')}
-        </p>
+        <p className="text-sm text-ink-muted">{t('activity.keyHint')}</p>
 
         <div data-testid="back-to-back">
           {backToBack.map((w) => (

@@ -9,7 +9,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 // app and its IndexedDB data are tied to this origin and path.
 const base = '/fuel-planner/';
 
-const themeColor = '#0f172a';
+const themeColor = '#000000';
 
 const { version } = JSON.parse(
   await readFile(new URL('./package.json', import.meta.url), 'utf8'),

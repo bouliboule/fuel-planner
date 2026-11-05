@@ -3,12 +3,13 @@
 Mobile first (iPhone width), usable on desktop. One screen does the job.
 Large text and tap targets (at least 48 px high), one column, no tables, dark
 mode following the system unless the Profile screen's Appearance choice sets
-light or dark (D56).
+light or dark (D56). Visual style is neubrutalist (D57): black outlines,
+hard offset shadows, flat bold colours.
 
 Icons (lucide-react, D51) are used everywhere a thing has a kind, each on a
 coloured tile: one colour per sport (ride amber, run rose, strength violet,
-Pilates teal, walk green, other slate) and per meal role (pre-workout amber,
-during sky, post-workout emerald, other meals slate). Hard activities carry
+Pilates teal, walk lime, other stone) and per meal role (pre-workout amber,
+during sky, post-workout emerald, other meals stone). Hard activities carry
 a flame badge. A day load banner (rest, light, moderate, high, very high)
 with its own icon and colour heads the totals. Guidance, example and
 during-session lines each start with an icon. Icons are decorative; text
