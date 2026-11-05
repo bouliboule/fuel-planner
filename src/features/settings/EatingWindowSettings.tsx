@@ -73,9 +73,7 @@ function WindowForm({ profile }: { profile: StoredProfile }) {
           />
         </>
       )}
-      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-        {t('window.hint')}
-      </p>
+      <p className="mt-2 text-sm text-ink-muted">{t('window.hint')}</p>
       <div className="mt-6">
         <Button type="submit" disabled={Boolean(startError ?? endError)}>
           {t('common.save')}

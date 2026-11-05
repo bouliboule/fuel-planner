@@ -59,14 +59,18 @@ export function MealCard({
   const tone = mealTone(slot.guidance);
   return (
     <li
-      className={`rounded-2xl border border-l-8 border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 ${tone.card}`}
+      className="brutal relative overflow-hidden bg-surface p-4 pl-6"
       data-testid="meal-card"
       data-guidance={slot.guidance}
     >
+      <span
+        aria-hidden="true"
+        className={`absolute inset-y-0 left-0 w-2 border-r-2 border-edge ${tone.card}`}
+      />
       <div className="flex items-center justify-between gap-3">
-        <h3 className="flex items-center gap-3 text-xl font-semibold">
+        <h3 className="flex items-center gap-3 text-xl font-black">
           <span
-            className={`grid size-12 shrink-0 place-items-center rounded-2xl ${tone.tile}`}
+            className={`brutal-flat grid size-12 shrink-0 place-items-center ${tone.tile}`}
           >
             {createElement(mealIcon(slot.guidance, slot.name), {
               'aria-hidden': true,
@@ -75,14 +79,14 @@ export function MealCard({
             })}
           </span>
           <span>
-            <span className="block text-base font-medium tabular-nums text-slate-500 dark:text-slate-400">
+            <span className="block text-base font-bold tabular-nums text-ink-muted">
               {slot.time}
             </span>
             {name}
           </span>
         </h3>
         {tag && (
-          <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold whitespace-nowrap text-amber-900 uppercase dark:bg-amber-900/40 dark:text-amber-200">
+          <span className="brutal-flat shrink-0 bg-main px-2 py-0.5 text-sm font-black whitespace-nowrap text-main-ink uppercase">
             {t(tag)}
           </span>
         )}
@@ -91,7 +95,7 @@ export function MealCard({
       {during ? (
         <div className="mt-3 space-y-1 text-lg">
           {slot.carbGPerH !== undefined && slot.carbGPerH > 0 && (
-            <p className="text-2xl font-bold">
+            <p className="text-2xl font-black">
               {t('during.rate', {
                 rate: g(slot.carbGPerH),
                 total: g(slot.target.carbG),
@@ -125,7 +129,7 @@ export function MealCard({
         </div>
       ) : (
         <div className="mt-3">
-          <p className="text-3xl font-bold tabular-nums">
+          <p className="text-3xl font-black tabular-nums">
             {t('day.mealKcal', { kcal: g(slot.target.kcal) })}
           </p>
           <p className="text-lg tabular-nums">
@@ -136,7 +140,7 @@ export function MealCard({
             })}
           </p>
           {slot.targetRanges?.kcal && (
-            <p className="text-sm text-slate-600 tabular-nums dark:text-slate-300">
+            <p className="text-sm text-ink-muted tabular-nums">
               {t('day.mealUsual', {
                 low: g(slot.targetRanges.kcal[0]),
                 high: g(slot.targetRanges.kcal[1]),
@@ -146,13 +150,10 @@ export function MealCard({
         </div>
       )}
 
-      <Line icon={Target} className="mt-3 text-lg font-medium">
+      <Line icon={Target} className="mt-3 text-lg font-bold">
         {t(`guidance.aim.${slot.guidance}`)}
       </Line>
-      <Line
-        icon={Lightbulb}
-        className="mt-1 text-base text-slate-600 dark:text-slate-300"
-      >
+      <Line icon={Lightbulb} className="mt-1 text-base text-ink-muted">
         {t('guidance.exampleLabel', { example: t(exampleKey(slot)) })}
       </Line>
       {showLowFibre(slot) && (

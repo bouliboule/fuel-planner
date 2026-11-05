@@ -71,24 +71,24 @@ function Calendar({ profile }: { profile: StoredProfile }) {
         <div className="mt-4 flex items-center justify-between">
           <Link
             to={`?month=${monthOf(`${month}-01`, -1)}`}
-            className="grid size-12 place-items-center rounded-xl border border-slate-300 dark:border-slate-700"
+            className="brutal brutal-press grid size-12 place-items-center bg-surface"
             aria-label={t('calendar.previous')}
           >
             <ChevronLeft aria-hidden="true" className="size-6" />
           </Link>
-          <h2 className="text-xl font-bold" data-testid="calendar-month">
+          <h2 className="text-xl font-black" data-testid="calendar-month">
             {monthTitle(month)}
           </h2>
           <Link
             to={`?month=${monthOf(`${month}-01`, 1)}`}
-            className="grid size-12 place-items-center rounded-xl border border-slate-300 dark:border-slate-700"
+            className="brutal brutal-press grid size-12 place-items-center bg-surface"
             aria-label={t('calendar.next')}
           >
             <ChevronRight aria-hidden="true" className="size-6" />
           </Link>
         </div>
 
-        <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-bold tracking-wide text-slate-500 uppercase">
+        <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-black tracking-wide text-ink-muted uppercase">
           {WEEKDAYS.map((key) => (
             <span key={key}>{t(key)}</span>
           ))}
@@ -103,16 +103,16 @@ function Calendar({ profile }: { profile: StoredProfile }) {
                 key={date}
                 to={`/day/${date}`}
                 aria-label={t('calendar.open', { date })}
-                className={`flex min-h-16 flex-col items-center gap-0.5 rounded-xl p-1 ${
-                  own ? 'bg-white shadow-sm dark:bg-slate-900' : 'opacity-40'
-                } ${date === today ? 'ring-2 ring-orange-500' : ''}`}
+                className={`brutal-flat flex min-h-16 flex-col items-center gap-0.5 p-1 ${
+                  own ? 'bg-surface' : 'opacity-40'
+                } ${date === today ? 'bg-main! text-main-ink shadow-brutal-sm' : ''}`}
               >
-                <span className="flex items-center gap-0.5 text-sm font-semibold tabular-nums">
+                <span className="flex items-center gap-0.5 text-sm font-black tabular-nums">
                   {Number(date.slice(8))}
                   {hard && (
                     <Flame
                       aria-hidden="true"
-                      className="size-3 text-red-600"
+                      className="size-3 text-red-600 dark:text-red-400"
                       strokeWidth={3}
                     />
                   )}
@@ -122,7 +122,8 @@ function Calendar({ profile }: { profile: StoredProfile }) {
                     createElement(SPORT_ICON[s.sport], {
                       key: s.id,
                       'aria-hidden': true,
-                      className: `size-4 ${SPORT_TEXT[s.sport]}`,
+                      // Today's cell is bg-main, where sport colours vanish.
+                      className: `size-4 ${date === today ? '' : SPORT_TEXT[s.sport]}`,
                       strokeWidth: 2.5,
                     }),
                   )}
@@ -132,7 +133,7 @@ function Calendar({ profile }: { profile: StoredProfile }) {
           })}
         </div>
 
-        <h2 className="mt-8 text-sm font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+        <h2 className="mt-8 inline-block bg-ink px-2 py-0.5 text-sm font-black tracking-wider text-page uppercase">
           {t('calendar.summary')}
         </h2>
         {inMonth.length === 0 ? (
@@ -148,7 +149,7 @@ function Calendar({ profile }: { profile: StoredProfile }) {
               return (
                 <li
                   key={sport}
-                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-base font-semibold ${SPORT_TONE[sport]}`}
+                  className={`brutal-flat inline-flex items-center gap-2 px-3 py-1 text-base font-bold shadow-brutal-sm ${SPORT_TONE[sport]}`}
                 >
                   {createElement(SPORT_ICON[sport], {
                     'aria-hidden': true,

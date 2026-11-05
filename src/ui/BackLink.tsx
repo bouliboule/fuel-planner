@@ -5,7 +5,7 @@ export function BackLink({ to }: { to: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex min-h-11 items-center text-amber-700 dark:text-amber-400"
+      className="inline-flex min-h-11 items-center font-bold underline decoration-main decoration-4 underline-offset-4"
     >
       ‹ {t('common.back')}
     </Link>

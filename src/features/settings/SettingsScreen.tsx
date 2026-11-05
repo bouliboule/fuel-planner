@@ -39,16 +39,16 @@ export function SettingsScreen() {
     <>
       <BackLink to="/day" />
       <Screen title={t('nav.profile')}>
-        <ul className="mt-4 divide-y divide-slate-200 rounded-lg border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+        <ul className="brutal mt-4 divide-y-2 divide-edge overflow-hidden bg-surface">
           {sections.map((s) => (
             <li key={s.to}>
               <Link
                 to={s.to}
-                className="flex min-h-14 items-center gap-3 px-4 text-lg"
+                className="flex min-h-14 items-center gap-3 px-4 text-lg font-bold hover:bg-main hover:text-main-ink"
               >
                 {createElement(s.icon, {
                   'aria-hidden': true,
-                  className: 'size-5 text-orange-600',
+                  className: 'size-5',
                 })}
                 <span className="flex-1">{t(s.label)}</span>
                 <span aria-hidden="true">›</span>
@@ -67,12 +67,12 @@ export function SettingsScreen() {
 
         {!window.matchMedia('(display-mode: standalone)').matches && (
           <>
-            <h2 className="mt-6 text-lg font-semibold">{t('install.title')}</h2>
+            <h2 className="mt-6 text-lg font-black">{t('install.title')}</h2>
             <p className="mt-1 text-sm">{t('install.body')}</p>
           </>
         )}
 
-        <h2 className="mt-6 text-lg font-semibold">{t('settings.about')}</h2>
+        <h2 className="mt-6 text-lg font-black">{t('settings.about')}</h2>
         <p className="mt-1 text-sm">
           {t('settings.version', { version: __APP_VERSION__ })}
         </p>

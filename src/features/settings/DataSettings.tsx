@@ -35,10 +35,8 @@ export function DataSettings() {
     <Screen title={t('data.title')}>
       <BackLink to="/profile" />
 
-      <h2 className="mt-4 text-lg font-semibold">{t('data.export')}</h2>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        {t('data.exportHint')}
-      </p>
+      <h2 className="mt-4 text-lg font-black">{t('data.export')}</h2>
+      <p className="mt-1 text-sm text-ink-muted">{t('data.exportHint')}</p>
       <p className="mt-1 text-sm">
         {lastExport
           ? t('data.lastExport', { date: lastExport.slice(0, 10) })
@@ -70,13 +68,11 @@ export function DataSettings() {
         </Button>
       </div>
 
-      <h2 className="mt-6 text-lg font-semibold">{t('data.import')}</h2>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        {t('data.importHint')}
-      </p>
+      <h2 className="mt-6 text-lg font-black">{t('data.import')}</h2>
+      <p className="mt-1 text-sm text-ink-muted">{t('data.importHint')}</p>
       <ImportBackup />
 
-      <h2 className="mt-6 text-lg font-semibold">{t('data.storage')}</h2>
+      <h2 className="mt-6 text-lg font-black">{t('data.storage')}</h2>
       {persistence && (
         <p className="mt-1 text-sm">{t(`data.storage.${persistence}`)}</p>
       )}

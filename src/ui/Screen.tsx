@@ -9,7 +9,7 @@ export function Screen({
 }) {
   return (
     <section className="py-6">
-      <h1 className="text-2xl font-semibold">{title}</h1>
+      <h1 className="text-3xl font-black tracking-tight">{title}</h1>
       {children}
     </section>
   );

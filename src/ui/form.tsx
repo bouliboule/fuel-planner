@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from 'react';
 
 const inputClass =
-  'mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-900 aria-[invalid=true]:border-red-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100';
+  'mt-1 block min-h-11 w-full brutal-flat bg-surface px-3 text-base text-ink shadow-brutal-sm aria-[invalid=true]:bg-danger/15 aria-[invalid=true]:shadow-[2px_2px_0_0_var(--danger)]';
 
 export function Field({
   label,
@@ -26,20 +26,17 @@ export function Field({
     undefined;
   return (
     <div className="mt-4">
-      <label htmlFor={id} className="block text-sm font-medium">
+      <label htmlFor={id} className="block text-sm font-bold">
         {label}
       </label>
       {children({ id, describedBy, invalid: Boolean(error) })}
       {hint && (
-        <p
-          id={hintId}
-          className="mt-1 text-sm text-slate-500 dark:text-slate-400"
-        >
+        <p id={hintId} className="mt-1 text-sm text-ink-muted">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="mt-1 text-sm text-red-600 dark:text-red-400">
+        <p id={errorId} className="mt-1 text-sm font-bold text-danger">
           {error}
         </p>
       )}
@@ -149,7 +146,7 @@ export function CheckboxField({
     <label className="mt-4 flex min-h-11 items-center gap-3 text-base">
       <input
         type="checkbox"
-        className="size-5"
+        className="size-5 accent-main"
         checked={checked}
         onChange={(e) => {
           onChange(e.target.checked);
@@ -174,17 +171,16 @@ export function Button({
   disabled?: boolean;
 }) {
   const styles = {
-    primary: 'bg-amber-600 text-white disabled:bg-slate-400',
-    secondary:
-      'border border-slate-300 text-slate-900 dark:border-slate-700 dark:text-slate-100',
-    danger: 'bg-red-600 text-white',
+    primary: 'bg-main text-main-ink',
+    secondary: 'bg-surface text-ink',
+    danger: 'bg-danger text-black',
   }[variant];
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`min-h-11 rounded-lg px-4 font-medium ${styles}`}
+      className={`brutal brutal-press min-h-11 px-4 font-bold disabled:opacity-50 disabled:shadow-none ${styles}`}
     >
       {children}
     </button>
