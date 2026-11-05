@@ -76,6 +76,21 @@ test('a long ride for tomorrow gives pre, during and post-workout meals, offline
   ).toBeVisible();
 });
 
+test('saving an incomplete activity reveals the first missing field', async ({
+  page,
+}) => {
+  await completeFirstRun(page);
+  await page.getByRole('button', { name: 'Add activity' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Add activity' });
+  await sheet.getByRole('button', { name: '60 min' }).click();
+  await sheet.getByRole('button', { name: 'Save activity' }).click();
+  // Start is above the fold once the sheet is scrolled to the save button.
+  const start = sheet.getByLabel('Start');
+  await expect(start).toBeFocused();
+  await expect(start).toBeInViewport();
+  await expect(sheet.getByText('Required')).toBeInViewport();
+});
+
 test('an activity can be edited and deleted', async ({ page }) => {
   await completeFirstRun(page);
   await page.getByRole('button', { name: 'Tomorrow' }).click();

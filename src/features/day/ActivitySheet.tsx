@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { backToBackWarnings } from '../../engine/backToBack.ts';
 import { db, deleteSession, saveSession } from '../../db/index.ts';
 import { t } from '../../i18n/index.ts';
@@ -18,6 +18,7 @@ import {
   TextField,
 } from '../../ui/form.tsx';
 import { SPORT_ICON } from '../../ui/icons.ts';
+import { revealFirstInvalid } from '../../ui/revealFirstInvalid.ts';
 import { Sheet } from '../../ui/Sheet.tsx';
 import { KcalPreview } from '../sessions/KcalPreview.tsx';
 import { WarningText } from './WarningText.tsx';
@@ -54,6 +55,13 @@ export function ActivitySheet({
     existing ? draftFromSession(existing) : emptySessionDraft('ride'),
   );
   const [errors, setErrors] = useState<SessionErrors>({});
+  // Bumped on each rejected save so the first error is shown even when the
+  // errors are the same as last time.
+  const [rejected, setRejected] = useState(0);
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    if (rejected > 0) revealFirstInvalid(formRef.current);
+  }, [rejected]);
   const [more, setMore] = useState(
     () => draft.mode !== MODES_BY_SPORT[draft.sport][0],
   );
@@ -82,12 +90,14 @@ export function ActivitySheet({
       onClose={onClose}
     >
       <form
+        ref={formRef}
         noValidate
         onSubmit={(e) => {
           e.preventDefault();
           const r = sessionFromDraft(draft);
           if (!r.ok) {
             setErrors(r.errors);
+            setRejected((n) => n + 1);
             return;
           }
           void saveSession(db, { ...r.session, date }, existing).then(onClose);
