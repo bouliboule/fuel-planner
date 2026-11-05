@@ -1,21 +1,33 @@
-// Writes the placeholder app icons into public/ as PNG files, using only
+// Writes the app icons into public/ as PNG files, using only
 // Node built-ins. Run with `pnpm icons` after changing the design below.
 //
-// Design: a plate (amber ring) on the theme background, full bleed. The ring
-// stays inside the maskable safe zone (a circle of radius 0.4 of the size).
+// Design, neubrutalist (D57): an amber plate with a black outline, a black
+// rim line and a hard black offset shadow, on the light page colour, full
+// bleed. Everything stays inside the maskable safe zone (a circle of radius
+// 0.4 of the size): the shadow's far edge is at about 0.34.
 
 import { writeFile } from 'node:fs/promises';
 import { crc32, deflateSync } from 'node:zlib';
 
-const background = [15, 23, 42]; // #0f172a, theme colour
-const ring = [245, 158, 11]; // #f59e0b
-const outerRadius = 0.34;
-const innerRadius = 0.24;
+const background = [253, 243, 225]; // #fdf3e1, --page (light)
+const plate = [255, 176, 0]; // #ffb000, --main
+const ink = [0, 0, 0]; // #000000, --edge
+const centre = 0.47; // plate centre, nudged up-left so the shadow fits
+const shadowOffset = 0.06;
+const plateRadius = 0.26;
+const outline = 0.035;
+const rimRadius = 0.155;
+const rimWidth = 0.025;
 const samplesPerAxis = 4; // supersampling for anti-aliased edges
 
 function colourAt(x, y) {
-  const d = Math.hypot(x - 0.5, y - 0.5);
-  return d <= outerRadius && d >= innerRadius ? ring : background;
+  const d = Math.hypot(x - centre, y - centre);
+  if (d <= plateRadius) {
+    return Math.abs(d - rimRadius) <= rimWidth / 2 ? ink : plate;
+  }
+  if (d <= plateRadius + outline) return ink;
+  const s = Math.hypot(x - centre - shadowOffset, y - centre - shadowOffset);
+  return s <= plateRadius + outline ? ink : background;
 }
 
 function render(size) {
@@ -69,10 +81,14 @@ function png(size) {
 }
 
 const hex = (c) => '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('');
-const midRadius = (outerRadius + innerRadius) / 2;
+const u = (v) => String(Math.round(v * 1000) / 10); // fraction to viewBox units
+const outer = plateRadius + outline;
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <rect width="100" height="100" rx="20" fill="${hex(background)}"/>
-  <circle cx="50" cy="50" r="${String(midRadius * 100)}" fill="none" stroke="${hex(ring)}" stroke-width="${String((outerRadius - innerRadius) * 100)}"/>
+  <circle cx="${u(centre + shadowOffset)}" cy="${u(centre + shadowOffset)}" r="${u(outer)}" fill="${hex(ink)}"/>
+  <circle cx="${u(centre)}" cy="${u(centre)}" r="${u(outer)}" fill="${hex(ink)}"/>
+  <circle cx="${u(centre)}" cy="${u(centre)}" r="${u(plateRadius)}" fill="${hex(plate)}"/>
+  <circle cx="${u(centre)}" cy="${u(centre)}" r="${u(rimRadius)}" fill="none" stroke="${hex(ink)}" stroke-width="${u(rimWidth)}"/>
 </svg>
 `;
 
